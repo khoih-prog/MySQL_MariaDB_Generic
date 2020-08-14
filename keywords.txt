@@ -1,0 +1,89 @@
+#######################################
+# Data types (KEYWORD1)
+#######################################
+
+MySQL_Connection	KEYWORD1
+MySQL_Packet	KEYWORD1
+MySQL_Query	KEYWORD1
+Encrypt_SHA1	KEYWORD1
+
+Connection_Result	KEYWORD1
+field_struct	KEYWORD1
+column_names	KEYWORD1
+row_values	KEYWORD1
+_buffer	KEYWORD1
+_state	KEYWORD1
+
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+##############################
+# MySQL_Generic_Connection
+##############################
+
+connect	KEYWORD2
+connectNonBlocking  KEYWORD2
+connected	KEYWORD2
+version KEYWORD2
+close KEYWORD2
+
+##############################
+# MySQL_Generic_Packet
+##############################
+
+complete_handshake	KEYWORD2
+send_authentication_packet	KEYWORD2
+parse_handshake_packet	KEYWORD2
+scramble_password	KEYWORD2
+read_packet	KEYWORD2
+get_packet_type	KEYWORD2
+parse_error_packet	KEYWORD2
+get_lcb_len	KEYWORD2
+read_int	KEYWORD2
+store_int	KEYWORD2
+read_lcb_int	KEYWORD2
+wait_for_bytes	KEYWORD2
+print_packet	KEYWORD2
+
+
+##############################
+# MySQL_Generic_Query
+##############################
+
+execute  KEYWORD2
+close KEYWORD2
+get_columns KEYWORD2
+get_next_row  KEYWORD2
+show_results KEYWORD2
+get_rows_affected KEYWORD2
+get_last_insert_id KEYWORD2
+
+
+##############################
+# MySQL_Generic_Encrypt_Sha1
+##############################
+
+init KEYWORD2
+initHmac KEYWORD2
+result  KEYWORD2
+write KEYWORD2
+
+#######################################
+# Literals (LITERAL1)
+#######################################
+
+Sha1	KEYWORD3
+CONNECTED	KEYWORD3
+DISCONNECTED	KEYWORD3
+MEMORY_ERROR	KEYWORD3
+PACKET_ERROR	KEYWORD3
+READ_TIMEOUT	KEYWORD3
+BAD_MOJO	KEYWORD3
+ROWS	KEYWORD3
+READ_COLS	KEYWORD3
+NOT_CONNECTED	KEYWORD3
+sha1InitState	KEYWORD3
+
