@@ -36,7 +36,7 @@ This [MySQL_MariaDB_Generic library](https://github.com/khoih-prog/MySQL_MariaDB
 10. Add support to WiFiNINA using [`WiFiNINA_Generic library`](https://github.com/khoih-prog/WiFiNINA_Generic) or WiFiNINA library.
 11. Add support to W5x00 Ethernet module/shield using Ethernet, EthernetLarge, Ethernet2 or Ethernet3 library.
 12. Add support to LAN8742A Ethernet module/shield using STM32Ethernet library.
-13. Add support to ESP8266/ESP32-AT-command module/shield using WiFiEspAT or [`ESP8266_AT_WebServer library`](https://github.com/khoih-prog/https://github.com/khoih-prog/ESP8266_AT_WebServer) library.
+13. Add support to ESP8266/ESP32-AT-command module/shield using WiFiEspAT or [`ESP8266_AT_WebServer library`](https://github.com/khoih-prog/ESP8266_AT_WebServer) library.
 14. Add Packages' Patches.
 15. Add sample Packages_Patches for ***STM32 stm32*** (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8)
 16. Add Ethernet Library Patches
@@ -1252,7 +1252,7 @@ Debug is enabled by default on Serial. Debug Level from 0 to 4. To disable, chan
 10. Add support to WiFiNINA using [`WiFiNINA_Generic library`](https://github.com/khoih-prog/WiFiNINA_Generic) or WiFiNINA library.
 11. Add support to W5x00 Ethernet module/shield using Ethernet, EthernetLarge, Ethernet2 or Ethernet3 library.
 12. Add support to LAN8742A Ethernet module/shield using STM32Ethernet library.
-13. Add support to ESP8266/ESP32-AT-command module/shield using WiFiEspAT or [`ESP8266_AT_WebServer library`](https://github.com/khoih-prog/https://github.com/khoih-prog/ESP8266_AT_WebServer) library.
+13. Add support to ESP8266/ESP32-AT-command module/shield using WiFiEspAT or [`ESP8266_AT_WebServer library`](https://github.com/khoih-prog/ESP8266_AT_WebServer) library.
 14. Add Packages' Patches.
 15. Add sample Packages_Patches for ***STM32 stm32*** (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8)
 16. Add Ethernet Library Patches
