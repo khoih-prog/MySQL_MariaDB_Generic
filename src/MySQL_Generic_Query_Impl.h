@@ -14,12 +14,13 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.0
+  Version: 1.0.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
-                                  WiFiNINA and ESP8266/ESP32-AT shields
+                                  (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
+  1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -39,6 +40,8 @@
 #ifndef MYSQL_GENERIC_QUERY_IMPL_H
 #define MYSQL_GENERIC_QUERY_IMPL_H
 
+#define COMMAND_HEADER_LEN      5
+
 /*
   Constructor
 
@@ -57,12 +60,12 @@ MySQL_Query::MySQL_Query(MySQL_Connection *connection)
   for (int f = 0; f < MAX_FIELDS; f++) 
   {
     columns.fields[f] = NULL;
-    row.values[f] = NULL;
+    row.values[f]     = NULL;
   }
   
-  columns_read = false;
-  rows_affected = -1;
-  last_insert_id = -1;
+  columns_read    = false;
+  rows_affected   = -1;
+  last_insert_id  = -1;
 #endif
 }
 
@@ -75,7 +78,6 @@ MySQL_Query::~MySQL_Query()
   close();
 #endif
 }
-
 
 /*
   execute - Execute a SQL statement
@@ -93,6 +95,8 @@ MySQL_Query::~MySQL_Query()
 
   Returns bool - True = a result set is available for reading
 */
+
+// TODO: Pass buffer pointer instead of using global buffer
 bool MySQL_Query::execute(const char *query, bool progmem)
 {
   int query_len;   // length of query
@@ -113,20 +117,52 @@ bool MySQL_Query::execute(const char *query, bool progmem)
     query_len = (int) strlen(query);
   }
   
-  if (conn->buffer != NULL)
-    free(conn->buffer);
-
-  conn->buffer = (byte *) malloc(query_len + 5);
-
+  // KH, new from v1.0.1
+  if ( conn->largest_buffer_size < query_len + COMMAND_HEADER_LEN )
+  {
+    if ( conn->largest_buffer_size == 0 )
+    {
+      // Check if we need to allocate buffer the first time. Don't need, but to be safe
+      conn->largest_buffer_size = query_len + COMMAND_HEADER_LEN;
+      MYSQL_LOGWARN1("MySQL_Query::execute: First time allocate buffer, size = ", conn->largest_buffer_size);
+      
+      conn->buffer = (byte *) malloc(conn->largest_buffer_size);
+    }
+    else
+    {
+      // Check if we need to reallocate buffer
+      conn->largest_buffer_size = query_len + COMMAND_HEADER_LEN;
+      MYSQL_LOGWARN1("MySQL_Query::execute: Reallocate buffer, size = ", conn->largest_buffer_size);
+      
+      conn->buffer = (byte *) realloc(conn->buffer, conn->largest_buffer_size);    
+    }
+  }
+  else
+  {
+    MYSQL_LOGWARN3("MySQL_Query::execute: Reuse allocated buffer, conn->largest_buffer_size = ", conn->largest_buffer_size, " > ", query_len + COMMAND_HEADER_LEN);
+  }
+   
+  if (conn->buffer == NULL)
+  {
+    MYSQL_LOGERROR(MEMORY_ERROR);
+   
+    return false;
+  }
+  else
+  {
+    memset(conn->buffer, 0, conn->largest_buffer_size);
+  }
+  //////
+    
   // Write query to packet
   if (progmem) 
   {
     for (int c = 0; c < query_len; c++)
-      conn->buffer[c + 5] = pgm_read_byte_near(query + c);
+      conn->buffer[c + COMMAND_HEADER_LEN] = pgm_read_byte_near(query + c);
   } 
   else 
   {
-    memcpy(&conn->buffer[5], query, query_len);
+    memcpy(&conn->buffer[COMMAND_HEADER_LEN], query, query_len);
   }
 
   // Send the query
@@ -148,6 +184,7 @@ bool MySQL_Query::execute(const char *query, bool progmem)
   Returns bool - true = result set available,
                     false = no result set returned.
 */
+// TODO: Pass buffer pointer instead of using global buffer
 bool MySQL_Query::execute_query(int query_len)
 {
   if (!conn->buffer)
@@ -213,7 +250,6 @@ bool MySQL_Query::execute_query(int query_len)
 #endif
   return true;
 }
-
 
 #ifdef WITH_SELECT
 /*
@@ -453,6 +489,9 @@ char *MySQL_Query::read_string(int *offset)
   int len_bytes = conn->get_lcb_len(conn->buffer[*offset]);
   int len = conn->read_int(*offset, len_bytes);
   
+  MYSQL_LOGINFO1("MySQL_Query::read_string: offset = ", *offset);
+  MYSQL_LOGINFO3("MySQL_Query::read_string: len = ", len, "len_bytes =", len_bytes);
+  
   if (len == 251) 
   {
     // This is a null field.
@@ -460,16 +499,25 @@ char *MySQL_Query::read_string(int *offset)
     strncpy(str, "NULL", 4);
     str[4] = 0x00;
     *offset += len_bytes;
-  } 
-  else 
+  }
+  
+  // KH, new from v1.0.1
+  if ( (len < 251) && (len > 0) )
   {
-    str = (char *)malloc(len + 1);
+    // TODO, KH, check where str is freed
+    str = (char *) malloc(len + 1);
+    
+    MYSQL_LOGINFO3("MySQL_Query::read_string: len = ", len, "conn->buffer size =", conn->largest_buffer_size);
+    
     strncpy(str, (char *)&conn->buffer[*offset + len_bytes], len);
     str[len] = 0x00;
     *offset += len_bytes + len;
+    
+    return str;
   }
   
-  return str;
+  return NULL;
+  ////// 
 }
 
 

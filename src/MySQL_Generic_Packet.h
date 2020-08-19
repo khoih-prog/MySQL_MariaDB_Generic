@@ -13,12 +13,13 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.0
+  Version: 1.0.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
-                                  WiFiNINA and ESP8266/ESP32-AT shields
+                                  (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
+  1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -46,12 +47,17 @@
 #define MYSQL_EOF_PACKET        0xfe
 #define MYSQL_ERROR_PACKET      0xff
 
-#define MYSQL_GENERIC_VERSION   "1.0.0"
+#define MYSQL_GENERIC_VERSION   "1.0.1"
 
 class MySQL_Packet 
 {
   public:
     byte *buffer;           // buffer for reading packets
+    
+    // KH, from v1.0.1
+    uint16_t largest_buffer_size = 0;
+    //////
+    
     int packet_len;         // length of current packet
     Client *client;         // instance of client class (e.g. EthernetClient)
     char *server_version;   // save server version from handshake

@@ -13,12 +13,13 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.0
+  Version: 1.0.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
-                                  WiFiNINA and ESP8266/ESP32-AT shields
+                                  (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
+  1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -42,7 +43,14 @@
 
 #include <MySQL_Generic_Encrypt_Sha1.h>
 
-#define MYSQL_DATA_TIMEOUT  3000   // Wifi client wait in milliseconds
+// KH, from v1.0.1 
+#if ( USE_UIP_ETHERNET  || USING_WIFIESPAT_LIB || USING_WIFI_ESP_AT )
+  #define MYSQL_DATA_TIMEOUT  30000   // UIPEthernet client wait in milliseconds !!!!
+#else
+  #define MYSQL_DATA_TIMEOUT  6000    // Client wait in milliseconds
+#endif  
+//////
+
 #define MYSQL_WAIT_INTERVAL 300    // WiFi client wait interval
 
 /*
@@ -84,82 +92,75 @@ MySQL_Packet::MySQL_Packet(Client *client_instance)
   password[in]    password
   db[in]          default database
 */
-void MySQL_Packet::send_authentication_packet(char *user, char *password, char *db)
-{
-  if (buffer != NULL)
-    free(buffer);
 
-  buffer = (byte *) malloc(256);
+void MySQL_Packet::send_authentication_packet(char *user, char *password, char *db)
+{ 
+  byte this_buffer[256];
+  byte scramble[20];
 
   int size_send = 4;
 
   // client flags
-  buffer[size_send] = byte(0x0D);
-  buffer[size_send + 1] = byte(0xa6);
-  buffer[size_send + 2] = byte(0x03);
-  buffer[size_send + 3] = byte(0x00);
+  this_buffer[size_send] = byte(0x0D);
+  this_buffer[size_send + 1] = byte(0xa6);
+  this_buffer[size_send + 2] = byte(0x03);
+  this_buffer[size_send + 3] = byte(0x00);
   size_send += 4;
 
   // max_allowed_packet
-  buffer[size_send] = 0;
-  buffer[size_send + 1] = 0;
-  buffer[size_send + 2] = 0;
-  buffer[size_send + 3] = 1;
+  this_buffer[size_send] = 0;
+  this_buffer[size_send + 1] = 0;
+  this_buffer[size_send + 2] = 0;
+  this_buffer[size_send + 3] = 1;
   size_send += 4;
 
   // charset - default is 8
-  buffer[size_send] = byte(0x08);
+  this_buffer[size_send] = byte(0x08);
   size_send += 1;
 
   for (int i = 0; i < 24; i++)
-    buffer[size_send + i] = 0x00;
+    this_buffer[size_send + i] = 0x00;
 
   size_send += 23;
 
   // user name
-  memcpy((char *) &buffer[size_send], user, strlen(user));
+  memcpy((char *) &this_buffer[size_send], user, strlen(user));
   size_send += strlen(user) + 1;
-  buffer[size_send - 1] = 0x00;
-
-  // password - see scramble password
-  byte *scramble = (uint8_t *)malloc(20);
-  
+  this_buffer[size_send - 1] = 0x00;
+   
   if (scramble_password(password, scramble)) 
   {
-    buffer[size_send] = 0x14;
+    this_buffer[size_send] = 0x14;
     size_send += 1;
     
     for (int i = 0; i < 20; i++)
-      buffer[i + size_send] = scramble[i];
+      this_buffer[i + size_send] = scramble[i];
       
     size_send += 20;
-    buffer[size_send] = 0x00;
+    this_buffer[size_send] = 0x00;
   }
   
-  free(scramble);
-
   if (db) 
   {
-    memcpy((char *)&buffer[size_send], db, strlen(db));
+    memcpy((char *)&this_buffer[size_send], db, strlen(db));
     size_send += strlen(db) + 1;
-    buffer[size_send - 1] = 0x00;
+    this_buffer[size_send - 1] = 0x00;
   } 
   else 
   {
-    buffer[size_send + 1] = 0x00;
+    this_buffer[size_send + 1] = 0x00;
     size_send += 1;
   }
 
   // Write packet size
   int p_size = size_send - 4;
-  store_int(&buffer[0], p_size, 3);
-  buffer[3] = byte(0x01);
+  store_int(&this_buffer[0], p_size, 3);
+  this_buffer[3] = byte(0x01);
 
   // Write the packet
-  client->write((uint8_t*)buffer, size_send);
+  client->write((uint8_t*)this_buffer, size_send);
   client->flush();
 }
-
 
 /*
   scramble_password - Build a SHA1 scramble of the user password
@@ -248,13 +249,16 @@ int MySQL_Packet::wait_for_bytes(int bytes_need)
       if (num >= bytes_need)
         break;
     }
+    
+    yield();
+    //delay(0);
   } while (now < wait_till);
 
   if (num == 0 && now >= wait_till)
   {
     MYSQL_LOGDEBUG("MySQL_Packet::wait_for_bytes: client->stop");
 
-    client->stop();
+    //client->stop();
   }
 
   MYSQL_LOGDEBUG1("MySQL_Packet::wait_for_bytes: OK, Num bytes= ", num);
@@ -278,20 +282,19 @@ int MySQL_Packet::wait_for_bytes(int bytes_need)
   be found by reading the first 4 bytes from the server then reading
   N bytes for the packet payload.
 */
+
+//KH, from v1.0.1. Use largest alocated buffer and keep until larger packet is received
+// TODO: Pass buffer pointer instead of using global buffer
 void MySQL_Packet::read_packet()
 {
-  byte local[4];
-
-  if (buffer)
-  {
-    free(buffer);
-    buffer = NULL;
-  }
-
+  #define PACKET_HEADER_SZ      4
+  
+  byte local[PACKET_HEADER_SZ];
+  
   MYSQL_LOGDEBUG("MySQL_Packet::read_packet: step 1");
 
   // Read packet header
-  if (wait_for_bytes(4) < 4)
+  if (wait_for_bytes(PACKET_HEADER_SZ) < PACKET_HEADER_SZ)
   {
     MYSQL_LOGERROR(READ_TIMEOUT);
     
@@ -300,7 +303,7 @@ void MySQL_Packet::read_packet()
 
   MYSQL_LOGDEBUG("MySQL_Packet::read_packet: step 2");
 
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < PACKET_HEADER_SZ; i++)
     local[i] = client->read();
 
   // Get packet length
@@ -317,7 +320,7 @@ void MySQL_Packet::read_packet()
     }
   */
 
-  MYSQL_LOGDEBUG1("MySQL_Packet::read_packet: packet_len= ", packet_len);
+  MYSQL_LOGWARN1("MySQL_Packet::read_packet: packet_len= ", packet_len);
 
   // Check for valid packet.
   if (packet_len < 0)
@@ -326,18 +329,42 @@ void MySQL_Packet::read_packet()
     packet_len = 0;
   }
 
-  buffer = (byte *)malloc(packet_len + 4);
-
+  if ( largest_buffer_size < packet_len + PACKET_HEADER_SZ )
+  {
+    if (largest_buffer_size == 0 )
+    {
+      // Check if we need to allocate buffer the first time
+      largest_buffer_size = packet_len + PACKET_HEADER_SZ;
+      MYSQL_LOGWARN1("MySQL_Packet::read_packet: First time allocate buffer, size = ", largest_buffer_size);
+      
+      buffer = (byte *) malloc(largest_buffer_size);
+    }
+    else
+    {
+      // Check if we need to reallocate buffer
+      largest_buffer_size = packet_len + PACKET_HEADER_SZ;
+      MYSQL_LOGWARN1("MySQL_Packet::read_packet: Reallocate buffer, size = ", largest_buffer_size);
+      
+      buffer = (byte *) realloc(buffer, largest_buffer_size);
+    }
+  }
+  
   if (buffer == NULL)
   {
     MYSQL_LOGERROR(MEMORY_ERROR);
+    largest_buffer_size = 0;
+    
     return;
   }
+  else
+  {
+    memset(buffer, 0, largest_buffer_size);
+  }
 
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < PACKET_HEADER_SZ; i++)
     buffer[i] = local[i];
 
-  for (int i = 4; i < packet_len + 4; i++)
+  for (int i = PACKET_HEADER_SZ; i < packet_len + PACKET_HEADER_SZ; i++)
     buffer[i] = client->read();
 
   MYSQL_LOGDEBUG("MySQL_Packet::read_packet: exit");
@@ -368,6 +395,7 @@ void MySQL_Packet::read_packet()
    1                            \0 byte, terminating the second part of
                                  a scramble seed
 */
+// KH, TODO: Pass buffer pointer instead of using global buffer
 void MySQL_Packet::parse_handshake_packet()
 {
   if (!buffer)
@@ -418,6 +446,7 @@ void MySQL_Packet::parse_handshake_packet()
   5                           sqlstate (5 characters)
   n                           message
 */
+// KH, TODO: Pass buffer pointer instead of using global buffer
 void MySQL_Packet::parse_error_packet() 
 {
   MYSQL_LOGDEBUG2("Error: ", read_int(5, 2), " = ");
@@ -448,6 +477,7 @@ void MySQL_Packet::parse_error_packet()
 
   Returns integer - 0 = successful parse, packet type if not an Ok packet
 */
+// KH, TODO: Pass buffer pointer instead of using global buffer
 int MySQL_Packet::get_packet_type() 
 {
   if (!buffer)
@@ -486,6 +516,7 @@ int MySQL_Packet::get_packet_type()
 
   Returns integer - number of bytes integer consumes
 */
+// KH, TODO: Pass buffer pointer instead of using global buffer
 int MySQL_Packet::get_lcb_len(int offset) 
 {
   if (!buffer)
@@ -526,6 +557,7 @@ int MySQL_Packet::get_lcb_len(int offset)
 
   Returns integer - integer from the buffer
 */
+// KH, TODO: Pass buffer pointer instead of using global buffer
 int MySQL_Packet::read_int(int offset, int size) 
 {
   int value = 0;
@@ -569,20 +601,21 @@ void MySQL_Packet::store_int(byte *buff, long value, int size)
 {
   memset(buff, 0, size);
   
-  if (value < 0xff)
+  if (value <= 0xff)
     buff[0] = (byte)value;
-  else if (value < 0xffff) 
+  else if (value <= 0xffff) 
   {
     buff[0] = (byte)value;
     buff[1] = (byte)(value >> 8);
   } 
-  else if (value < 0xffffff) 
+  else if (value <= 0xffffff) 
   {
     buff[0] = (byte)value;
     buff[1] = (byte)(value >> 8);
     buff[2] = (byte)(value >> 16);
   } 
-  else if (value < 0xffffff) 
+  //else if (value < 0xffffff) 
+  else if (value > 0xffffff) 
   {
     buff[0] = (byte)value;
     buff[1] = (byte)(value >> 8);
@@ -601,6 +634,7 @@ void MySQL_Packet::store_int(byte *buff, long value, int size)
 
   Returns integer - integer from the buffer
 */
+// KH, TODO: Pass buffer pointer instead of using global buffer
 int MySQL_Packet::read_lcb_int(int offset) 
 {
   int len_size = 0;
@@ -648,6 +682,7 @@ int MySQL_Packet::read_lcb_int(int offset)
   are looking for additional program memory space, you can safely
   delete this method.
 */
+// KH, TODO: Pass buffer pointer instead of using global buffer
 void MySQL_Packet::print_packet() 
 {
   if (!buffer)

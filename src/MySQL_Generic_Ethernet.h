@@ -11,12 +11,13 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.0
+  Version: 1.0.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
-                                  (using Ethernet, EthernetLarge, Ethernet2, Ethernet3 library) and WiFiNINA
+                                  (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
+  1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
  **********************************************************************************************************************************/
 
 #ifndef MYSQL_GENERIC_ETHERNET_H
@@ -27,38 +28,47 @@
 #if USE_ETHERNET
   #include "Ethernet.h"
   EthernetClient client;
-  #warning Use Ethernet lib
+  #warning Using Ethernet lib
 #elif USE_ETHERNET_LARGE
   #include "EthernetLarge.h"
   EthernetClient client;
-  #warning Use EthernetLarge lib
+  #warning Using EthernetLarge lib
 #elif USE_ETHERNET2
   #include "Ethernet2.h"
   EthernetClient client;
-  #warning Use Ethernet2 lib
+  #warning Using Ethernet2 lib
 #elif USE_ETHERNET3
   #include "Ethernet3.h"
   EthernetClient client;
-  #warning Use Ethernet3 lib  
+  #warning Using Ethernet3 lib  
 #elif USE_ETHERNET_ESP8266
   #include "Ethernet_ESP8266.h"
   EthernetClient client;
-  #warning Use Ethernet_ESP8266 lib
+  #warning Using Ethernet_ESP8266 lib
 #elif USE_ETHERNET_LAN8742A
   #include <LwIP.h>
   #include <STM32Ethernet.h>
   EthernetClient client;
-  #warning Use Ethernet_LAN8742A lib
+  #warning Using Ethernet_LAN8742A lib
+
+// KH, from v1.0.1  
+#elif USE_UIP_ETHERNET
+  #include <UIPEthernet.h>
+  #include <utility/logging.h>
+  EthernetClient client;
+  #warning Using ENC28J60 UIPEthernet lib
+//////
+ 
 #elif USE_CUSTOM_ETHERNET
   #include "Ethernet_XYZ.h"
   EthernetClient client;
-  #warning Use Custom Ethernet library from EthernetWrapper. You must include a library here or error.
+  #warning Using Custom Ethernet library from EthernetWrapper. You must include a library here or error.
 #else
   // Backup if none is selected
   #define USE_ETHERNET          true
   #include "Ethernet.h"
   EthernetClient client;
-  #warning Use Ethernet lib
+  #warning Using Ethernet lib
 #endif
 
 #include <MySQL_Generic_Connection.h>
