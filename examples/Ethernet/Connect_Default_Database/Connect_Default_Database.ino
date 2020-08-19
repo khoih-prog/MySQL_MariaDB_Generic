@@ -11,12 +11,13 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.0
+  Version: 1.0.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
                                   (using Ethernet, EthernetLarge, Ethernet2, Ethernet3 library) and WiFiNINA
+  1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
  **********************************************************************************************************************************/
 /*
   MySQL Connector/Arduino Example : connect with default database
@@ -81,6 +82,8 @@ void setup()
   Serial.println(" using LAN8742A/STM32Ethernet Library");
 #elif USE_ETHERNET_ESP8266
   Serial.println(" using W5x00/Ethernet_ESP8266 Library");
+#elif USE_UIP_ETHERNET
+  Serial.println(" using ENC28J60/UIPEthernet Library");
 #elif USE_CUSTOM_ETHERNET
   Serial.println(" using W5x00/Ethernet Custom Library");
 #else
@@ -191,11 +194,10 @@ void setup()
 #endif    //defined(ESP8266)
 
   // start the ethernet connection and the server:
-  // Use Static IP
-  //Ethernet.begin(mac, ip);
   // Use DHCP dynamic IP and random mac
   uint16_t index = millis() % NUMBER_OF_MAC;
-
+  // Use Static IP
+  //Ethernet.begin(mac[index], ip);
   Ethernet.begin(mac[index]);
 
   // Just info to know how to connect correctly
@@ -217,17 +219,25 @@ void setup()
   Serial.print(server_addr);
   Serial.println(String(", Port = ") + server_port);
   Serial.println(String("User = ") + user + String(", PW = ") + password + String(", DB = ") + default_db);
-  
-  if (conn.connect(server_addr, server_port, user, password, default_db))
-  {
-    delay(1000);
-    // You would add your code here to run a query once on startup.
-  }
-  else
-    Serial.println("Connection failed.");
-  conn.close();
 }
 
-void loop() 
+void loop()
 {
+  Serial.println("Connecting...");
+  
+  //if (conn.connect(server_addr, server_port, user, password, default_db))
+  if (conn.connectNonBlocking(server_addr, server_port, user, password, default_db) != RESULT_FAIL)
+  {
+    Serial.println("Closing connection...");
+    conn.close();                     // close the connection
+  } 
+  else 
+  {
+    Serial.println("\nConnect failed. Trying again on next iteration.");
+  }
+
+  Serial.println("\nSleeping...");
+  Serial.println("================================================");
+ 
+  delay(60000);
 }

@@ -11,12 +11,13 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.0
+  Version: 1.0.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
                                   (using Ethernet, EthernetLarge, Ethernet2, Ethernet3 library) and WiFiNINA
+  1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
  **********************************************************************************************************************************/
 /*
   MySQL Connector/Arduino Example : basic select
@@ -58,19 +59,16 @@
 #include <MySQL_Generic_WiFiNINA.h>
 
 IPAddress server_addr(192, 168, 2, 112);
+
 uint16_t server_port = 5698;    //3306;
 
 char default_database[] = "world";              //"test_arduino";
 char default_table[]    = "city";        //"test_arduino";
 
-String default_column   = "population";
-String default_value    = "New York";
+String default_column   = "population"; 
+String default_value    = "Toronto"; 
 
 // Sample query
-//char query[] = "SELECT population FROM world.city WHERE name = 'New York'";
-
-//String query = "SELECT population FROM world.city WHERE name = 'New York'";
-
 String query = String("SELECT ") + default_column + " FROM " + default_database + "." + default_table
                + " WHERE name = '" + default_value + "'";
 
@@ -135,75 +133,91 @@ void setup()
   Serial.print(server_addr);
   Serial.println(String(", Port = ") + server_port);
   Serial.println(String("User = ") + user + String(", PW = ") + password + String(", DB = ") + default_database);
-
-  if (conn.connect(server_addr, server_port, user, password))
-  {
-    delay(1000);
-  }
-  else
-    Serial.println("Connection failed.");
 }
 
-
-void loop()
+void runQuery(void)
 {
   row_values *row = NULL;
   long head_count = 0;
 
-  Serial.println("1) Demonstrating using a cursor dynamically allocated.");
-  
+  Serial.println("1) Demonstrating using a dynamically allocated query.");
   // Initiate the query class instance
   MySQL_Query *query_mem = new MySQL_Query(&conn);
+  
   // Execute the query
+  Serial.println(query);
   query_mem->execute(query.c_str());
+  
   // Fetch the columns (required) but we don't use them.
   column_names *columns = query_mem->get_columns();
 
   // Read the row (we are only expecting the one)
-  do
+  do 
   {
     row = query_mem->get_next_row();
-
-    if (row != NULL)
+    
+    if (row != NULL) 
     {
       head_count = atol(row->values[0]);
     }
   } while (row != NULL);
-
+  
   // Deleting the cursor also frees up memory used
   delete query_mem;
 
   // Show the result
-  Serial.print("  NYC pop = ");
+  Serial.print("  Toronto pop = ");
   Serial.println(head_count);
 
   delay(500);
 
-  Serial.println("2) Demonstrating using a local, global cursor.");
+  Serial.println("2) Demonstrating using a local, global query.");
+  
   // Execute the query
+  Serial.println(query);
   sql_query.execute(query.c_str());
+  
   // Fetch the columns (required) but we don't use them.
   sql_query.get_columns();
-
+  
   // Read the row (we are only expecting the one)
-  do
+  do 
   {
     row = sql_query.get_next_row();
-    if (row != NULL)
+    if (row != NULL) 
     {
       head_count = atol(row->values[0]);
     }
   } while (row != NULL);
-
+  
   // Now we close the cursor to free any memory
   sql_query.close();
 
   // Show the result but this time do some math on it
-  Serial.print("  NYC pop = ");
+  Serial.print("  Toronto pop = ");
   Serial.println(head_count);
-  Serial.print("  NYC pop increased by 12 = ");
-  Serial.println(head_count + 12);
-  Serial.print("==========================================");
+  Serial.print("  Toronto pop increased by 11725 = ");
+  Serial.println(head_count + 11725);
+}
 
+void loop()
+{
+  Serial.println("Connecting...");
+  
+  //if (conn.connect(server_addr, server_port, user, password))
+  if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
+  {
+    delay(500);
+    runQuery();
+    conn.close();                     // close the connection
+  } 
+  else 
+  {
+    Serial.println("\nConnect failed. Trying again on next iteration.");
+  }
+
+  Serial.println("\nSleeping...");
+  Serial.println("================================================");
+ 
   delay(60000);
 }

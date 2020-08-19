@@ -11,12 +11,13 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.0
+  Version: 1.0.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
                                   (using Ethernet, EthernetLarge, Ethernet2, Ethernet3 library) and WiFiNINA
+  1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
  **********************************************************************************************************************************/
 /*
   MySQL Connector/Arduino Example : query results
@@ -54,8 +55,8 @@ IPAddress server_addr(192, 168, 2, 112);
 uint16_t server_port = 5698;    //3306;
 
 // Sample query
-const char query[] = "SELECT * FROM world.city LIMIT 12";
-//const char query[] = "SELECT * FROM test_arduino.hello_arduino LIMIT 12;";
+const char query[] = "SELECT * FROM world.city LIMIT 6";
+//const char query[] = "SELECT * FROM test_arduino.hello_arduino LIMIT 6;";
 
 MySQL_Connection conn((Client *)&client);
 
@@ -109,26 +110,17 @@ void setup()
   Serial.print(server_addr);
   Serial.println(String(", Port = ") + server_port);
   Serial.println(String("User = ") + user + String(", PW = ") + password);
-
-  if (conn.connect(server_addr, server_port, user, password))
-  {
-    delay(1000);
-    // You would add your code here to run a query once on startup.
-  }
-  else
-    Serial.println("Connection failed.");
 }
 
-
-void loop()
+void runQuery(void)
 {
   Serial.println("\nRunning SELECT and printing results\n");
+  Serial.println(query);
 
   // Initiate the query class instance
   MySQL_Query *query_mem = new MySQL_Query(&conn);
 
   // Execute the query
-  Serial.println(query);
   query_mem->execute(query);
   
   // Fetch the columns and print them
@@ -169,6 +161,26 @@ void loop()
   
   // Deleting the cursor also frees up memory used
   delete query_mem;
+}
 
+void loop()
+{
+  Serial.println("Connecting...");
+  
+  //if (conn.connect(server_addr, server_port, user, password))
+  if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
+  {
+    delay(500);
+    runQuery();
+    conn.close();                     // close the connection
+  } 
+  else 
+  {
+    Serial.println("\nConnect failed. Trying again on next iteration.");
+  }
+
+  Serial.println("\nSleeping...");
+  Serial.println("================================================");
+ 
   delay(60000);
 }
