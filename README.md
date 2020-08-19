@@ -22,7 +22,15 @@ This [MySQL_MariaDB_Generic library](https://github.com/khoih-prog/MySQL_MariaDB
 
 ---
 
-### New in v1.0.0
+### New in v1.0.1
+
+ 1. Add support to ENC28J60 Ethernet module/shield using UIPEthernet library.
+ 2. Fix bugs
+ 3. Optimize code
+ 4. Enhance examples
+ 5. Add UIPEthernet Library Patches for SAMD21/SAMD51
+
+#### New in v1.0.0
 
  1. Add support to ***nRF52*** boards, such as ***AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B302_ublox, NINA_B112_ublox, etc.***
  2. Add support to ***Adafruit SAMD51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)***
@@ -36,7 +44,7 @@ This [MySQL_MariaDB_Generic library](https://github.com/khoih-prog/MySQL_MariaDB
 10. Add support to WiFiNINA using [`WiFiNINA_Generic library`](https://github.com/khoih-prog/WiFiNINA_Generic) or WiFiNINA library.
 11. Add support to W5x00 Ethernet module/shield using Ethernet, EthernetLarge, Ethernet2 or Ethernet3 library.
 12. Add support to LAN8742A Ethernet module/shield using STM32Ethernet library.
-13. Add support to ESP8266/ESP32-AT-command module/shield using WiFiEspAT or [`ESP8266_AT_WebServer library`](https://github.com/khoih-prog/ESP8266_AT_WebServer) library.
+13. Add support to ESP8266/ESP32-AT-command module/shield using [`WiFiEspAT library`](https://github.com/jandrassy/WiFiEspAT) or [`ESP8266_AT_WebServer library`](https://github.com/khoih-prog/ESP8266_AT_WebServer).
 14. Add Packages' Patches.
 15. Add sample Packages_Patches for ***STM32 stm32*** (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8)
 16. Add Ethernet Library Patches
@@ -62,10 +70,10 @@ This [MySQL_MariaDB_Generic library](https://github.com/khoih-prog/MySQL_MariaDB
    - [`Ethernet2 library v1.0.4+`](https://github.com/khoih-prog/Ethernet2) for W5500 (Deprecated, use Arduino Ethernet library). ***Ready*** from v1.0.0.
    - [`Ethernet3 library v1.5.3+`](https://github.com/sstaub/Ethernet3) for W5500/WIZ550io/WIZ850io/USR-ES1 with Wiznet W5500 chip. ***Ready*** from v1.0.0.
    - [`EthernetLarge library v2.0.0+`](https://github.com/OPEnSLab-OSU/EthernetLarge) for W5100, W5200 and W5500. ***Ready*** from v1.0.0.
-   - [`UIPEthernet library v2.0.8+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60. ***Not Ready*** in v1.0.0.
+   - [`UIPEthernet library v2.0.8+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60. ***Ready*** from v1.0.1.
    - [`STM32Ethernet library v1.2.0+`](https://github.com/stm32duino/STM32Ethernet) for built-in Ethernet LAN8742A on (Nucleo-144, Discovery). To be used with [`STM32duino_LwIP library v2.1.2+`](https://github.com/stm32duino/LwIP). ***Ready*** from v1.0.0. 
-14. [`ESP8266_AT_WebServer library v1.0.12+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer). ***Ready*** in v1.0.0.
-15. [`WiFiEspAT library v1.3.0+`](https://github.com/jandrassy/WiFiEspAT) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiEspAT.svg?)](https://www.ardu-badge.com/WiFiEspAT). ***Ready*** in v1.0.0.
+14. [`ESP8266_AT_WebServer library v1.0.12+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer). ***Ready*** from v1.0.0.
+15. [`WiFiEspAT library v1.3.0+`](https://github.com/jandrassy/WiFiEspAT) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiEspAT.svg?)](https://www.ardu-badge.com/WiFiEspAT). ***Ready*** from v1.0.0.
 
 ---
 
@@ -223,7 +231,7 @@ theses files must be copied into the corresponding directory:
 - [Ethernet3.h](LibraryPatches/Ethernet3/src/Ethernet3.h)
 - [Ethernet3.cpp](LibraryPatches/Ethernet3/src/Ethernet3.cpp)
 
-6. ***To be able to compile and run on nRF52 boards with ENC28J60 using UIPEthernet library***, you have to copy these following files into the UIPEthernet `utility` directory to overwrite the old files:
+6. ***To be able to compile and run on nRF52/SAMD21/SAMD51 boards with ENC28J60 using UIPEthernet library***, you have to copy these following files into the UIPEthernet `utility` directory to overwrite the old files:
 
 - [UIPEthernet.h](LibraryPatches/UIPEthernet/UIPEthernet.h)
 - [UIPEthernet.cpp](LibraryPatches/UIPEthernet/UIPEthernet.cpp)
@@ -237,7 +245,7 @@ theses files must be copied into the corresponding directory:
 
 ### Important Notes
 
-1. From v1.0.1, code is restructured to provide flexibility to make it easy to support many more ***WiFi/Ethernet*** modules/shields in the future. Please delete the *.cpp files, replaced by *.hpp files, in the src directory, if *.cpp files still exist after installing new version.
+1. From v1.0.0, code is restructured to provide flexibility to make it easy to support many more ***WiFi/Ethernet*** modules/shields in the future. Please delete the *.cpp files, replaced by *.hpp files, in the src directory, if *.cpp files still exist after installing new version.
 
 2. For ***Adafruit nRF52***, use the SPI's  pin as follows:
 
@@ -291,6 +299,7 @@ There are many modifications to facilitate the usage of [`MySQL_MariaDB_Generic 
 #define USE_ETHERNET3             false //true
 #define USE_ETHERNET_ESP8266      false //true
 #define USE_ETHERNET_LAN8742A     false //true
+#define USE_UIP_ETHERNET          false
 ```
 
 #### In the sketch:
@@ -382,7 +391,6 @@ MySQL_Query sql_query = MySQL_Query(&conn);
  8. [Connect_Disconnect](examples/Ethernet/Connect_Disconnect)
  9. [Query_Progmem](examples/Ethernet/Query_Progmem)
 10. [Query_Results](examples/Ethernet/Query_Results)
-11. [Reboot](examples/Ethernet/Reboot)
 
 #### For WiFi module/shield
 
@@ -469,6 +477,8 @@ void setup()
   Serial.println(" using LAN8742A/STM32Ethernet Library");
 #elif USE_ETHERNET_ESP8266
   Serial.println(" using W5x00/Ethernet_ESP8266 Library");
+#elif USE_UIP_ETHERNET
+  Serial.println(" using ENC28J60/UIPEthernet Library");
 #elif USE_CUSTOM_ETHERNET
   Serial.println(" using W5x00/Ethernet Custom Library");
 #else
@@ -579,11 +589,10 @@ void setup()
 #endif    //defined(ESP8266)
 
   // start the ethernet connection and the server:
-  // Use Static IP
-  //Ethernet.begin(mac, ip);
   // Use DHCP dynamic IP and random mac
   uint16_t index = millis() % NUMBER_OF_MAC;
-
+  // Use Static IP
+  //Ethernet.begin(mac[index], ip);
   Ethernet.begin(mac[index]);
 
   // Just info to know how to connect correctly
@@ -605,23 +614,12 @@ void setup()
   Serial.print(server_addr);
   Serial.println(String(", Port = ") + server_port);
   Serial.println(String("User = ") + user + String(", PW = ") + password + String(", DB = ") + default_database);
-
-  if (conn.connect(server_addr, server_port, user, password))
-  {
-    delay(1000);
-  }
-  else
-    Serial.println("Connection failed.");
 }
 
-
-void loop()
+void runQuery(void)
 {
   Serial.println("====================================================");
   Serial.println("> Running SELECT with dynamically supplied parameter");
-
-  // Initiate the query class instance
-  MySQL_Query *query_mem = new MySQL_Query(&conn);
   
   // Supply the parameter for the query
   // Here we use the QUERY_POP as the format string and query as the
@@ -630,9 +628,12 @@ void loop()
   // memory as needed (just make sure you allocate enough memory and
   // free it when you're done!).
   sprintf(query, QUERY_POP, QUERY_POPULATION);
+  Serial.println(query);
+  
+  // Initiate the query class instance
+  MySQL_Query *query_mem = new MySQL_Query(&conn);
   
   // Execute the query
-  Serial.println(query);
   query_mem->execute(query);
   
   // Fetch the columns and print them
@@ -675,10 +676,29 @@ void loop()
   
   // Deleting the cursor also frees up memory used
   delete query_mem;
-
-  delay(60000);
 }
 
+void loop()
+{
+  Serial.println("Connecting...");
+  
+  //if (conn.connect(server_addr, server_port, user, password))
+  if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
+  {
+    delay(500);
+    runQuery();
+    conn.close();                     // close the connection
+  } 
+  else 
+  {
+    Serial.println("\nConnect failed. Trying again on next iteration.");
+  }
+
+  Serial.println("\nSleeping...");
+  Serial.println("================================================");
+ 
+  delay(60000);
+}
 ```
 
 #### 2. File [defines.h](examples/Ethernet/Complex_Select/defines.h)
@@ -687,7 +707,7 @@ void loop()
 #ifndef defines_h
 #define defines_h
 
-#define ETHERNET_DEBUG        1
+#define ETHERNET_DEBUG        4
 
 #define MYSQL_DEBUG_PORT      Serial
 
@@ -699,256 +719,271 @@ void loop()
       || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) || defined(ARDUINO_SAMD_MKRVIDOR4000) || defined(__SAMD21G18A__) \
       || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) || defined(__SAMD21E18A__) || defined(__SAMD51__) || defined(__SAMD51J20A__) || defined(__SAMD51J19A__) \
       || defined(__SAMD51G19A__) || defined(__SAMD51P19A__) || defined(__SAMD21G18A__) )
-  #if defined(ETHERNET_USE_SAMD)
-    #undef ETHERNET_USE_SAMD
-  #endif
-  #define ETHERNET_USE_SAMD      true
-  #endif
+#if defined(ETHERNET_USE_SAMD)
+#undef ETHERNET_USE_SAMD
+#endif
+#define ETHERNET_USE_SAMD      true
+#endif
 
 #if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
         defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
         defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) || defined(NINA_B302_ublox) || defined(NINA_B112_ublox) )
-  #if defined(ETHERNET_USE_NRF528XX)
-    #undef ETHERNET_USE_NRF528XX
-  #endif
-  #define ETHERNET_USE_NRF528XX      true
+#if defined(ETHERNET_USE_NRF528XX)
+#undef ETHERNET_USE_NRF528XX
+#endif
+#define ETHERNET_USE_NRF528XX      true
 #endif
 
 #if ( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
-  #if defined(ETHERNET_USE_SAM_DUE)
-    #undef ETHERNET_USE_SAM_DUE
-  #endif
-  #define ETHERNET_USE_SAM_DUE      true
+#if defined(ETHERNET_USE_SAM_DUE)
+#undef ETHERNET_USE_SAM_DUE
+#endif
+#define ETHERNET_USE_SAM_DUE      true
 #endif
 
 #if ( defined(STM32F0) || defined(STM32F1) || defined(STM32F2) || defined(STM32F3)  ||defined(STM32F4) || defined(STM32F7) || \
        defined(STM32L0) || defined(STM32L1) || defined(STM32L4) || defined(STM32H7)  ||defined(STM32G0) || defined(STM32G4) || \
        defined(STM32WB) || defined(STM32MP1) )
-  #if defined(ETHERNET_USE_STM32)
-    #undef ETHERNET_USE_STM32
-  #endif
-  #define ETHERNET_USE_STM32        true
+#if defined(ETHERNET_USE_STM32)
+#undef ETHERNET_USE_STM32
+#endif
+#define ETHERNET_USE_STM32        true
 #endif
 
 #if defined(ETHERNET_USE_SAMD)
-  // For SAMD
-  
-  #if ( defined(ARDUINO_SAMD_ZERO) && !defined(SEEED_XIAO_M0) )
-    #define BOARD_TYPE      "SAMD Zero"
-  #elif defined(ARDUINO_SAMD_MKR1000)
-    #define BOARD_TYPE      "SAMD MKR1000"
-  #elif defined(ARDUINO_SAMD_MKRWIFI1010)
-    #define BOARD_TYPE      "SAMD MKRWIFI1010"
-  #elif defined(ARDUINO_SAMD_NANO_33_IOT)
-    #define BOARD_TYPE      "SAMD NANO_33_IOT"
-  #elif defined(ARDUINO_SAMD_MKRFox1200)
-    #define BOARD_TYPE      "SAMD MKRFox1200"
-  #elif ( defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) )
-    #define BOARD_TYPE      "SAMD MKRWAN13X0"
-  #elif defined(ARDUINO_SAMD_MKRGSM1400)
-    #define BOARD_TYPE      "SAMD MKRGSM1400"
-  #elif defined(ARDUINO_SAMD_MKRNB1500)
-    #define BOARD_TYPE      "SAMD MKRNB1500"
-  #elif defined(ARDUINO_SAMD_MKRVIDOR4000)
-    #define BOARD_TYPE      "SAMD MKRVIDOR4000"
-  #elif defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS)
-    #define BOARD_TYPE      "SAMD ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS"
-  #elif defined(ADAFRUIT_FEATHER_M0_EXPRESS)
-    #define BOARD_TYPE      "SAMD21 ADAFRUIT_FEATHER_M0_EXPRESS"
-  #elif defined(ADAFRUIT_METRO_M0_EXPRESS)
-    #define BOARD_TYPE      "SAMD21 ADAFRUIT_METRO_M0_EXPRESS"
-  #elif defined(ADAFRUIT_CIRCUITPLAYGROUND_M0)
-    #define BOARD_TYPE      "SAMD21 ADAFRUIT_CIRCUITPLAYGROUND_M0"
-  #elif defined(ADAFRUIT_GEMMA_M0)
-    #define BOARD_TYPE      "SAMD21 ADAFRUIT_GEMMA_M0"
-  #elif defined(ADAFRUIT_TRINKET_M0)
-    #define BOARD_TYPE      "SAMD21 ADAFRUIT_TRINKET_M0"
-  #elif defined(ADAFRUIT_ITSYBITSY_M0)
-    #define BOARD_TYPE      "SAMD21 ADAFRUIT_ITSYBITSY_M0"
-  #elif defined(ARDUINO_SAMD_HALLOWING_M0)
-    #define BOARD_TYPE      "SAMD21 ARDUINO_SAMD_HALLOWING_M0"
-  #elif defined(ADAFRUIT_METRO_M4_EXPRESS)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_METRO_M4_EXPRESS"
-  #elif defined(ADAFRUIT_GRAND_CENTRAL_M4)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_GRAND_CENTRAL_M4"
-  #elif defined(ADAFRUIT_FEATHER_M4_EXPRESS)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_FEATHER_M4_EXPRESS"
-  #elif defined(ADAFRUIT_ITSYBITSY_M4_EXPRESS)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_ITSYBITSY_M4_EXPRESS"
-  #elif defined(ADAFRUIT_TRELLIS_M4_EXPRESS)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_TRELLIS_M4_EXPRESS"
-  #elif defined(ADAFRUIT_PYPORTAL)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_PYPORTAL"
-  #elif defined(ADAFRUIT_PYPORTAL_M4_TITANO)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_PYPORTAL_M4_TITANO"
-  #elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_PYBADGE_M4_EXPRESS"
-  #elif defined(ADAFRUIT_METRO_M4_AIRLIFT_LITE)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_METRO_M4_AIRLIFT_LITE"
-  #elif defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_PYGAMER_M4_EXPRESS"
-  #elif defined(ADAFRUIT_PYGAMER_ADVANCE_M4_EXPRESS)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_PYGAMER_ADVANCE_M4_EXPRESS"
-  #elif defined(ADAFRUIT_PYBADGE_AIRLIFT_M4)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_PYBADGE_AIRLIFT_M4"
-  #elif defined(ADAFRUIT_MONSTER_M4SK_EXPRESS)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_MONSTER_M4SK_EXPRESS"
-  #elif defined(ADAFRUIT_HALLOWING_M4_EXPRESS)
-    #define BOARD_TYPE      "SAMD51 ADAFRUIT_HALLOWING_M4_EXPRESS"
-  #elif defined(SEEED_WIO_TERMINAL)
-    #define BOARD_TYPE      "SAMD SEEED_WIO_TERMINAL"
-  #elif defined(SEEED_FEMTO_M0)
-    #define BOARD_TYPE      "SAMD SEEED_FEMTO_M0"
-  #elif defined(SEEED_XIAO_M0)
-    #define BOARD_TYPE      "SAMD SEEED_XIAO_M0"
-    #define USE_THIS_SS_PIN       A1
-    #warning define SEEED_XIAO_M0 USE_THIS_SS_PIN == A1
-  #elif defined(Wio_Lite_MG126)
-    #define BOARD_TYPE      "SAMD SEEED Wio_Lite_MG126"
-  #elif defined(WIO_GPS_BOARD)
-    #define BOARD_TYPE      "SAMD SEEED WIO_GPS_BOARD"
-  #elif defined(SEEEDUINO_ZERO)
-    #define BOARD_TYPE      "SAMD SEEEDUINO_ZERO"
-  #elif defined(SEEEDUINO_LORAWAN)
-    #define BOARD_TYPE      "SAMD SEEEDUINO_LORAWAN"
-  #elif defined(SEEED_GROVE_UI_WIRELESS)
-    #define BOARD_TYPE      "SAMD SEEED_GROVE_UI_WIRELESS"
-  #elif defined(__SAMD21E18A__)
-    #define BOARD_TYPE      "SAMD21E18A"
-  #elif defined(__SAMD21G18A__)
-    #define BOARD_TYPE      "SAMD21G18A"
-  #elif defined(__SAMD51G19A__)
-    #define BOARD_TYPE      "SAMD51G19A"
-  #elif defined(__SAMD51J19A__)
-    #define BOARD_TYPE      "SAMD51J19A"
-  #elif defined(__SAMD51J20A__)
-    #define BOARD_TYPE      "SAMD51J20A"
-  #elif defined(__SAM3X8E__)
-    #define BOARD_TYPE      "SAM3X8E"
-  #elif defined(__CPU_ARC__)
-    #define BOARD_TYPE      "CPU_ARC"
-  #elif defined(__SAMD51__)
-    #define BOARD_TYPE      "SAMD51"
-  #else
-    #define BOARD_TYPE      "SAMD Unknown"
-  #endif
+// For SAMD
+// Default pin 10 to SS/CS
+#define USE_THIS_SS_PIN       10
+
+#if ( defined(ARDUINO_SAMD_ZERO) && !defined(SEEED_XIAO_M0) )
+#define BOARD_TYPE      "SAMD Zero"
+#elif defined(ARDUINO_SAMD_MKR1000)
+#define BOARD_TYPE      "SAMD MKR1000"
+#elif defined(ARDUINO_SAMD_MKRWIFI1010)
+#define BOARD_TYPE      "SAMD MKRWIFI1010"
+#elif defined(ARDUINO_SAMD_NANO_33_IOT)
+#define BOARD_TYPE      "SAMD NANO_33_IOT"
+#elif defined(ARDUINO_SAMD_MKRFox1200)
+#define BOARD_TYPE      "SAMD MKRFox1200"
+#elif ( defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) )
+#define BOARD_TYPE      "SAMD MKRWAN13X0"
+#elif defined(ARDUINO_SAMD_MKRGSM1400)
+#define BOARD_TYPE      "SAMD MKRGSM1400"
+#elif defined(ARDUINO_SAMD_MKRNB1500)
+#define BOARD_TYPE      "SAMD MKRNB1500"
+#elif defined(ARDUINO_SAMD_MKRVIDOR4000)
+#define BOARD_TYPE      "SAMD MKRVIDOR4000"
+#elif defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS)
+#define BOARD_TYPE      "SAMD ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS"
+#elif defined(ADAFRUIT_FEATHER_M0_EXPRESS)
+#define BOARD_TYPE      "SAMD21 ADAFRUIT_FEATHER_M0_EXPRESS"
+#elif defined(ADAFRUIT_METRO_M0_EXPRESS)
+#define BOARD_TYPE      "SAMD21 ADAFRUIT_METRO_M0_EXPRESS"
+#elif defined(ADAFRUIT_CIRCUITPLAYGROUND_M0)
+#define BOARD_TYPE      "SAMD21 ADAFRUIT_CIRCUITPLAYGROUND_M0"
+#elif defined(ADAFRUIT_GEMMA_M0)
+#define BOARD_TYPE      "SAMD21 ADAFRUIT_GEMMA_M0"
+#elif defined(ADAFRUIT_TRINKET_M0)
+#define BOARD_TYPE      "SAMD21 ADAFRUIT_TRINKET_M0"
+#elif defined(ADAFRUIT_ITSYBITSY_M0)
+#define BOARD_TYPE      "SAMD21 ADAFRUIT_ITSYBITSY_M0"
+#elif defined(ARDUINO_SAMD_HALLOWING_M0)
+#define BOARD_TYPE      "SAMD21 ARDUINO_SAMD_HALLOWING_M0"
+#elif defined(ADAFRUIT_METRO_M4_EXPRESS)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_METRO_M4_EXPRESS"
+#elif defined(ADAFRUIT_GRAND_CENTRAL_M4)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_GRAND_CENTRAL_M4"
+#elif defined(ADAFRUIT_FEATHER_M4_EXPRESS)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_FEATHER_M4_EXPRESS"
+#elif defined(ADAFRUIT_ITSYBITSY_M4_EXPRESS)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_ITSYBITSY_M4_EXPRESS"
+#elif defined(ADAFRUIT_TRELLIS_M4_EXPRESS)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_TRELLIS_M4_EXPRESS"
+#elif defined(ADAFRUIT_PYPORTAL)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_PYPORTAL"
+#elif defined(ADAFRUIT_PYPORTAL_M4_TITANO)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_PYPORTAL_M4_TITANO"
+#elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_PYBADGE_M4_EXPRESS"
+#elif defined(ADAFRUIT_METRO_M4_AIRLIFT_LITE)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_METRO_M4_AIRLIFT_LITE"
+#elif defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_PYGAMER_M4_EXPRESS"
+#elif defined(ADAFRUIT_PYGAMER_ADVANCE_M4_EXPRESS)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_PYGAMER_ADVANCE_M4_EXPRESS"
+#elif defined(ADAFRUIT_PYBADGE_AIRLIFT_M4)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_PYBADGE_AIRLIFT_M4"
+#elif defined(ADAFRUIT_MONSTER_M4SK_EXPRESS)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_MONSTER_M4SK_EXPRESS"
+#elif defined(ADAFRUIT_HALLOWING_M4_EXPRESS)
+#define BOARD_TYPE      "SAMD51 ADAFRUIT_HALLOWING_M4_EXPRESS"
+#elif defined(SEEED_WIO_TERMINAL)
+#define BOARD_TYPE      "SAMD SEEED_WIO_TERMINAL"
+#elif defined(SEEED_FEMTO_M0)
+#define BOARD_TYPE      "SAMD SEEED_FEMTO_M0"
+#elif defined(SEEED_XIAO_M0)
+#define BOARD_TYPE      "SAMD SEEED_XIAO_M0"
+#ifdef USE_THIS_SS_PIN
+#undef USE_THIS_SS_PIN
+#endif
+#define USE_THIS_SS_PIN       A1
+#warning define SEEED_XIAO_M0 USE_THIS_SS_PIN == A1
+#elif defined(Wio_Lite_MG126)
+#define BOARD_TYPE      "SAMD SEEED Wio_Lite_MG126"
+#elif defined(WIO_GPS_BOARD)
+#define BOARD_TYPE      "SAMD SEEED WIO_GPS_BOARD"
+#elif defined(SEEEDUINO_ZERO)
+#define BOARD_TYPE      "SAMD SEEEDUINO_ZERO"
+#elif defined(SEEEDUINO_LORAWAN)
+#define BOARD_TYPE      "SAMD SEEEDUINO_LORAWAN"
+#elif defined(SEEED_GROVE_UI_WIRELESS)
+#define BOARD_TYPE      "SAMD SEEED_GROVE_UI_WIRELESS"
+#elif defined(__SAMD21E18A__)
+#define BOARD_TYPE      "SAMD21E18A"
+#elif defined(__SAMD21G18A__)
+#define BOARD_TYPE      "SAMD21G18A"
+#elif defined(__SAMD51G19A__)
+#define BOARD_TYPE      "SAMD51G19A"
+#elif defined(__SAMD51J19A__)
+#define BOARD_TYPE      "SAMD51J19A"
+#elif defined(__SAMD51J20A__)
+#define BOARD_TYPE      "SAMD51J20A"
+#elif defined(__SAM3X8E__)
+#define BOARD_TYPE      "SAM3X8E"
+#elif defined(__CPU_ARC__)
+#define BOARD_TYPE      "CPU_ARC"
+#elif defined(__SAMD51__)
+#define BOARD_TYPE      "SAMD51"
+#else
+#define BOARD_TYPE      "SAMD Unknown"
+#endif
 
 #elif (ETHERNET_USE_SAM_DUE)
-  #define BOARD_TYPE      "SAM DUE"
+// Default pin 10 to SS/CS
+#define USE_THIS_SS_PIN       10
+
+#define BOARD_TYPE      "SAM DUE"
 
 #elif (ETHERNET_USE_NRF528XX)
-
-  #if defined(NRF52840_FEATHER)
-    #define BOARD_TYPE      "NRF52840_FEATHER"
-  #elif defined(NRF52832_FEATHER)
-    #define BOARD_TYPE      "NRF52832_FEATHER"
-  #elif defined(NRF52840_FEATHER_SENSE)
-    #define BOARD_TYPE      "NRF52840_FEATHER_SENSE"
-  #elif defined(NRF52840_ITSYBITSY)
-    #define BOARD_TYPE      "NRF52840_ITSYBITSY"
-  #elif defined(NRF52840_CIRCUITPLAY)
-    #define BOARD_TYPE      "NRF52840_CIRCUITPLAY"
-  #elif defined(NRF52840_CLUE)
-    #define BOARD_TYPE      "NRF52840_CLUE"
-  #elif defined(NRF52840_METRO)
-    #define BOARD_TYPE      "NRF52840_METRO"
-  #elif defined(NRF52840_PCA10056)
-    #define BOARD_TYPE      "NRF52840_PCA10056"
-  #elif defined(NINA_B302_ublox)
-    #define BOARD_TYPE      "NINA_B302_ublox"
-  #elif defined(NINA_B112_ublox)
-    #define BOARD_TYPE      "NINA_B112_ublox"
-  #elif defined(PARTICLE_XENON)
-    #define BOARD_TYPE      "PARTICLE_XENON"
-  #elif defined(ARDUINO_NRF52_ADAFRUIT)
-    #define BOARD_TYPE      "ARDUINO_NRF52_ADAFRUIT"
-  #else
-    #define BOARD_TYPE      "nRF52 Unknown"
-  #endif
+// Default pin 10 to SS/CS
+#define USE_THIS_SS_PIN       10
+#if defined(NRF52840_FEATHER)
+#define BOARD_TYPE      "NRF52840_FEATHER"
+#elif defined(NRF52832_FEATHER)
+#define BOARD_TYPE      "NRF52832_FEATHER"
+#elif defined(NRF52840_FEATHER_SENSE)
+#define BOARD_TYPE      "NRF52840_FEATHER_SENSE"
+#elif defined(NRF52840_ITSYBITSY)
+#define BOARD_TYPE      "NRF52840_ITSYBITSY"
+#elif defined(NRF52840_CIRCUITPLAY)
+#define BOARD_TYPE      "NRF52840_CIRCUITPLAY"
+#elif defined(NRF52840_CLUE)
+#define BOARD_TYPE      "NRF52840_CLUE"
+#elif defined(NRF52840_METRO)
+#define BOARD_TYPE      "NRF52840_METRO"
+#elif defined(NRF52840_PCA10056)
+#define BOARD_TYPE      "NRF52840_PCA10056"
+#elif defined(NINA_B302_ublox)
+#define BOARD_TYPE      "NINA_B302_ublox"
+#elif defined(NINA_B112_ublox)
+#define BOARD_TYPE      "NINA_B112_ublox"
+#elif defined(PARTICLE_XENON)
+#define BOARD_TYPE      "PARTICLE_XENON"
+#elif defined(ARDUINO_NRF52_ADAFRUIT)
+#define BOARD_TYPE      "ARDUINO_NRF52_ADAFRUIT"
+#else
+#define BOARD_TYPE      "nRF52 Unknown"
+#endif
 
 #elif ( defined(CORE_TEENSY) )
-  #if defined(__IMXRT1062__)
-    // For Teensy 4.1/4.0
-    #define BOARD_TYPE      "TEENSY 4.1/4.0"
-  #elif defined(__MK66FX1M0__)
-    #define BOARD_TYPE "Teensy 3.6"
-  #elif defined(__MK64FX512__)
-    #define BOARD_TYPE "Teensy 3.5"
-  #elif defined(__MKL26Z64__)
-    #define BOARD_TYPE "Teensy LC"
-  #elif defined(__MK20DX256__)
-    #define BOARD_TYPE "Teensy 3.2" // and Teensy 3.1 (obsolete)
-  #elif defined(__MK20DX128__)
-    #define BOARD_TYPE "Teensy 3.0"
-  #elif defined(__AVR_AT90USB1286__)
-    #error Teensy 2.0++ not supported yet
-  #elif defined(__AVR_ATmega32U4__)
-    #error Teensy 2.0 not supported yet
-  #else
-    // For Other Boards
-    #define BOARD_TYPE      "Unknown Teensy Board"
-  #endif
+// Default pin 10 to SS/CS
+#define USE_THIS_SS_PIN       10
+
+#if defined(__IMXRT1062__)
+// For Teensy 4.1/4.0
+#define BOARD_TYPE      "TEENSY 4.1/4.0"
+#elif defined(__MK66FX1M0__)
+#define BOARD_TYPE "Teensy 3.6"
+#elif defined(__MK64FX512__)
+#define BOARD_TYPE "Teensy 3.5"
+#elif defined(__MKL26Z64__)
+#define BOARD_TYPE "Teensy LC"
+#elif defined(__MK20DX256__)
+#define BOARD_TYPE "Teensy 3.2" // and Teensy 3.1 (obsolete)
+#elif defined(__MK20DX128__)
+#define BOARD_TYPE "Teensy 3.0"
+#elif defined(__AVR_AT90USB1286__)
+#error Teensy 2.0++ not supported yet
+#elif defined(__AVR_ATmega32U4__)
+#error Teensy 2.0 not supported yet
+#else
+// For Other Boards
+#define BOARD_TYPE      "Unknown Teensy Board"
+#endif
 
 #elif (ETHERNET_USE_STM32)
-  #if defined(STM32F0)
-    #define BOARD_TYPE  "STM32F0"
-  #elif defined(STM32F1)
-    #define BOARD_TYPE  "STM32F1"
-  #elif defined(STM32F2)
-    #define BOARD_TYPE  "STM32F2"
-  #elif defined(STM32F3)
-    #define BOARD_TYPE  "STM32F3"
-  #elif defined(STM32F4)
-    #define BOARD_TYPE  "STM32F4"
-  #elif defined(STM32F7)
-    #define BOARD_TYPE  "STM32F7"
-  #elif defined(STM32L0)
-    #define BOARD_TYPE  "STM32L0"
-  #elif defined(STM32L1)
-    #define BOARD_TYPE  "STM32L1"
-  #elif defined(STM32L4)
-    #define BOARD_TYPE  "STM32L4"
-  #elif defined(STM32H7)
-    #define BOARD_TYPE  "STM32H7"
-  #elif defined(STM32G0)
-    #define BOARD_TYPE  "STM32G0"
-  #elif defined(STM32G4)
-    #define BOARD_TYPE  "STM32G4"
-  #elif defined(STM32WB)
-    #define BOARD_TYPE  "STM32WB"
-  #elif defined(STM32MP1)
-    #define BOARD_TYPE  "STM32MP1"
-  #else
-    #define BOARD_TYPE  "STM32 Unknown"
-  #endif
+#if defined(STM32F0)
+#define BOARD_TYPE  "STM32F0"
+#elif defined(STM32F1)
+#define BOARD_TYPE  "STM32F1"
+#elif defined(STM32F2)
+#define BOARD_TYPE  "STM32F2"
+#elif defined(STM32F3)
+#define BOARD_TYPE  "STM32F3"
+#elif defined(STM32F4)
+#define BOARD_TYPE  "STM32F4"
+#elif defined(STM32F7)
+#define BOARD_TYPE  "STM32F7"
+#elif defined(STM32L0)
+#define BOARD_TYPE  "STM32L0"
+#elif defined(STM32L1)
+#define BOARD_TYPE  "STM32L1"
+#elif defined(STM32L4)
+#define BOARD_TYPE  "STM32L4"
+#elif defined(STM32H7)
+#define BOARD_TYPE  "STM32H7"
+#elif defined(STM32G0)
+#define BOARD_TYPE  "STM32G0"
+#elif defined(STM32G4)
+#define BOARD_TYPE  "STM32G4"
+#elif defined(STM32WB)
+#define BOARD_TYPE  "STM32WB"
+#elif defined(STM32MP1)
+#define BOARD_TYPE  "STM32MP1"
+#else
+#define BOARD_TYPE  "STM32 Unknown"
+#endif
 
 #elif ( defined(ESP8266) )
-  // For ESP8266
-  #warning Use ESP8266 architecture
-  #include <ESP8266mDNS.h>
-  #define ETHERNET_USE_ESP8266
-  #define BOARD_TYPE      "ESP8266"
+// For ESP8266
+#warning Use ESP8266 architecture
+#include <ESP8266mDNS.h>
+#define ETHERNET_USE_ESP8266
+#define BOARD_TYPE      "ESP8266"
 
 #elif ( defined(ESP32) )
-  // For ESP32
-  #warning Use ESP32 architecture
-  #define ETHERNET_USE_ESP32
-  #define BOARD_TYPE      "ESP32"
-  
-  #define W5500_RST_PORT   21
+// For ESP32
+#warning Use ESP32 architecture
+#define ETHERNET_USE_ESP32
+#define BOARD_TYPE      "ESP32"
+
+#define W5500_RST_PORT   21
 
 #else
-  // For Mega
-  #define BOARD_TYPE      "AVR Mega"
+// For Mega
+// Default pin 10 to SS/CS
+#define USE_THIS_SS_PIN       10
+
+#define BOARD_TYPE      "AVR Mega"
 #endif
 
 #ifndef BOARD_NAME
-  #define BOARD_NAME    BOARD_TYPE
+#define BOARD_NAME    BOARD_TYPE
 #endif
 
 #include <SPI.h>
 
-// UIPEthernet, Ethernet2, Ethernet3, Ethernet_Shield_W5200, EtherCard, EtherSia libraries are not supported
+// Ethernet_Shield_W5200, EtherCard, EtherSia libraries are not supported
 
 // To override the default CS/SS pin. Don't use unless you know exactly which pin to use
 // You can define here or customize for each board at same place with BOARD_TYPE
@@ -957,12 +992,16 @@ void loop()
 
 // Only one of the following to be true.
 #define USE_ETHERNET              false //true
-#define USE_ETHERNET_LARGE        true
+#define USE_ETHERNET_LARGE        false
 #define USE_ETHERNET2             false //true
 #define USE_ETHERNET3             false //true
 #define USE_ETHERNET_ESP8266      false //true
 #define USE_ETHERNET_LAN8742A     false //true
- 
+
+// KH, from v1.0.1
+#define USE_UIP_ETHERNET          true
+//////
+
 // Enter a MAC address and IP address for your controller below.
 #define NUMBER_OF_MAC      20
 
@@ -1195,9 +1234,48 @@ User = invited-guest, PW = the-invited-guest
 ```
 
 ---
----
+
+7. This is terminal debug output when running [Query_Progmem](examples/Ethernet/Query_Progmem) on ***NRF52840_FEATHER using ENC28J60 Ethernet shield and UIPEthernet library.*** connecting to MariaDB Server.
+
+
+```
+Starting Query_Progmem on NRF52840_FEATHER using ENC28J60/UIPEthernet Library
+ENC28J60_CONTROL_CS =10
+SS =5
+SPI_MOSI =25
+SPI_MISO =24
+SPI_SCK =26
+Using mac index = 15
+Connected! IP address: 192.168.2.174
+Connecting to SQL Server @ 192.168.2.112, Port = 5698
+User = invited-guest, PW = the-invited-guest
+Connecting...
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connect OK. Try reading packets
+[SQL] Try parsing packets
+[SQL] Try send_authentication packets
+[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+
+Running SELECT from PROGMEM and printing results
+
+SELECT * FROM test_arduino.hello_arduino LIMIT 6
+num,message,recorded
+351,Hello, Arduino!,2020-08-18 13:52:35
+352,Hello, Arduino!,2020-08-18 13:53:42
+353,Hello, Arduino!,2020-08-18 13:54:57
+354,Hello, Arduino!,2020-08-18 13:56:03
+355,Hello, Arduino!,2020-08-18 22:37:21
+356,Hello, Arduino!,2020-08-18 22:38:28
+6 rows in result.
+[SQL] Disconnected
+
+Sleeping...
+================================================
+```
 
 ---
+---
+
 
 ### Debug
 
@@ -1215,9 +1293,8 @@ Debug is enabled by default on Serial. Debug Level from 0 to 4. To disable, chan
 ### TO DO
 
  1. Support more boards
- 2. Support ENC28J60 using UIPEthernet Library.
- 3. Support more non-compatible Ethernet Libraries such as Ethernet_Shield_W5200, EtherCard, EtherSia
- 5. Bug fixing.
+ 2. Support more non-compatible Ethernet Libraries such as Ethernet_Shield_W5200, EtherCard, EtherSia
+ 3. Bug fixing.
 
 ### DONE
 
@@ -1234,11 +1311,20 @@ Debug is enabled by default on Serial. Debug Level from 0 to 4. To disable, chan
 11. Add support to ***ESP8266/ESP32-AT***, using either [`ESP8266_AT_WebServer library`](https://github.com/khoih-prog/ESP8266_AT_WebServer) or [`WiFiEspAT library`](https://github.com/jandrassy/WiFiEspAT) library
 12. Add support to ***Ethernet LAN8742A***, using [`STM32Ethernet library`](https://github.com/stm32duino/STM32Ethernet) and [`STM32duino_LwIP library`](https://github.com/stm32duino/LwIP).
 13. Split each example into several manageable files.
+14. Support ENC28J60 using [`UIPEthernet library`](https://github.com/UIPEthernet/UIPEthernet).
 
 ---
 ---
 
-### New in v1.0.0
+### New in v1.0.1
+
+ 1. Add support to ENC28J60 Ethernet module/shield using UIPEthernet library.
+ 2. Fix bugs
+ 3. Optimize code
+ 4. Enhance examples
+ 5. Add UIPEthernet Library Patches for SAMD21/SAMD51
+
+#### New in v1.0.0
 
  1. Add support to ***nRF52*** boards, such as ***AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B302_ublox, NINA_B112_ublox, etc.***
  2. Add support to ***Adafruit SAMD51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)***
@@ -1252,7 +1338,7 @@ Debug is enabled by default on Serial. Debug Level from 0 to 4. To disable, chan
 10. Add support to WiFiNINA using [`WiFiNINA_Generic library`](https://github.com/khoih-prog/WiFiNINA_Generic) or WiFiNINA library.
 11. Add support to W5x00 Ethernet module/shield using Ethernet, EthernetLarge, Ethernet2 or Ethernet3 library.
 12. Add support to LAN8742A Ethernet module/shield using STM32Ethernet library.
-13. Add support to ESP8266/ESP32-AT-command module/shield using WiFiEspAT or [`ESP8266_AT_WebServer library`](https://github.com/khoih-prog/ESP8266_AT_WebServer) library.
+13. Add support to ESP8266/ESP32-AT-command module/shield using [`WiFiEspAT library`](https://github.com/jandrassy/WiFiEspAT) or [`ESP8266_AT_WebServer library`](https://github.com/khoih-prog/ESP8266_AT_WebServer).
 14. Add Packages' Patches.
 15. Add sample Packages_Patches for ***STM32 stm32*** (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8)
 16. Add Ethernet Library Patches
