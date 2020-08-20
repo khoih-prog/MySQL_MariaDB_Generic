@@ -13,13 +13,14 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.1
+  Version: 1.0.2
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
                                   (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
+  1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -45,7 +46,7 @@
 
 // KH, from v1.0.1 
 #if ( USE_UIP_ETHERNET  || USING_WIFIESPAT_LIB || USING_WIFI_ESP_AT )
-  #define MYSQL_DATA_TIMEOUT  30000   // UIPEthernet client wait in milliseconds !!!!
+  #define MYSQL_DATA_TIMEOUT  10000   // UIPEthernet client wait in milliseconds !!!!
 #else
   #define MYSQL_DATA_TIMEOUT  6000    // Client wait in milliseconds
 #endif  
@@ -234,7 +235,6 @@ int MySQL_Packet::wait_for_bytes(int bytes_need)
   const long wait_till = millis() + MYSQL_DATA_TIMEOUT;
   int num = 0;
 
-  // KH mod
   long now = 0;
 
   do
@@ -244,7 +244,7 @@ int MySQL_Packet::wait_for_bytes(int bytes_need)
       now = millis();
       num = client->available();
 
-      MYSQL_LOGDEBUG3("MySQL_Packet::wait_for_bytes: Num bytes= ", num, ", need bytes= ", bytes_need);
+      MYSQL_LOGLEVEL5_3("MySQL_Packet::wait_for_bytes: Num bytes= ", num, ", need bytes= ", bytes_need);
 
       if (num >= bytes_need)
         break;
@@ -285,23 +285,36 @@ int MySQL_Packet::wait_for_bytes(int bytes_need)
 
 //KH, from v1.0.1. Use largest alocated buffer and keep until larger packet is received
 // TODO: Pass buffer pointer instead of using global buffer
-void MySQL_Packet::read_packet()
+
+// KH, mod from v1.0.2. Return true if valid packet
+bool MySQL_Packet::read_packet()
 {
   #define PACKET_HEADER_SZ      4
   
   byte local[PACKET_HEADER_SZ];
   
-  MYSQL_LOGDEBUG("MySQL_Packet::read_packet: step 1");
+  MYSQL_LOGLEVEL5("MySQL_Packet::read_packet: step 1");
+  
+  // KH, be sure to safely clear the buffer
+  if ( largest_buffer_size > 0 )
+    memset(buffer, 0, largest_buffer_size);
 
   // Read packet header
   if (wait_for_bytes(PACKET_HEADER_SZ) < PACKET_HEADER_SZ)
   {
-    MYSQL_LOGERROR(READ_TIMEOUT);
+    // KH, add
+    packet_len = 0;
+    //////
     
-    return;
+    MYSQL_LOGERROR1("MySQL_Packet::read_packet: ", READ_TIMEOUT);
+    
+    return false;
   }
 
-  MYSQL_LOGDEBUG("MySQL_Packet::read_packet: step 2");
+  MYSQL_LOGLEVEL5("MySQL_Packet::read_packet: step 2");
+  
+  // KH, clear packet_len
+  packet_len = 0;
 
   for (int i = 0; i < PACKET_HEADER_SZ; i++)
     local[i] = client->read();
@@ -316,17 +329,20 @@ void MySQL_Packet::read_packet()
     if (wait_for_bytes(packet_len) < packet_len) 
     {
       MYSQL_LOGERROR(READ_TIMEOUT);
-      return;
+      return false;
     }
   */
 
   MYSQL_LOGWARN1("MySQL_Packet::read_packet: packet_len= ", packet_len);
 
   // Check for valid packet.
-  if (packet_len < 0)
+  // KH mod
+  if ( (packet_len < 0) || ( packet_len > MAX_TRANSMISSION_UNIT ) )
   {
     MYSQL_LOGERROR(PACKET_ERROR);
     packet_len = 0;
+    
+    return false;
   }
 
   if ( largest_buffer_size < packet_len + PACKET_HEADER_SZ )
@@ -351,10 +367,10 @@ void MySQL_Packet::read_packet()
   
   if (buffer == NULL)
   {
-    MYSQL_LOGERROR(MEMORY_ERROR);
+    MYSQL_LOGERROR("MySQL_Packet::read_packet: NULL buffer");
     largest_buffer_size = 0;
     
-    return;
+    return false;
   }
   else
   {
@@ -368,6 +384,8 @@ void MySQL_Packet::read_packet()
     buffer[i] = client->read();
 
   MYSQL_LOGDEBUG("MySQL_Packet::read_packet: exit");
+  
+  return true;
 }
 
 
@@ -399,7 +417,10 @@ void MySQL_Packet::read_packet()
 void MySQL_Packet::parse_handshake_packet()
 {
   if (!buffer)
+  {
+    MYSQL_LOGERROR("MySQL_Packet::parse_handshake_packet: NULL buffer");
     return;
+  }
 
   int i = 5;
   
@@ -452,7 +473,10 @@ void MySQL_Packet::parse_error_packet()
   MYSQL_LOGDEBUG2("Error: ", read_int(5, 2), " = ");
 
   if (!buffer)
+  {
+    MYSQL_LOGERROR("MySQL_Packet::parse_error_packet: NULL buffer");
     return;
+  }
 
   for (int i = 0; i < packet_len - 9; i++)
   {
@@ -481,9 +505,14 @@ void MySQL_Packet::parse_error_packet()
 int MySQL_Packet::get_packet_type() 
 {
   if (!buffer)
+  {
+    MYSQL_LOGERROR("MySQL_Packet::get_packet_type: NULL buffer");
     return -1;
+  }
 
   int type = buffer[4];
+  
+  MYSQL_LOGDEBUG1("MySQL_Packet::get_packet_type: packet type= ", type);
 
   if (type == MYSQL_OK_PACKET)
   {
@@ -520,7 +549,10 @@ int MySQL_Packet::get_packet_type()
 int MySQL_Packet::get_lcb_len(int offset) 
 {
   if (!buffer)
+  {
+    MYSQL_LOGERROR("MySQL_Packet::get_lcb_len: NULL buffer");
     return 0;
+  }
 
   int read_len = buffer[offset];
   
@@ -564,7 +596,10 @@ int MySQL_Packet::read_int(int offset, int size)
   int new_size = 0;
   
   if (!buffer)
+  {
+    MYSQL_LOGERROR("MySQL_Packet::read_int: NULL buffer");
     return -1;
+  }
     
   if (size == 0)
     new_size = get_lcb_len(offset);
@@ -599,6 +634,12 @@ int MySQL_Packet::read_int(int offset, int size)
 */
 void MySQL_Packet::store_int(byte *buff, long value, int size) 
 {
+  if (!buff)
+  {
+    MYSQL_LOGERROR("MySQL_Packet::store_int: NULL buffer");
+    return;
+  }
+
   memset(buff, 0, size);
   
   if (value <= 0xff)
@@ -614,7 +655,6 @@ void MySQL_Packet::store_int(byte *buff, long value, int size)
     buff[1] = (byte)(value >> 8);
     buff[2] = (byte)(value >> 16);
   } 
-  //else if (value < 0xffffff) 
   else if (value > 0xffffff) 
   {
     buff[0] = (byte)value;
@@ -642,7 +682,10 @@ int MySQL_Packet::read_lcb_int(int offset)
   int value = 0;
   
   if (!buffer)
+  {
+    MYSQL_LOGERROR("MySQL_Packet::read_lcb_int: NULL buffer");
     return -1;
+  }
     
   len_size = buffer[offset];
   
@@ -686,7 +729,10 @@ int MySQL_Packet::read_lcb_int(int offset)
 void MySQL_Packet::print_packet() 
 {
   if (!buffer)
+  {
+    MYSQL_LOGERROR("MySQL_Packet::print_packet: NULL buffer");
     return;
+  }
 
   MYSQL_LOGDEBUG3("Packet: ", buffer[3], " contains no. bytes = ", packet_len + 3);
 

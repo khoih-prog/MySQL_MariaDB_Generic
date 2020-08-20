@@ -22,7 +22,14 @@ This [MySQL_MariaDB_Generic library](https://github.com/khoih-prog/MySQL_MariaDB
 
 ---
 
-### New in v1.0.1
+### New in v1.0.2
+
+ 1. Fix crashing bug when Client timeout. 
+ 2. Make code more error-proof.
+ 3. Drop support to ESP8266_AT_Webserver.
+ 4. Enhance examples
+
+#### New in v1.0.1
 
  1. Add support to ENC28J60 Ethernet module/shield using UIPEthernet library.
  2. Fix bugs
@@ -51,6 +58,7 @@ This [MySQL_MariaDB_Generic library](https://github.com/khoih-prog/MySQL_MariaDB
 17. Add many examples
 
 ---
+---
  
 ## Prerequisite
  1. [`Arduino IDE v1.8.12+` for Arduino](https://www.arduino.cc/en/Main/Software)
@@ -72,7 +80,7 @@ This [MySQL_MariaDB_Generic library](https://github.com/khoih-prog/MySQL_MariaDB
    - [`EthernetLarge library v2.0.0+`](https://github.com/OPEnSLab-OSU/EthernetLarge) for W5100, W5200 and W5500. ***Ready*** from v1.0.0.
    - [`UIPEthernet library v2.0.8+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60. ***Ready*** from v1.0.1.
    - [`STM32Ethernet library v1.2.0+`](https://github.com/stm32duino/STM32Ethernet) for built-in Ethernet LAN8742A on (Nucleo-144, Discovery). To be used with [`STM32duino_LwIP library v2.1.2+`](https://github.com/stm32duino/LwIP). ***Ready*** from v1.0.0. 
-14. [`ESP8266_AT_WebServer library v1.0.12+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer). ***Ready*** from v1.0.0.
+14. [`ESP8266_AT_WebServer library v1.0.12+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer). ***Not Ready*** from v1.0.2.
 15. [`WiFiEspAT library v1.3.0+`](https://github.com/jandrassy/WiFiEspAT) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiEspAT.svg?)](https://www.ardu-badge.com/WiFiEspAT). ***Ready*** from v1.0.0.
 
 ---
@@ -324,7 +332,7 @@ MySQL_Query sql_query = MySQL_Query(&conn);
 #### For remaining boards, just select a WiFi module/shield and the corresponding library to use in defines.h:
 
 ```c++
-// Select only one of these libraries, baid only for boards other than ESP8266/ESP32
+// Select only one of these libraries, only for boards other than ESP8266/ESP32
 #define USING_WIFI_ESP_AT               false         // Using ESP8266_AT_WebServer lib (https://github.com/khoih-prog/ESP8266_AT_WebServer)
 #define USING_WIFININA_GENERIC          false         // Using WiFiNINA_Generic library (https://github.com/khoih-prog/WiFiNINA_Generic)
 #define USING_WIFININA                  false         // Using WiFiNINA library
@@ -450,7 +458,7 @@ char default_table[]    = "city";               //"test_arduino";
 // Notice the "%lu" - that's a placeholder for the parameter we will
 // supply. See sprintf() documentation for more formatting specifier
 // options
-unsigned long QUERY_POPULATION = 8000000;
+unsigned long QUERY_POPULATION = 800000;
 
 const char QUERY_POP[] = "SELECT name, population FROM world.city WHERE population < %lu ORDER BY population DESC LIMIT 12;";
 
@@ -627,17 +635,22 @@ void runQuery(void)
   // to allocate one buffer for all formatted queries or allocate the
   // memory as needed (just make sure you allocate enough memory and
   // free it when you're done!).
-  sprintf(query, QUERY_POP, QUERY_POPULATION);
+  sprintf(query, QUERY_POP, QUERY_POPULATION + (( millis() % 100000 ) * 10) );
   Serial.println(query);
   
   // Initiate the query class instance
-  MySQL_Query *query_mem = new MySQL_Query(&conn);
+  MySQL_Query query_mem = MySQL_Query(&conn);
   
   // Execute the query
-  query_mem->execute(query);
+  // KH, check if valid before fetching
+  if ( !query_mem.execute(query) )
+  {
+    Serial.println("Querying error");
+    return;
+  }
   
   // Fetch the columns and print them
-  column_names *cols = query_mem->get_columns();
+  column_names *cols = query_mem.get_columns();
 
   for (int f = 0; f < cols->num_fields; f++) 
   {
@@ -656,7 +669,7 @@ void runQuery(void)
   
   do 
   {
-    row = query_mem->get_next_row();
+    row = query_mem.get_next_row();
     
     if (row != NULL) 
     {
@@ -673,9 +686,6 @@ void runQuery(void)
       Serial.println();
     }
   } while (row != NULL);
-  
-  // Deleting the cursor also frees up memory used
-  delete query_mem;
 }
 
 void loop()
@@ -697,7 +707,7 @@ void loop()
   Serial.println("\nSleeping...");
   Serial.println("================================================");
  
-  delay(60000);
+  delay(10000);
 }
 ```
 
@@ -1038,7 +1048,7 @@ byte mac[][NUMBER_OF_MAC] =
 
 ### Debug Termimal Output Samples
 
-1. This is terminal debug output when running [Query_Progmem](examples/Ethernet/Query_Progmem) on nRF52 ***Adafruit NRF52840_FEATHER using W5500 Ethernet module and Ethernet3 library.*** connecting to MariaDB Server.
+1. This is terminal debug output when running [Query_Progmem](examples/Ethernet/Query_Progmem) on nRF52 ***Adafruit NRF52840_FEATHER using W5500 Ethernet module and Ethernet3 library*** connecting to MariaDB Server.
 
 ```
 Starting Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet3 Library
@@ -1075,7 +1085,7 @@ ID,Name,CountryCode,District,Population
 
 ---
 
-2. This is terminal debug output when running [Complex_Select](examples/Ethernet/Complex_Select) on STM32F7 ***Nucleo-144 NUCLEO_F767ZI using LAN8742A built-in Ethernet and STM32Ethernet library.*** connecting to MariaDB Server.
+2. This is terminal debug output when running [Complex_Select](examples/Ethernet/Complex_Select) on STM32F7 ***Nucleo-144 NUCLEO_F767ZI using LAN8742A built-in Ethernet and STM32Ethernet library*** connecting to MariaDB Server.
 
 ```
 Starting Complex_Select on NUCLEO_F767ZI using LAN8742A/STM32Ethernet Library
@@ -1090,41 +1100,140 @@ User = invited-guest, PW = the-invited-guest, DB = world
 [SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
-SELECT name, population FROM world.city WHERE population < 8000000 ORDER BY population DESC LIMIT 12;
+SELECT name, population FROM world.city WHERE population < 857880 ORDER BY population DESC LIMIT 12;
 name,population
-Tokyo,7980230
-Peking,7472000
-London,7285000
-Delhi,7206704
-Cairo,6789479
-Teheran,6758845
-Lima,6464693
-Chongqing,6351600
-Bangkok,6320174
-Santaf⸮ de Bogot⸮,6260862
-Rio de Janeiro,5598953
-Tianjin,5286800
+Naucalpan de Ju⸮rez,857511
+Pikine,855287
+Lubumbashi,851381
+Monrovia,850000
+Freetown,850000
+Zaporizzja,848000
+Handan,840000
+S⸮o Lu⸮s,837588
+Wuxi,830000
+Ouagadougou,824000
+Ciudad de Guatemala,823301
+Coimbatore,816321
+[SQL] Disconnected
+
+Sleeping...
+================================================
+Connecting...
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connect OK. Try reading packets
+[SQL] Try parsing packets
+[SQL] Try send_authentication packets
+[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+====================================================
+> Running SELECT with dynamically supplied parameter
+SELECT name, population FROM world.city WHERE population < 972170 ORDER BY population DESC LIMIT 12;
+name,population
+Mekka,965700
+K⸮ln,962507
+Managua,959000
+Detroit,951270
+Shenzhen,950500
+Haora (Howrah),950435
+Campinas,950043
+Brazzaville,950000
+Khartum,947483
+Karaj,940968
+Taichung,940589
+Santa Cruz de la Sierra,935361
+[SQL] Disconnected
+
+Sleeping...
+================================================
 
 ```
 
 ---
 
-3. This is terminal debug output when running [Query_Results_WiFi](examples/WiFi/Query_Results_WiFi) on SAMD51 ***Adafruit ITSYBITSY_M4 using ESP8266-AT WiFi shield and WiFiEspAT library.*** connecting to MySQL Server.
+3. This is terminal debug output when running [Query_Results_WiFi](examples/WiFi/Query_Results_WiFi) on SAMD51 ***Adafruit ITSYBITSY_M4 using ESP8266-AT WiFi shield and WiFiEspAT library*** connecting to MySQL Server.
 
 ```
-
 Starting Query_Results_WiFi on ITSYBITSY_M4
 Using WiFiEspAT Library
 WiFi shield init done
 Connecting to HueNet1
-Connected to network. My IP address is: 192.168.2.43
+Connected to network. My IP address is: 192.168.2.32
 Connecting to SQL Server @ 192.168.2.112, Port = 5698
 User = invited-guest, PW = the-invited-guest
+Connecting...
 [SQL] Connecting to Server: 192.168.2.112 , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
-[SQL] Connected. Server Version =5.7.31-0ubuntu0.18.04.1
+[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+
+Running SELECT and printing results
+
+SELECT * FROM world.city LIMIT 6
+ID, Name, CountryCode, District, Population
+1, Kabul, AFG, Kabol, 1780000
+2, Qandahar, AFG, Qandahar, 237500
+3, Herat, AFG, Herat, 186800
+4, Mazar-e-Sharif, AFG, Balkh, 127800
+5, Amsterdam, NLD, Noord-Holland, 731200
+6, Rotterdam, NLD, Zuid-Holland, 593321
+[SQL] Disconnected
+
+Sleeping...
+================================================
+```
+
+---
+
+4. This is terminal debug output when running [Basic_Select_WiFi](examples/WiFi/Basic_Select_WiFi) on SAMD51 ***Seeeduino SEEED_XIAO_M0 using ESP8266-AT WiFi shield and WiFiEspAT library*** connecting to MariaDB Server.
+
+
+```
+Starting Basic_Select_WiFi on SEEED_XIAO_M0
+Using WiFiEspAT Library
+WiFi shield init done
+Connecting to HueNet1
+Connected to network. My IP address is: 192.168.2.32
+Connecting to SQL Server @ 192.168.2.112, Port = 5698
+User = invited-guest, PW = the-invited-guest, DB = world
+Connecting...
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connect OK. Try reading packets
+[SQL] Try parsing packets
+[SQL] Try send_authentication packets
+[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+1) Demonstrating using a dynamically allocated query.
+SELECT population FROM world.city WHERE name = 'Toronto'
+  Toronto pop = 688275
+2) Demonstrating using a local, global query.
+SELECT population FROM world.city WHERE name = 'Toronto'
+  Toronto pop = 688275
+  Toronto pop increased by 11725 = 700000
+[SQL] Disconnected
+
+Sleeping...
+================================================
+
+```
+
+---
+
+5. This is terminal debug output when running [Query_Results_WiFiNINA](examples/WiFiNINA/Query_Results_WiFiNINA) on SAMD21 ***Arduino SAMD_NANO_33_IOT using built-in WiFiNINA and WiFiNINA_Generic library*** connecting to MariaDB Server.
+
+
+```
+Starting Query_Results_WiFiNINA on SAMD_NANO_33_IOT
+Attempting to connect to SSID: HueNet1
+SSID: HueNet1
+IP Address: 192.168.2.118
+signal strength (RSSI):-40 dBm
+Connecting to SQL Server @ 192.168.2.112, Port = 5698
+User = invited-guest, PW = the-invited-guest
+Connecting...
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connect OK. Try reading packets
+[SQL] Try parsing packets
+[SQL] Try send_authentication packets
+[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
 
 Running SELECT and printing results
 
@@ -1142,77 +1251,16 @@ ID, Name, CountryCode, District, Population
 10, Tilburg, NLD, Noord-Brabant, 193238
 11, Groningen, NLD, Groningen, 172701
 12, Breda, NLD, Noord-Brabant, 160398
-```
+[SQL] Disconnected
 
----
-
-4. This is terminal debug output when running [Basic_Select_WiFi](examples/WiFi/Basic_Select_WiFi) on SAMD51 ***Adafruit ITSYBITSY_M4 using ESP8266-AT WiFi shield and ESP8266_AT/ESP8266_AT_WebServer library.*** connecting to MariaDB Server.
-
-
-```
-
-Starting Basic_Select_WiFi on ITSYBITSY_M4
-Using ESP8266_AT/ESP8266_AT_WebServer Library
-[ESP_AT] Use ES8266-AT Command
-WiFi shield init done
-Connecting to HueNet1
-Connected to network. My IP address is: 192.168.2.43
-Connecting to SQL Server @ 192.168.2.112, Port = 5698
-User = invited-guest, PW = the-invited-guest, DB = world
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
-1) Demonstrating using a cursor dynamically allocated.
-SELECT population FROM world.city WHERE name = 'New York'
-  NYC pop = 8008278
-2) Demonstrating using a local, global cursor.
-  NYC pop = 8008278
-  NYC pop increased by 12 = 8008290
+Sleeping...
+================================================
 
 ```
 
 ---
 
-5. This is terminal debug output when running [Query_Results_WiFiNINA](examples/WiFiNINA/Query_Results_WiFiNINA) on SAMD21 ***Arduino SAMD_NANO_33_IOT using built-in WiFiNINA and WiFiNINA_Generic library.*** connecting to MariaDB Server.
-
-
-```
-Starting Query_Results_WiFiNINA on SAMD_NANO_33_IOT
-Attempting to connect to SSID: HueNet1
-SSID: HueNet1
-IP Address: 192.168.2.105
-signal strength (RSSI):-22 dBm
-Connecting to SQL Server @ 192.168.2.112, Port = 5698
-User = invited-guest, PW = the-invited-guest
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
-
-Running SELECT and printing results
-
-ID, Name, CountryCode, District, Population
-1, Kabul, AFG, Kabol, 1780000
-2, Qandahar, AFG, Qandahar, 237500
-3, Herat, AFG, Herat, 186800
-4, Mazar-e-Sharif, AFG, Balkh, 127800
-5, Amsterdam, NLD, Noord-Holland, 731200
-6, Rotterdam, NLD, Zuid-Holland, 593321
-7, Haag, NLD, Zuid-Holland, 440900
-8, Utrecht, NLD, Utrecht, 234323
-9, Eindhoven, NLD, Noord-Brabant, 201843
-10, Tilburg, NLD, Noord-Brabant, 193238
-11, Groningen, NLD, Groningen, 172701
-12, Breda, NLD, Noord-Brabant, 160398
-
-```
-
----
-
-6. This is terminal debug output when running [Connect_By_Hostname](examples/Ethernet/Connect_By_Hostname) on ***Arduino SAM DUE using W5100 Ethernet shield and EthernetLarge library.*** connecting to MariaDB Server.
+6. This is terminal debug output when running [Connect_By_Hostname](examples/Ethernet/Connect_By_Hostname) on ***Arduino SAM DUE using W5100 Ethernet shield and EthernetLarge library*** connecting to MariaDB Server.
 
 
 ```
@@ -1235,42 +1283,99 @@ User = invited-guest, PW = the-invited-guest
 
 ---
 
-7. This is terminal debug output when running [Query_Progmem](examples/Ethernet/Query_Progmem) on ***NRF52840_FEATHER using ENC28J60 Ethernet shield and UIPEthernet library.*** connecting to MariaDB Server.
+7. This is terminal debug output when running [Complex_Select](examples/Ethernet/Complex_Select) on ***NRF52840_FEATHER using ENC28J60 Ethernet shield and UIPEthernet library*** connecting to MariaDB Server.
 
 
 ```
-Starting Query_Progmem on NRF52840_FEATHER using ENC28J60/UIPEthernet Library
+Starting Complex_Select on NRF52840_FEATHER using ENC28J60/UIPEthernet Library
 ENC28J60_CONTROL_CS =10
 SS =5
 SPI_MOSI =25
 SPI_MISO =24
 SPI_SCK =26
-Using mac index = 15
-Connected! IP address: 192.168.2.174
+Using mac index = 5
+Connected! IP address: 192.168.2.161
 Connecting to SQL Server @ 192.168.2.112, Port = 5698
-User = invited-guest, PW = the-invited-guest
+User = invited-guest, PW = the-invited-guest, DB = world
 Connecting...
 [SQL] Connecting to Server: 192.168.2.112 , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
 [SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
-
-Running SELECT from PROGMEM and printing results
-
-SELECT * FROM test_arduino.hello_arduino LIMIT 6
-num,message,recorded
-351,Hello, Arduino!,2020-08-18 13:52:35
-352,Hello, Arduino!,2020-08-18 13:53:42
-353,Hello, Arduino!,2020-08-18 13:54:57
-354,Hello, Arduino!,2020-08-18 13:56:03
-355,Hello, Arduino!,2020-08-18 22:37:21
-356,Hello, Arduino!,2020-08-18 22:38:28
-6 rows in result.
+====================================================
+> Running SELECT with dynamically supplied parameter
+SELECT name, population FROM world.city WHERE population < 885240 ORDER BY population DESC LIMIT 12;
+name,population
+Port-au-Prince,884472
+Mosul,879000
+Barquisimeto,877239
+Krasnojarsk,875500
+Saratov,874000
+Shubra al-Khayma,870716
+S⸮o Gon⸮alo,869254
+Songnam,869094
+Chiba,863930
+Nova Igua⸮u,862225
+Naucalpan de Ju⸮rez,857511
+Pikine,855287
 [SQL] Disconnected
 
 Sleeping...
 ================================================
+Connecting...
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connect OK. Try reading packets
+[SQL] Try parsing packets
+[SQL] Try send_authentication packets
+[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+====================================================
+> Running SELECT with dynamically supplied parameter
+SELECT name, population FROM world.city WHERE population < 1015280 ORDER BY population DESC LIMIT 12;
+name,population
+Kalyan,1014557
+Birmingham,1013000
+Rostov-na-Donu,1012700
+Odesa,1011000
+Perm,1009700
+Napoli,1002619
+Zapopan,1002239
+Amman,1000000
+Mogadishu,997000
+Volgograd,993400
+Sendai,989975
+Peshawar,988005
+[SQL] Disconnected
+
+Sleeping...
+================================================
+Connecting...
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connect OK. Try reading packets
+[SQL] Try parsing packets
+[SQL] Try send_authentication packets
+[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+====================================================
+> Running SELECT with dynamically supplied parameter
+SELECT name, population FROM world.city WHERE population < 1193330 ORDER BY population DESC LIMIT 12;
+name,population
+Tabriz,1191043
+Dallas,1188580
+Bel⸮m,1186926
+Multan,1182441
+Praha,1181126
+Kalookan,1177604
+Nanning,1161800
+C⸮rdoba,1157507
+Samara,1156100
+Hyderabad,1151274
+Omsk,1148900
+Davao,1147116
+[SQL] Disconnected
+
+Sleeping...
+================================================
+
 ```
 
 ---
@@ -1316,6 +1421,13 @@ Debug is enabled by default on Serial. Debug Level from 0 to 4. To disable, chan
 ---
 ---
 
+### New in v1.0.2
+
+ 1. Fix crashing bug when Client timeout. 
+ 2. Make code more error-proof.
+ 3. Drop support to ESP8266_AT_Webserver.
+ 4. Enhance examples
+
 ### New in v1.0.1
 
  1. Add support to ENC28J60 Ethernet module/shield using UIPEthernet library.
@@ -1344,6 +1456,7 @@ Debug is enabled by default on Serial. Debug Level from 0 to 4. To disable, chan
 16. Add Ethernet Library Patches
 17. Add many examples
 
+---
 ---
 
 ### Issues ###

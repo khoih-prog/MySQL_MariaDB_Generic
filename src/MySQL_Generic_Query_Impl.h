@@ -14,13 +14,14 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.1
+  Version: 1.0.2
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
                                   (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
+  1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -144,7 +145,7 @@ bool MySQL_Query::execute(const char *query, bool progmem)
    
   if (conn->buffer == NULL)
   {
-    MYSQL_LOGERROR(MEMORY_ERROR);
+    MYSQL_LOGERROR("MySQL_Query::execute: NULL buffer");
    
     return false;
   }
@@ -165,6 +166,8 @@ bool MySQL_Query::execute(const char *query, bool progmem)
     memcpy(&conn->buffer[COMMAND_HEADER_LEN], query, query_len);
   }
 
+  MYSQL_LOGDEBUG1("MySQL_Query::execute: query = ", (char *) &conn->buffer[COMMAND_HEADER_LEN] );
+  
   // Send the query
   return execute_query(query_len);
 }
@@ -188,7 +191,10 @@ bool MySQL_Query::execute(const char *query, bool progmem)
 bool MySQL_Query::execute_query(int query_len)
 {
   if (!conn->buffer)
+  {
+    MYSQL_LOGERROR("MySQL_Query::execute_query: NULL buffer");
     return false;
+  }
 
   // Reset the rows affected and last insert id before query.
   rows_affected  = -1;
@@ -199,11 +205,17 @@ bool MySQL_Query::execute_query(int query_len)
   conn->buffer[4] = byte(0x03);  // command packet
 
   // Send the query
-  conn->client->write((uint8_t*)conn->buffer, query_len + 5);
+  MYSQL_LOGDEBUG1("MySQL_Query::execute_query: query = ", (char *) &conn->buffer[COMMAND_HEADER_LEN] );
+  
+  conn->client->write((uint8_t*)conn->buffer, query_len + COMMAND_HEADER_LEN);
   conn->client->flush();
 
   // Read a response packet and check it for Ok or Error.
-  conn->read_packet();
+  // KH mod, check if packet_len is valid.
+  if ( !conn->read_packet() || ( conn->packet_len <= 0 ) || ( conn->packet_len > MAX_TRANSMISSION_UNIT ) )
+    return false;
+  //////
+  
   int res = conn->get_packet_type();
   
   if (res == MYSQL_ERROR_PACKET) 
@@ -306,6 +318,8 @@ row_values *MySQL_Query::get_next_row()
   free_row_buffer();
 
   // Read the rows
+  MYSQL_LOGDEBUG("MySQL_Query::get_next_row: get_row_values");
+  
   res = get_row_values();
   
   if (res != MYSQL_EOF_PACKET) 
@@ -398,7 +412,10 @@ bool MySQL_Query::clear_ok_packet()
     
     if (num > 0) 
     {
-      conn->read_packet();
+      // KH mod, check if packet_len is valid.
+      if ( !conn->read_packet() || ( conn->packet_len <= 0 ) || ( conn->packet_len > MAX_TRANSMISSION_UNIT ) )
+        return false;
+      //////
       
       if (conn->get_packet_type() != MYSQL_OK_PACKET) 
       {
@@ -486,6 +503,9 @@ void MySQL_Query::free_row_buffer()
 char *MySQL_Query::read_string(int *offset) 
 {
   char *str;
+  
+  MYSQL_LOGLEVEL5("MySQL_Query::read_string: step 1");
+  
   int len_bytes = conn->get_lcb_len(conn->buffer[*offset]);
   int len = conn->read_int(*offset, len_bytes);
   
@@ -513,8 +533,12 @@ char *MySQL_Query::read_string(int *offset)
     str[len] = 0x00;
     *offset += len_bytes + len;
     
+    MYSQL_LOGDEBUG1("MySQL_Query::read_string: str = ", str);
+    
     return str;
   }
+  
+  MYSQL_LOGDEBUG("MySQL_Query::read_string: return NULL");
   
   return NULL;
   ////// 
@@ -551,28 +575,58 @@ int MySQL_Query::get_field(field_struct *fs)
   int len_bytes;
   int len;
   int offset;
-
-  // Read field packets until EOF
-  conn->read_packet();
   
-  if (conn->buffer && conn->buffer[4] != MYSQL_EOF_PACKET) 
+  // KH add
+  if (conn->buffer == NULL) 
+  {
+    MYSQL_LOGERROR("MySQL_Query::get_field: NULL buffer");
+    return MYSQL_ERROR_PACKET;
+  }
+  //////
+  
+  // Read field packets until EOF
+  MYSQL_LOGDEBUG("MySQL_Query::get_field: read_packet");
+  
+  // KH mod, check if packet_len is valid.
+  if ( !conn->read_packet() || ( conn->packet_len <= 0 ) || ( conn->packet_len > MAX_TRANSMISSION_UNIT ) )
+    return MYSQL_ERROR_PACKET;
+  //////
+  
+  // KH, bug here and read garbage
+  if (conn->buffer && conn->buffer[4] != MYSQL_EOF_PACKET)
   {
     // calculate location of db
     len_bytes = conn->get_lcb_len(4);
     len = conn->read_int(4, len_bytes);
     offset = 4 + len_bytes + len;
+    
+    MYSQL_LOGDEBUG("MySQL_Query::get_field: read_string to fs->db");
     fs->db = read_string(&offset);
+    MYSQL_LOGDEBUG1("MySQL_Query::get_field: fs->db = ", fs->db);
+    
     // get table
+    MYSQL_LOGDEBUG("MySQL_Query::get_field: read_string to fs->table");
     fs->table = read_string(&offset);
+    MYSQL_LOGDEBUG1("MySQL_Query::get_field: fs->table = ", fs->table);
+    
     // calculate location of name
     len_bytes = conn->get_lcb_len(offset);
     len = conn->read_int(offset, len_bytes);
     offset += len_bytes + len;
+    
+    // get name
+    MYSQL_LOGDEBUG("MySQL_Query::get_field: read_string to fs->name");
     fs->name = read_string(&offset);
-    return 0;
+    MYSQL_LOGDEBUG1("MySQL_Query::get_field: fs->name = ", fs->name);
+    
+    //return 0;
+    return MYSQL_OK_PACKET;
   }
-  
-  return MYSQL_EOF_PACKET;
+  else if (conn->buffer && conn->buffer[4] == MYSQL_EOF_PACKET)
+    return MYSQL_EOF_PACKET;
+  else
+    return MYSQL_ERROR_PACKET;
+  //////
 }
 
 
@@ -596,10 +650,15 @@ int MySQL_Query::get_field(field_struct *fs)
 int MySQL_Query::get_row() 
 {
   // Read row packets
-  conn->read_packet();
-  
+  // KH mod, check if packet_len is valid.// get row
+  MYSQL_LOGDEBUG("MySQL_Query::get_row: read_packet");
+
+  if ( !conn->read_packet() || ( conn->packet_len <= 0 ) || ( conn->packet_len > MAX_TRANSMISSION_UNIT ) )
+    return MYSQL_EOF_PACKET;    //MYSQL_ERROR_PACKET;
+  //////
+
   if (conn->buffer && conn->buffer[4] != MYSQL_EOF_PACKET)
-    return 0;
+    return MYSQL_OK_PACKET;
     
   return MYSQL_EOF_PACKET;
 }
@@ -619,6 +678,7 @@ bool MySQL_Query::get_fields()
 
   if (conn->buffer == NULL) 
   {
+    MYSQL_LOGERROR("MySQL_Query::get_fields: NULL buffer");
     return false;
   }
   
@@ -631,7 +691,9 @@ bool MySQL_Query::get_fields()
     field_struct *field = (field_struct *) malloc(sizeof(field_struct));
     res = get_field(field);
     
-    if (res == MYSQL_EOF_PACKET) 
+    // KH
+    //if (res == MYSQL_EOF_PACKET) 
+    if ( (res == MYSQL_EOF_PACKET) || (res == MYSQL_ERROR_PACKET) )
     {
       MYSQL_LOGERROR(BAD_MOJO);
       
@@ -641,7 +703,13 @@ bool MySQL_Query::get_fields()
     columns.fields[f] = field;
   }
   
-  conn->read_packet(); // EOF packet
+  // KH mod, check if packet_len is valid.
+  // EOF packet
+  MYSQL_LOGDEBUG("MySQL_Query::get_fields: read_packet");
+  
+  if ( !conn->read_packet() || ( conn->packet_len <= 0 ) || ( conn->packet_len > MAX_TRANSMISSION_UNIT ) )
+    return false;
+  //////
   
   return true;
 }
@@ -671,9 +739,12 @@ int MySQL_Query::get_row_values()
   free_row_buffer();
 
   // Read a row
+  MYSQL_LOGDEBUG("MySQL_Query::get_row_values: get_row");
+  
   res = get_row();
   
-  if (res != MYSQL_EOF_PACKET) 
+  // KH mod
+  if ( (res != MYSQL_EOF_PACKET) && (res != MYSQL_ERROR_PACKET) )
   {
     offset = 4;
     
