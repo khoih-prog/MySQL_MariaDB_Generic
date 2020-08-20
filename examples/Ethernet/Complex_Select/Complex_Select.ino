@@ -11,13 +11,14 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.1
+  Version: 1.0.2
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
-                                  (using Ethernet, EthernetLarge, Ethernet2, Ethernet3 library) and WiFiNINA
+                                  (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
+  1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
  **********************************************************************************************************************************/
 
 /*
@@ -72,7 +73,7 @@ char default_table[]    = "city";               //"test_arduino";
 // Notice the "%lu" - that's a placeholder for the parameter we will
 // supply. See sprintf() documentation for more formatting specifier
 // options
-unsigned long QUERY_POPULATION = 8000000;
+unsigned long QUERY_POPULATION = 800000;
 
 const char QUERY_POP[] = "SELECT name, population FROM world.city WHERE population < %lu ORDER BY population DESC LIMIT 12;";
 
@@ -249,17 +250,22 @@ void runQuery(void)
   // to allocate one buffer for all formatted queries or allocate the
   // memory as needed (just make sure you allocate enough memory and
   // free it when you're done!).
-  sprintf(query, QUERY_POP, QUERY_POPULATION);
+  sprintf(query, QUERY_POP, QUERY_POPULATION + (( millis() % 100000 ) * 10) );
   Serial.println(query);
   
   // Initiate the query class instance
-  MySQL_Query *query_mem = new MySQL_Query(&conn);
+  MySQL_Query query_mem = MySQL_Query(&conn);
   
   // Execute the query
-  query_mem->execute(query);
+  // KH, check if valid before fetching
+  if ( !query_mem.execute(query) )
+  {
+    Serial.println("Querying error");
+    return;
+  }
   
   // Fetch the columns and print them
-  column_names *cols = query_mem->get_columns();
+  column_names *cols = query_mem.get_columns();
 
   for (int f = 0; f < cols->num_fields; f++) 
   {
@@ -278,7 +284,7 @@ void runQuery(void)
   
   do 
   {
-    row = query_mem->get_next_row();
+    row = query_mem.get_next_row();
     
     if (row != NULL) 
     {
@@ -295,9 +301,6 @@ void runQuery(void)
       Serial.println();
     }
   } while (row != NULL);
-  
-  // Deleting the cursor also frees up memory used
-  delete query_mem;
 }
 
 void loop()
@@ -319,5 +322,5 @@ void loop()
   Serial.println("\nSleeping...");
   Serial.println("================================================");
  
-  delay(60000);
+  delay(10000);
 }

@@ -11,13 +11,14 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.1
+  Version: 1.0.2
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
-                                  (using Ethernet, EthernetLarge, Ethernet2, Ethernet3 library) and WiFiNINA
+                                  (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
+  1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
  **********************************************************************************************************************************/
 /*
   MySQL Connector/Arduino Example : query with PROGMEM strings
@@ -109,9 +110,6 @@ void setup()
     Serial.println(ssid);
     // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid, pass);
-
-    // wait 10 seconds for connection:
-    //delay(10000);
   }
 
   printWifiStatus();
@@ -130,15 +128,20 @@ void runQuery(void)
   Serial.println(query);
   
   // Initiate the query class instance
-  MySQL_Query *query_mem = new MySQL_Query(&conn);
+  MySQL_Query query_mem = MySQL_Query(&conn);
   
   // Execute the query with the PROGMEM option
-  query_mem->execute(query, true);
+  // KH, check if valid before fetching
+  if ( !query_mem.execute(query, true) )
+  {
+    Serial.println("Querying error");
+    return;
+  }
   
   // Show the results
-  query_mem->show_results();
-  // Deleting the cursor also frees up memory used
-  delete query_mem;
+  query_mem.show_results();
+  // close the query
+  query_mem.close();
 }
 
 void loop()

@@ -11,13 +11,14 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.1
+  Version: 1.0.2
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
-                                  (using Ethernet, EthernetLarge, Ethernet2, Ethernet3 library) and WiFiNINA
+                                  (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
+  1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
  **********************************************************************************************************************************/
 /*
   MySQL Connector/Arduino Example : connect
@@ -66,8 +67,8 @@ void setup()
   Serial.println("\nStarting Connect_WiFi on " + String(BOARD_NAME));
 
   // Remember to initialize your WiFi module
-#if ( USING_WIFI_ESP_AT  || USING_WIFIESPAT_LIB ) 
-  #if ( USING_WIFI_ESP_AT )
+#if ( USING_WIFI_ESP8266_AT  || USING_WIFIESPAT_LIB ) 
+  #if ( USING_WIFI_ESP8266_AT )
     Serial.println("Using ESP8266_AT/ESP8266_AT_WebServer Library");
   #elif ( USING_WIFIESPAT_LIB )
     Serial.println("Using WiFiEspAT Library");

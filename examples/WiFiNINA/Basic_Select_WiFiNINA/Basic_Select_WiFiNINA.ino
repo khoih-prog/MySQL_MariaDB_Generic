@@ -11,13 +11,14 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.1
+  Version: 1.0.2
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
-                                  (using Ethernet, EthernetLarge, Ethernet2, Ethernet3 library) and WiFiNINA
+                                  (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
+  1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
  **********************************************************************************************************************************/
 /*
   MySQL Connector/Arduino Example : basic select
@@ -142,28 +143,32 @@ void runQuery(void)
 
   Serial.println("1) Demonstrating using a dynamically allocated query.");
   // Initiate the query class instance
-  MySQL_Query *query_mem = new MySQL_Query(&conn);
+  MySQL_Query query_mem = MySQL_Query(&conn);
   
   // Execute the query
   Serial.println(query);
-  query_mem->execute(query.c_str());
+
+  // Execute the query
+  // KH, check if valid before fetching
+  if ( !query_mem.execute(query.c_str()) )
+  {
+    Serial.println("Querying error");
+    return;
+  }
   
   // Fetch the columns (required) but we don't use them.
-  column_names *columns = query_mem->get_columns();
+  column_names *columns = query_mem.get_columns();
 
   // Read the row (we are only expecting the one)
   do 
   {
-    row = query_mem->get_next_row();
+    row = query_mem.get_next_row();
     
     if (row != NULL) 
     {
       head_count = atol(row->values[0]);
     }
   } while (row != NULL);
-  
-  // Deleting the cursor also frees up memory used
-  delete query_mem;
 
   // Show the result
   Serial.print("  Toronto pop = ");

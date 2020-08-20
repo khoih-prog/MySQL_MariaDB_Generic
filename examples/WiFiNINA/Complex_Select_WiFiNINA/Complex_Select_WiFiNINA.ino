@@ -65,7 +65,7 @@ char default_table[]    = "city";               //"test_arduino";
 // Notice the "%lu" - that's a placeholder for the parameter we will
 // supply. See sprintf() documentation for more formatting specifier
 // options
-unsigned long QUERY_POPULATION = 8000000;
+unsigned long QUERY_POPULATION = 800000;
 
 const char QUERY_POP[] = "SELECT name, population FROM world.city WHERE population < %lu ORDER BY population DESC LIMIT 12;";
 
@@ -146,17 +146,22 @@ void runQuery(void)
   // to allocate one buffer for all formatted queries or allocate the
   // memory as needed (just make sure you allocate enough memory and
   // free it when you're done!).
-  sprintf(query, QUERY_POP, QUERY_POPULATION);
+  sprintf(query, QUERY_POP, QUERY_POPULATION + (( millis() % 100000 ) * 10) );
   Serial.println(query);
   
   // Initiate the query class instance
-  MySQL_Query *query_mem = new MySQL_Query(&conn);
+  MySQL_Query query_mem = MySQL_Query(&conn);
   
   // Execute the query
-  query_mem->execute(query);
+  // KH, check if valid before fetching
+  if ( !query_mem.execute(query) )
+  {
+    Serial.println("Querying error");
+    return;
+  }
   
   // Fetch the columns and print them
-  column_names *cols = query_mem->get_columns();
+  column_names *cols = query_mem.get_columns();
 
   for (int f = 0; f < cols->num_fields; f++) 
   {
@@ -175,7 +180,7 @@ void runQuery(void)
   
   do 
   {
-    row = query_mem->get_next_row();
+    row = query_mem.get_next_row();
     
     if (row != NULL) 
     {
@@ -192,9 +197,6 @@ void runQuery(void)
       Serial.println();
     }
   } while (row != NULL);
-  
-  // Deleting the cursor also frees up memory used
-  delete query_mem;
 }
 
 void loop()
@@ -216,5 +218,5 @@ void loop()
   Serial.println("\nSleeping...");
   Serial.println("================================================");
  
-  delay(60000);
+  delay(10000);
 }
