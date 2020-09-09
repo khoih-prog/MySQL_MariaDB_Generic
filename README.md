@@ -64,7 +64,7 @@ This [MySQL_MariaDB_Generic library](https://github.com/khoih-prog/MySQL_MariaDB
  1. [`Arduino IDE v1.8.12+` for Arduino](https://www.arduino.cc/en/Main/Software)
  2. [`ESP32 core v1.0.4+`](https://github.com/espressif/arduino-esp32/releases) for ESP32 boards. ***Ready*** from v1.0.0.
  3. [`ESP8266 core v2.7.3+` for Arduino](https://github.com/esp8266/Arduino#installing-with-boards-manager) for ESP8266 boards. ***Ready*** from v1.0.0.
- 4. `Arduino AVR core v1.8.2+` for Arduino (Use Arduino Board Manager).
+ 4. [`Arduino AVR core 1.8.3+`](https://github.com/arduino/ArduinoCore-avr) for Arduino AVR boards. Use Arduino Board Manager to install.
  5. [`Teensy core v1.53+`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0) boards. ***Ready*** from v1.0.0.
  6. [`Arduino SAM DUE core v1.6.12+`](https://www.arduino.cc/en/Guide/ArduinoDue) for SAM DUE ARM Cortex-M3 boards. ***Ready*** from v1.0.0.
  7. [`Arduino SAMD core v1.8.8+`](https://www.arduino.cc/en/Guide/ArduinoM0) for SAMD ARM Cortex-M0+ boards. ***Ready*** from v1.0.0.
@@ -72,7 +72,7 @@ This [MySQL_MariaDB_Generic library](https://github.com/khoih-prog/MySQL_MariaDB
  9. [`Seeeduino SAMD core 1.7.8+`](https://www.seeedstudio.com/) for SAMD21/SAMD51 boards (XIAO M0, Wio Terminal, etc.). ***Ready*** from v1.0.0.
 10. [`Adafruit nRF52 v0.20.5+`](https://www.adafruit.com/) for nRF52 boards such as AdaFruit Feather nRF52840 Express, NINA_B302_ublox, NINA_B112_ublox, etc. ***Ready*** from v1.0.0.
 11. [`Arduino Core for STM32 v1.9.0+`](https://github.com/khoih-prog/Arduino_Core_STM32) for STM32F/L/H/G/WB/MP1 boards. To install go to Arduino IDE, select Boards Manager, search for ***`STM32`***. ***Ready*** from v1.0.0.
-12. [`WiFiNINA_Generic library v1.7.0+`](https://github.com/khoih-prog/WiFiNINA_Generic) for WiFiNINA. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiNINA_Generic.svg?)](https://www.ardu-badge.com/WiFiNINA_Generic). ***Ready*** from v1.0.0.
+12. [`WiFiNINA_Generic library v1.7.1+`](https://github.com/khoih-prog/WiFiNINA_Generic) for WiFiNINA. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiNINA_Generic.svg?)](https://www.ardu-badge.com/WiFiNINA_Generic). ***Ready*** from v1.0.0.
 13. Depending on which Ethernet module/shield you're using :
    - [`Ethernet library v2.0.0+`](https://www.arduino.cc/en/Reference/Ethernet) for W5100, W5200 and W5500. ***Ready*** from v1.0.0.
    - [`Ethernet2 library v1.0.4+`](https://github.com/khoih-prog/Ethernet2) for W5500 (Deprecated, use Arduino Ethernet library). ***Ready*** from v1.0.0.
@@ -80,7 +80,7 @@ This [MySQL_MariaDB_Generic library](https://github.com/khoih-prog/MySQL_MariaDB
    - [`EthernetLarge library v2.0.0+`](https://github.com/OPEnSLab-OSU/EthernetLarge) for W5100, W5200 and W5500. ***Ready*** from v1.0.0.
    - [`UIPEthernet library v2.0.8+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60. ***Ready*** from v1.0.1.
    - [`STM32Ethernet library v1.2.0+`](https://github.com/stm32duino/STM32Ethernet) for built-in Ethernet LAN8742A on (Nucleo-144, Discovery). To be used with [`STM32duino_LwIP library v2.1.2+`](https://github.com/stm32duino/LwIP). ***Ready*** from v1.0.0. 
-14. [`ESP8266_AT_WebServer library v1.0.12+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer). ***Not Ready*** from v1.0.2.
+14. [`ESP8266_AT_WebServer library v1.0.12+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer). ***Not Ready*** in v1.0.2.
 15. [`WiFiEspAT library v1.3.0+`](https://github.com/jandrassy/WiFiEspAT) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiEspAT.svg?)](https://www.ardu-badge.com/WiFiEspAT). ***Ready*** from v1.0.0.
 
 ---
@@ -104,7 +104,7 @@ Another way to install is to:
 1. Install [VS Code](https://code.visualstudio.com/)
 2. Install [PlatformIO](https://platformio.org/platformio-ide)
 3. Install **MySQL_MariaDB_Generic** library by using [Library Manager](https://docs.platformio.org/en/latest/librarymanager/). Search for MySQL_MariaDB_Generic in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
-4. Use included [platformio.ini](examples/platformio/platformio.ini) file from examples to ensure that all dependent libraries will installed automatically.
+4. Use included [platformio.ini](platformio/platformio.ini) file from examples to ensure that all dependent libraries will installed automatically. Please visit documentation for the other options and examples at [Project Configuration File](https://docs.platformio.org/page/projectconf.html)
 
 ---
 
@@ -1184,7 +1184,7 @@ Sleeping...
 
 ---
 
-4. This is terminal debug output when running [Basic_Select_WiFi](examples/WiFi/Basic_Select_WiFi) on SAMD51 ***Seeeduino SEEED_XIAO_M0 using ESP8266-AT WiFi shield and WiFiEspAT library*** connecting to MariaDB Server.
+4. This is terminal debug output when running [Basic_Select_WiFi](examples/WiFi/Basic_Select_WiFi) on SAMD21 ***Seeeduino SEEED_XIAO_M0 using ESP8266-AT WiFi shield and WiFiEspAT library*** connecting to MariaDB Server.
 
 
 ```
