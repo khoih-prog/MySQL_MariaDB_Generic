@@ -11,7 +11,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.2
+  Version: 1.0.3
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -19,6 +19,7 @@
                                   (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
   1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
+  1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
  **********************************************************************************************************************************/
 
 #ifndef MYSQL_GENERIC_ETHERNET_H
@@ -41,7 +42,13 @@
 #elif USE_ETHERNET3
   #include "Ethernet3.h"
   EthernetClient client;
-  #warning Using Ethernet3 lib  
+  #warning Using Ethernet3 lib
+// KH, from v1.0.3
+#elif USE_ETHERNET_ENC
+  #include "EthernetENC.h"
+  EthernetClient client;
+  #warning Using ENC28J60 with EthernetENC lib
+//////  
 #elif USE_ETHERNET_ESP8266
   #include "Ethernet_ESP8266.h"
   EthernetClient client;
