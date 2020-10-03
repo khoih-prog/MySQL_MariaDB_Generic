@@ -11,7 +11,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.2
+  Version: 1.0.3
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -19,6 +19,7 @@
                                   (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
   1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
+  1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
  **********************************************************************************************************************************/
 
 #ifndef defines_h
@@ -294,8 +295,13 @@
 #define BOARD_TYPE      "AVR Mega"
 #endif
 
-#ifndef BOARD_NAME
-#define BOARD_NAME    BOARD_TYPE
+
+#if defined(ARDUINO_BOARD)
+  #define BOARD_NAME    ARDUINO_BOARD
+#else
+  #ifndef BOARD_NAME
+    #define BOARD_NAME    BOARD_TYPE
+  #endif
 #endif
 
 #include <SPI.h>
@@ -313,11 +319,40 @@
 #define USE_ETHERNET2             false //true
 #define USE_ETHERNET3             false //true
 #define USE_ETHERNET_ESP8266      false //true
+#define USE_ETHERNET_ENC          true
 #define USE_ETHERNET_LAN8742A     false //true
 
 // KH, from v1.0.1
-#define USE_UIP_ETHERNET          true
+#define USE_UIP_ETHERNET          false
 //////
+
+#if USE_ETHERNET
+  #warning Use Ethernet lib
+  #define SHIELD_TYPE           "W5x00 using Ethernet Library" 
+#elif USE_ETHERNET_LARGE
+  #warning Use EthernetLarge lib
+  #define SHIELD_TYPE           "W5x00 using EthernetLarge Library"
+#elif USE_ETHERNET2
+   #warning Use Ethernet2 lib
+  #define SHIELD_TYPE           "W5x00 using Ethernet2 Library"
+#elif USE_ETHERNET3
+   #warning Use Ethernet3 lib   
+  #define SHIELD_TYPE           "W5x00 using Ethernet3 Library" 
+#elif USE_ETHERNET_ESP8266
+  #warning Using Ethernet_ESP8266 lib 
+  #define SHIELD_TYPE           "W5x00 using Ethernet_ESP8266 Library" 
+#elif USE_ETHERNET_ENC
+  #warning Using EthernetENC lib
+  #define SHIELD_TYPE           "ENC28J60 using EthernetENC Library"
+#elif USE_ETHERNET_LAN8742A
+  #warning Using LAN8742A Ethernet & STM32Ethernet lib
+  #define SHIELD_TYPE           "LAN8742A Ethernet & STM32Ethernet Library"  
+#else
+  #define USE_ETHERNET          true
+  #include "Ethernet.h"
+  #warning Use Ethernet lib
+  #define SHIELD_TYPE           "W5x00 using Ethernet Library"
+#endif
 
 // Enter a MAC address and IP address for your controller below.
 #define NUMBER_OF_MAC      20

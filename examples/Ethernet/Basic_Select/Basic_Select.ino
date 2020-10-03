@@ -11,7 +11,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.2
+  Version: 1.0.3
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -19,6 +19,7 @@
                                   (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
   1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
+  1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
  **********************************************************************************************************************************/
 
 /*
@@ -86,36 +87,15 @@ void setup()
   Serial.begin(115200);
   while (!Serial); // wait for serial port to connect
 
-  Serial.print("\nStarting Basic_Select on " + String(BOARD_NAME));
+  Serial.println("\nStarting Basic_Select on " + String(BOARD_NAME) + ", with " + String(SHIELD_TYPE));
 
-#if USE_ETHERNET
-  Serial.println(" using W5x00/Ethernet Library");
-#elif USE_ETHERNET_LARGE
-  Serial.println(" using W5x00/EthernetLarge Library");
-#elif USE_ETHERNET2
-  Serial.println(" using W5x00/Ethernet2 Library");
-#elif USE_ETHERNET3
-  Serial.println(" using W5x00/Ethernet3 Library");
-#elif USE_ETHERNET_LAN8742A
-  Serial.println(" using LAN8742A/STM32Ethernet Library");
-#elif USE_ETHERNET_ESP8266
-  Serial.println(" using W5x00/Ethernet_ESP8266 Library");
-#elif USE_UIP_ETHERNET
-  Serial.println(" using ENC28J60/UIPEthernet Library");
-#elif USE_CUSTOM_ETHERNET
-  Serial.println(" using W5x00/Ethernet Custom Library");
-#else
-  // Backup if none is selected
-  Serial.println(" using W5x00/Ethernet Library");
-#endif
-
-  MYSQL_LOGWARN(F("========================="));
-  MYSQL_LOGWARN(F("Default SPI pinout:"));
-  MYSQL_LOGWARN1(F("MOSI:"), MOSI);
-  MYSQL_LOGWARN1(F("MISO:"), MISO);
-  MYSQL_LOGWARN1(F("SCK:"),  SCK);
-  MYSQL_LOGWARN1(F("SS:"),   SS);
-  MYSQL_LOGWARN(F("========================="));
+  MYSQL_LOGERROR(F("========================================="));
+  MYSQL_LOGERROR(F("Default SPI pinout:"));
+  MYSQL_LOGERROR1(F("MOSI:"), MOSI);
+  MYSQL_LOGERROR1(F("MISO:"), MISO);
+  MYSQL_LOGERROR1(F("SCK:"),  SCK);
+  MYSQL_LOGERROR1(F("SS:"),   SS);
+  MYSQL_LOGERROR(F("========================================="));
 
 #if defined(ESP8266)
   // For ESP8266, change for other boards if necessary
@@ -123,9 +103,9 @@ void setup()
     #define USE_THIS_SS_PIN   D2    // For ESP8266
   #endif
   
-    MYSQL_LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
+    MYSQL_LOGERROR1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
   
-  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
+  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
     // For ESP8266
     // Pin                D0(GPIO16)    D1(GPIO5)    D2(GPIO4)    D3(GPIO0)    D4(GPIO2)    D8
     // Ethernet           0                 X            X            X            X        0
@@ -146,7 +126,7 @@ void setup()
     Ethernet.setCsPin (USE_THIS_SS_PIN);
     Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
   
-  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET_LARGE || USE_ETHERNET_ENC )
 
 #elif defined(ESP32)
 
@@ -162,10 +142,10 @@ void setup()
     #define USE_THIS_SS_PIN   22    // For ESP32
   #endif
 
-  MYSQL_LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
+  MYSQL_LOGERROR1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
 
   // For other boards, to change if necessary
-  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
+  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
     // Must use library patch for Ethernet, EthernetLarge libraries
     // ESP32 => GPIO2,4,5,13,15,21,22 OK with Ethernet, Ethernet2, EthernetLarge
     // ESP32 => GPIO2,4,5,15,21,22 OK with Ethernet3
@@ -182,7 +162,7 @@ void setup()
     Ethernet.setCsPin (USE_THIS_SS_PIN);
     Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
 
-  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET_LARGE  || USE_ETHERNET_ENC )
 
 #else   //defined(ESP8266)
   // unknown board, do nothing, use default SS = 10
@@ -190,10 +170,10 @@ void setup()
     #define USE_THIS_SS_PIN   10    // For other boards
   #endif
 
-  MYSQL_LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
+  MYSQL_LOGERROR3(F("Board :"), BOARD_NAME, F(", setCsPin:"), USE_THIS_SS_PIN);
 
   // For other boards, to change if necessary
-  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
+  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
     // Must use library patch for Ethernet, Ethernet2, EthernetLarge libraries
   
     Ethernet.init (USE_THIS_SS_PIN);
@@ -207,7 +187,7 @@ void setup()
     Ethernet.setCsPin (USE_THIS_SS_PIN);
     Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
   
-  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET_LARGE || USE_ETHERNET_ENC )
 
 #endif    //defined(ESP8266)
 
@@ -219,13 +199,13 @@ void setup()
   Ethernet.begin(mac[index]);
 
   // Just info to know how to connect correctly
-  MYSQL_LOGWARN(F("========================="));
-  MYSQL_LOGWARN(F("Currently Used SPI pinout:"));
-  MYSQL_LOGWARN1(F("MOSI:"), MOSI);
-  MYSQL_LOGWARN1(F("MISO:"), MISO);
-  MYSQL_LOGWARN1(F("SCK:"),  SCK);
-  MYSQL_LOGWARN1(F("SS:"),   SS);
-  MYSQL_LOGWARN(F("========================="));
+  MYSQL_LOGERROR(F("========================================="));
+  MYSQL_LOGERROR(F("Currently Used SPI pinout:"));
+  MYSQL_LOGERROR1(F("MOSI:"), MOSI);
+  MYSQL_LOGERROR1(F("MISO:"), MISO);
+  MYSQL_LOGERROR1(F("SCK:"),  SCK);
+  MYSQL_LOGERROR1(F("SS:"),   SS);
+  MYSQL_LOGERROR(F("========================================="));
 
   Serial.print("Using mac index = ");
   Serial.println(index);

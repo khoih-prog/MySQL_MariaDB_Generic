@@ -10,7 +10,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.2
+  Version: 1.0.3
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -18,6 +18,7 @@
                                   (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
   1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
+  1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
  **********************************************************************************************************************************/
 
 #ifndef defines_h
@@ -308,8 +309,12 @@
   #define BOARD_TYPE    "Unknown Board"
 #endif
 
-#ifndef BOARD_NAME
-  #define BOARD_NAME    BOARD_TYPE
+#if defined(ARDUINO_BOARD)
+  #define BOARD_NAME    ARDUINO_BOARD
+#else
+  #ifndef BOARD_NAME
+    #define BOARD_NAME    BOARD_TYPE
+  #endif
 #endif
 
 #define DEBUG_WIFININA_PORT     Serial
