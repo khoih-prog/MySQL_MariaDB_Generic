@@ -11,11 +11,16 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  x-special/nautilus-clipboard
-copy
-file:///home/kh/Arduino/khoih-prog_working/MySQL_MariaDB_Generic_GitHub/examples/WiFiNINA/Basic_Insert_WiFiNINA/Credentials.h
-file:///home/kh/Arduino/khoih-prog_working/MySQL_MariaDB_Generic_GitHub/examples/WiFiNINA/Basic_Insert_WiFiNINA/defines.h
+  Version: 1.1.0
 
+  Version Modified By   Date      Comments
+  ------- -----------  ---------- -----------
+  1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
+                                  (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
+  1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
+  1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
+  1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
+  1.1.0   K Hoang      08/06/2021 Add support to RP2040-based boards such as Nano_RP2040_Connect, RASPBERRY_PI_PICO. etc.
  **********************************************************************************************************************************/
 /*
   MySQL Connector/Arduino Example : basic select
@@ -60,7 +65,7 @@ IPAddress server_addr(192, 168, 2, 112);
 
 uint16_t server_port = 5698;    //3306;
 
-char default_database[] = "world";              //"test_arduino";
+char default_database[] = "world";       //"test_arduino";
 char default_table[]    = "city";        //"test_arduino";
 
 String default_column   = "population"; 
@@ -78,20 +83,11 @@ int status = WL_IDLE_STATUS;
 
 void printWifiStatus()
 {
-  // print the SSID of the network you're attached to:
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
-
-  // print your board's IP address:
-  IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
+  // print the SSID and IP address of the network you're attached to:
+  MYSQL_DISPLAY3("SSID:", WiFi.SSID(), "IP Address:", WiFi.localIP());
 
   // print the received signal strength:
-  long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
+  MYSQL_DISPLAY2("Signal strength (RSSI):", WiFi.RSSI(), "dBm");
 }
 
 void setup()
@@ -99,12 +95,13 @@ void setup()
   Serial.begin(115200);
   while (!Serial); // wait for serial port to connect
 
-  Serial.println("\nStarting Basic_Select_WiFiNINA on " + String(BOARD_NAME));
+  MYSQL_DISPLAY1("\nStarting Basic_Select_WiFiNINA on", BOARD_NAME);
+  MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_MODULE)
   {
-    Serial.println("Communication with WiFi module failed!");
+    MYSQL_DISPLAY("Communication with WiFi module failed!");
     // don't continue
     while (true);
   }
@@ -113,48 +110,51 @@ void setup()
 
   if (fv < WIFI_FIRMWARE_LATEST_VERSION)
   {
-    Serial.println("Please upgrade the firmware");
+    MYSQL_DISPLAY("Please upgrade the firmware");
   }
 
   // attempt to connect to Wifi network:
   while (status != WL_CONNECTED)
   {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
+    MYSQL_DISPLAY1("Attempting to connect to SSID:", ssid);
     // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid, pass);
+
+    // wait 10 seconds for connection:
+    //delay(10000);
   }
 
   printWifiStatus();
 
-  Serial.print("Connecting to SQL Server @ ");
-  Serial.print(server_addr);
-  Serial.println(String(", Port = ") + server_port);
-  Serial.println(String("User = ") + user + String(", PW = ") + password + String(", DB = ") + default_database);
+  // End WiFi section
+
+  MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
+  MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);
 }
 
-void runQuery(void)
+void runQuery()
 {
   row_values *row = NULL;
   long head_count = 0;
 
-  Serial.println("1) Demonstrating using a dynamically allocated query.");
+  MYSQL_DISPLAY("1) Demonstrating using a dynamically allocated query.");
   // Initiate the query class instance
   MySQL_Query query_mem = MySQL_Query(&conn);
   
   // Execute the query
-  Serial.println(query);
+  MYSQL_DISPLAY(query);
 
   // Execute the query
   // KH, check if valid before fetching
   if ( !query_mem.execute(query.c_str()) )
   {
-    Serial.println("Querying error");
+    MYSQL_DISPLAY("Querying error");
     return;
   }
   
   // Fetch the columns (required) but we don't use them.
-  column_names *columns = query_mem.get_columns();
+  //column_names *columns = query_mem.get_columns();
+  query_mem.get_columns();
 
   // Read the row (we are only expecting the one)
   do 
@@ -168,15 +168,14 @@ void runQuery(void)
   } while (row != NULL);
 
   // Show the result
-  Serial.print("  Toronto pop = ");
-  Serial.println(head_count);
+  MYSQL_DISPLAY1("  Toronto pop =", head_count);
 
   delay(500);
 
-  Serial.println("2) Demonstrating using a local, global query.");
+  MYSQL_DISPLAY("2) Demonstrating using a local, global query.");
   
   // Execute the query
-  Serial.println(query);
+  MYSQL_DISPLAY(query);
   sql_query.execute(query.c_str());
   
   // Fetch the columns (required) but we don't use them.
@@ -196,15 +195,13 @@ void runQuery(void)
   sql_query.close();
 
   // Show the result but this time do some math on it
-  Serial.print("  Toronto pop = ");
-  Serial.println(head_count);
-  Serial.print("  Toronto pop increased by 11725 = ");
-  Serial.println(head_count + 11725);
+  MYSQL_DISPLAY1("  Toronto pop =", head_count);
+  MYSQL_DISPLAY1("  Toronto pop increased by 11725 =", head_count + 11725);
 }
 
 void loop()
 {
-  Serial.println("Connecting...");
+  MYSQL_DISPLAY("Connecting...");
   
   //if (conn.connect(server_addr, server_port, user, password))
   if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
@@ -215,11 +212,11 @@ void loop()
   } 
   else 
   {
-    Serial.println("\nConnect failed. Trying again on next iteration.");
+    MYSQL_DISPLAY("\nConnect failed. Trying again on next iteration.");
   }
 
-  Serial.println("\nSleeping...");
-  Serial.println("================================================");
+  MYSQL_DISPLAY("\nSleeping...");
+  MYSQL_DISPLAY("================================================");
  
   delay(60000);
 }

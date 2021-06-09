@@ -11,7 +11,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.3
+  Version: 1.1.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -20,6 +20,7 @@
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
   1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
   1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
+  1.1.0   K Hoang      08/06/2021 Add support to RP2040-based boards such as Nano_RP2040_Connect, RASPBERRY_PI_PICO. etc.
  **********************************************************************************************************************************/
  
 /*
@@ -62,20 +63,11 @@ int status = WL_IDLE_STATUS;
 
 void printWifiStatus()
 {
-  // print the SSID of the network you're attached to:
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
-
-  // print your board's IP address:
-  IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
+  // print the SSID and IP address of the network you're attached to:
+  MYSQL_DISPLAY3("SSID:", WiFi.SSID(), "IP Address:", WiFi.localIP());
 
   // print the received signal strength:
-  long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
+  MYSQL_DISPLAY2("Signal strength (RSSI):", WiFi.RSSI(), "dBm");
 }
 
 void setup()
@@ -83,12 +75,13 @@ void setup()
   Serial.begin(115200);
   while (!Serial); // wait for serial port to connect
 
-  Serial.println("\nStarting Reboot_WiFiNINA on " + String(BOARD_NAME));
+  MYSQL_DISPLAY1("\nStarting Reboot_WiFiNINA on", BOARD_NAME);
+  MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_MODULE)
   {
-    Serial.println("Communication with WiFi module failed!");
+    MYSQL_DISPLAY("Communication with WiFi module failed!");
     // don't continue
     while (true);
   }
@@ -97,14 +90,13 @@ void setup()
 
   if (fv < WIFI_FIRMWARE_LATEST_VERSION)
   {
-    Serial.println("Please upgrade the firmware");
+    MYSQL_DISPLAY("Please upgrade the firmware");
   }
 
   // attempt to connect to Wifi network:
   while (status != WL_CONNECTED)
   {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
+    MYSQL_DISPLAY1("Attempting to connect to SSID:", ssid);
     // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid, pass);
 
@@ -116,17 +108,15 @@ void setup()
 
   // End WiFi section
 
-  Serial.print("Connecting to SQL Server @ ");
-  Serial.print(server_addr);
-  Serial.println(String(", Port = ") + server_port);
-  Serial.println(String("User = ") + user + String(", PW = ") + password);
+  MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
+  MYSQL_DISPLAY3("User =", user, ", PW =", password);
 
   if (conn.connect(server_addr, server_port, user, password))
   {
     delay(1000);
   }
   else
-    Serial.println("Connection failed.");
+    MYSQL_DISPLAY("Connection failed.");
 }
 
 // Begin reboot code
@@ -136,48 +126,53 @@ int num_fails;                      // variable for number of failure attempts
 void soft_reset()
 {
 #if WIFININA_USE_SAMD
-#if ( defined(__SAMD51__) || defined(__SAMD51J20A__) || defined(__SAMD51J19A__) || defined(__SAMD51G19A__)  )
-  // For SAMD51
-  // see Table 17-5 Timeout Period (valid values 0-11)
-  WDT->CONFIG.reg = 5;
-  WDT->CTRLA.reg = WDT_CTRLA_ENABLE;
-  // To check if OK or bit.ENABLE/CLEAR
-  while (WDT->SYNCBUSY.bit.WEN == 1);
-
-  // use the WDT watchdog timer to force a system reset.
-  WDT->CLEAR.reg = 0x00;
-  // To check if OK or bit.ENABLE/CLEAR
-  while (WDT->SYNCBUSY.bit.WEN == 1);
-#else
-  // For SAMD21, etc
-  // see Table 17-5 Timeout Period (valid values 0-11)
-  WDT->CONFIG.reg = 5;
-  WDT->CTRL.reg = WDT_CTRL_ENABLE;
-  while (WDT->STATUS.bit.SYNCBUSY == 1);
-
-  // use the WDT watchdog timer to force a system reset.
-  WDT->CLEAR.reg = 0x00;
-  while (WDT->STATUS.bit.SYNCBUSY == 1);
-#endif
+  #if ( defined(__SAMD51__) || defined(__SAMD51J20A__) || defined(__SAMD51J19A__) || defined(__SAMD51G19A__)  )
+    // For SAMD51
+    // see Table 17-5 Timeout Period (valid values 0-11)
+    WDT->CONFIG.reg = 5;
+    WDT->CTRLA.reg = WDT_CTRLA_ENABLE;
+    // To check if OK or bit.ENABLE/CLEAR
+    while (WDT->SYNCBUSY.bit.WEN == 1);
+  
+    // use the WDT watchdog timer to force a system reset.
+    WDT->CLEAR.reg = 0x00;
+    // To check if OK or bit.ENABLE/CLEAR
+    while (WDT->SYNCBUSY.bit.WEN == 1);
+  #else
+    // For SAMD21, etc
+    // see Table 17-5 Timeout Period (valid values 0-11)
+    WDT->CONFIG.reg = 5;
+    WDT->CTRL.reg = WDT_CTRL_ENABLE;
+    while (WDT->STATUS.bit.SYNCBUSY == 1);
+  
+    // use the WDT watchdog timer to force a system reset.
+    WDT->CLEAR.reg = 0x00;
+    while (WDT->STATUS.bit.SYNCBUSY == 1);
+  #endif
 #elif WIFININA_USE_NRF52
   //delay(1000);
   // Restart for nRF52
   NVIC_SystemReset();
 #elif WIFININA_USE_SAMDUE
-  void(*resetFunc)(void) = 0;
+  void(*resetFunc)() = 0;
   resetFunc();
 #elif WIFININA_USE_STM32
-  void(*resetFunc)(void) = 0;
+  void(*resetFunc)() = 0;
   resetFunc();
 
 #elif WIFININA_USE_TEENSY
-#if defined(__IMXRT1062__)
-  // Teensy 4.1/4.0
-  SCB_AIRCR = 0x05FA0004; //write value for restart for Teensy
-#else
-  void(*resetFunc)(void) = 0;
-  resetFunc();
-#endif
+  #if defined(__IMXRT1062__)
+    // Teensy 4.1/4.0
+    SCB_AIRCR = 0x05FA0004; //write value for restart for Teensy
+  #else
+    void(*resetFunc)() = 0;
+    resetFunc();
+  #endif
+
+#elif ( defined(WIFININA_USE_RP2040) && defined(ARDUINO_ARCH_MBED) )
+
+  NVIC_SystemReset();
+  
 #endif
 }
 
@@ -187,14 +182,14 @@ void loop()
 {
   if (conn.connected())
   {
-    Serial.println("Running a query: SHOW DATABASES");
+    MYSQL_DISPLAY("Running a query: SHOW DATABASES");
     
     // Execute the query
 
     // KH, check if valid before fetching
     if ( !query.execute("SHOW DATABASES") )
     {
-      Serial.println("Querying error");
+      MYSQL_DISPLAY("Querying error");
       return;
     }
     //////
@@ -208,10 +203,8 @@ void loop()
   }
   else
   {
-    Serial.print("Connecting to SQL Server @ ");
-    Serial.print(server_addr);
-    Serial.println(String(", Port = ") + server_port);
-    Serial.println(String("User = ") + user + String(", PW = ") + password);
+    MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
+    MYSQL_DISPLAY3("User =", user, ", PW =", password);
 
     //if (conn.connect(server_addr, server_port, user, password))
     if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
@@ -221,11 +214,11 @@ void loop()
     else
     {
       num_fails++;
-      Serial.println("Connect failed!");
+      MYSQL_DISPLAY("Connect failed!");
 
       if (num_fails == MAX_FAILED_CONNECTS)
       {
-        Serial.println("Ok, that's it. I'm outta here. Rebooting...");
+        MYSQL_DISPLAY("Ok, that's it. I'm outta here. Rebooting...");
         delay(2000);
         // Here we tell the Arduino to reboot by redirecting the instruction
         // pointer to the "top" or position 0. This is a soft reset and may
@@ -235,6 +228,6 @@ void loop()
     }
   }
 
-  Serial.println("\nSleeping...");
-  Serial.println("==========================================");
+  MYSQL_DISPLAY("\nSleeping...");
+  MYSQL_DISPLAY("==========================================");
 }

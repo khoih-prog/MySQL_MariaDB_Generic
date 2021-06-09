@@ -11,7 +11,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.3
+  Version: 1.1.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -20,6 +20,7 @@
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
   1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
   1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
+  1.1.0   K Hoang      08/06/2021 Add support to RP2040-based boards such as Nano_RP2040_Connect, RASPBERRY_PI_PICO. etc.
  **********************************************************************************************************************************/
 /*
   MySQL Connector/Arduino Example : basic select
@@ -83,14 +84,15 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
 
-  Serial.println("\nStarting Basic_Select_WiFi on " + String(BOARD_NAME));
+  MYSQL_DISPLAY1("\nStarting Basic_Select_WiFi on", BOARD_NAME);
+  MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
   // Remember to initialize your WiFi module
 #if ( USING_WIFI_ESP8266_AT  || USING_WIFIESPAT_LIB ) 
   #if ( USING_WIFI_ESP8266_AT )
-    Serial.println("Using ESP8266_AT/ESP8266_AT_WebServer Library");
+    MYSQL_DISPLAY("Using ESP8266_AT/ESP8266_AT_WebServer Library");
   #elif ( USING_WIFIESPAT_LIB )
-    Serial.println("Using WiFiEspAT Library");
+    MYSQL_DISPLAY("Using WiFiEspAT Library");
   #endif
   
   // initialize serial for ESP module
@@ -98,61 +100,58 @@ void setup()
   // initialize ESP module
   WiFi.init(&EspSerial);
 
-  Serial.println(F("WiFi shield init done"));
+  MYSQL_DISPLAY(F("WiFi shield init done"));
 
   // check for the presence of the shield
   if (WiFi.status() == WL_NO_SHIELD)
   {
-    Serial.println(F("WiFi shield not present"));
+    MYSQL_DISPLAY(F("WiFi shield not present"));
     // don't continue
     while (true);
   }
 #endif
 
   // Begin WiFi section
-  Serial.println(String("Connecting to ") + ssid);
+  MYSQL_DISPLAY1("Connecting to", ssid);
 
   WiFi.begin(ssid, pass);
   
   while (WiFi.status() != WL_CONNECTED) 
   {
     delay(500);
-    Serial.print(".");
+    MYSQL_DISPLAY0(".");
   }
 
   // print out info about the connection:
-  Serial.print("Connected to network. My IP address is: ");
-  Serial.println(WiFi.localIP());
-  
-  //Serial.println("Connecting...");
-  Serial.print("Connecting to SQL Server @ ");
-  Serial.print(server_addr);
-  Serial.println(String(", Port = ") + server_port);
-  Serial.println(String("User = ") + user + String(", PW = ") + password + String(", DB = ") + default_database);
+  MYSQL_DISPLAY1("Connected to network. My IP address is:", WiFi.localIP());
+
+  MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
+  MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);
 }
 
-void runQuery(void)
+void runQuery()
 {
   row_values *row = NULL;
   long head_count = 0;
 
-  Serial.println("1) Demonstrating using a dynamically allocated query.");
+  MYSQL_DISPLAY("1) Demonstrating using a dynamically allocated query.");
   // Initiate the query class instance
   MySQL_Query query_mem = MySQL_Query(&conn);
   
   // Execute the query
-  Serial.println(query);
+  MYSQL_DISPLAY(query);
 
   // Execute the query
   // KH, check if valid before fetching
   if ( !query_mem.execute(query.c_str()) )
   {
-    Serial.println("Querying error");
+    MYSQL_DISPLAY("Querying error");
     return;
   }
   
   // Fetch the columns (required) but we don't use them.
-  column_names *columns = query_mem.get_columns();
+  //column_names *columns = query_mem.get_columns();
+  query_mem.get_columns();
 
   // Read the row (we are only expecting the one)
   do 
@@ -166,15 +165,14 @@ void runQuery(void)
   } while (row != NULL);
 
   // Show the result
-  Serial.print("  Toronto pop = ");
-  Serial.println(head_count);
+  MYSQL_DISPLAY1("  Toronto pop =", head_count);
 
   delay(500);
 
-  Serial.println("2) Demonstrating using a local, global query.");
+  MYSQL_DISPLAY("2) Demonstrating using a local, global query.");
   
   // Execute the query
-  Serial.println(query);
+  MYSQL_DISPLAY(query);
   sql_query.execute(query.c_str());
   
   // Fetch the columns (required) but we don't use them.
@@ -194,15 +192,13 @@ void runQuery(void)
   sql_query.close();
 
   // Show the result but this time do some math on it
-  Serial.print("  Toronto pop = ");
-  Serial.println(head_count);
-  Serial.print("  Toronto pop increased by 11725 = ");
-  Serial.println(head_count + 11725);
+  MYSQL_DISPLAY1("  Toronto pop =", head_count);
+  MYSQL_DISPLAY1("  Toronto pop increased by 11725 =", head_count + 11725);
 }
 
 void loop()
 {
-  Serial.println("Connecting...");
+  MYSQL_DISPLAY("Connecting...");
   
   //if (conn.connect(server_addr, server_port, user, password))
   if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
@@ -213,11 +209,11 @@ void loop()
   } 
   else 
   {
-    Serial.println("\nConnect failed. Trying again on next iteration.");
+    MYSQL_DISPLAY("\nConnect failed. Trying again on next iteration.");
   }
 
-  Serial.println("\nSleeping...");
-  Serial.println("================================================");
+  MYSQL_DISPLAY("\nSleeping...");
+  MYSQL_DISPLAY("================================================");
  
   delay(60000);
 }

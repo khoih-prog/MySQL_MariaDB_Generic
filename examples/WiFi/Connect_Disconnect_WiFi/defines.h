@@ -10,15 +10,6 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.3
-
-  Version Modified By   Date      Comments
-  ------- -----------  ---------- -----------
-  1.0.0   K Hoang      13/08/2020 Initial coding/porting to support nRF52, SAM DUE and SAMD21/SAMD51 boards using W5x00 Ethernet
-                                  (Ethernet, EthernetLarge, Ethernet2, Ethernet3 library), WiFiNINA and ESP8266/ESP32-AT shields
-  1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
-  1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
-  1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
  **********************************************************************************************************************************/
 
 #ifndef defines_h
@@ -86,6 +77,14 @@
     #undef WIFI_USE_STM32
   #endif
   #define WIFI_USE_STM32      true
+#endif
+
+#if ( defined(ARDUINO_NANO_RP2040_CONNECT) || defined(ARDUINO_ARCH_RP2040) || defined(ARDUINO_RASPBERRY_PI_PICO) || \
+      defined(ARDUINO_GENERIC_RP2040) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) )
+  #if defined(WIFI_USE_RP2040)
+    #undef WIFI_USE_RP2040
+  #endif
+  #define WIFI_USE_RP2040          true
 #endif
 
 #ifdef CORE_TEENSY
@@ -327,12 +326,49 @@
 
 #elif (ESP32)
   #warning ESP32 board selected
-  #define BOARD_TYPE    ARDUINO_BOARD  
+  #define BOARD_TYPE    ARDUINO_BOARD
+
+#elif defined(WIFI_USE_RP2040) && !defined(ARDUINO_ARCH_MBED)  
+
+  // For RP2040
+  #if ( USING_WIFI_ESP8266_AT  || USING_WIFIESPAT_LIB )
+    #define EspSerial Serial1
+  #endif
   
+#elif defined(WIFI_USE_RP2040) && defined(ARDUINO_ARCH_MBED)
+
+  #warning Using ARDUINO_ARCH_MBED
+
+    // For MBED RP2040
+  #if ( USING_WIFI_ESP8266_AT  || USING_WIFIESPAT_LIB )
+    #define EspSerial Serial1
+  #endif
+  
+  #if ( defined(ARDUINO_NANO_RP2040_CONNECT)    || defined(ARDUINO_RASPBERRY_PI_PICO) || \
+        defined(ARDUINO_GENERIC_RP2040) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) )
+    // Only undef known BOARD_NAME to use better one
+    #undef BOARD_NAME
+  #endif
+  
+  #if defined(ARDUINO_RASPBERRY_PI_PICO)
+    #define BOARD_NAME      "MBED RASPBERRY_PI_PICO"
+  #elif defined(ARDUINO_ADAFRUIT_FEATHER_RP2040)
+    #define BOARD_NAME      "MBED ADAFRUIT_FEATHER_RP2040"
+  #elif defined(ARDUINO_GENERIC_RP2040)
+    #define BOARD_NAME      "MBED GENERIC_RP2040"
+  #elif defined(ARDUINO_NANO_RP2040_CONNECT) 
+    #define BOARD_NAME      "MBED NANO_RP2040_CONNECT"
+  #else
+    // Use default BOARD_NAME if exists
+    #if !defined(BOARD_NAME)
+      #define BOARD_NAME      "MBED Unknown RP2040"
+    #endif
+  #endif
+ 
 #else
   // For Mega
   #if ( USING_WIFI_ESP8266_AT  || USING_WIFIESPAT_LIB )
-    #define EspSerial Serial3
+    #define EspSerial Serial1
   #endif
   
   #define BOARD_TYPE      "AVR Mega"

@@ -11,7 +11,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.3
+  Version: 1.1.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -20,6 +20,7 @@
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
   1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
   1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
+  1.1.0   K Hoang      08/06/2021 Add support to RP2040-based boards such as Nano_RP2040_Connect, RASPBERRY_PI_PICO. etc.
  **********************************************************************************************************************************/
 /*
   MySQL Connector/Arduino Example : complex select
@@ -79,20 +80,11 @@ int status = WL_IDLE_STATUS;
 
 void printWifiStatus()
 {
-  // print the SSID of the network you're attached to:
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
-
-  // print your board's IP address:
-  IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
+  // print the SSID and IP address of the network you're attached to:
+  MYSQL_DISPLAY3("SSID:", WiFi.SSID(), "IP Address:", WiFi.localIP());
 
   // print the received signal strength:
-  long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
+  MYSQL_DISPLAY2("Signal strength (RSSI):", WiFi.RSSI(), "dBm");
 }
 
 void setup()
@@ -100,12 +92,13 @@ void setup()
   Serial.begin(115200);
   while (!Serial); // wait for serial port to connect
 
-  Serial.println("\nStarting Complex_Select_WiFiNINA on " + String(BOARD_NAME));
+  MYSQL_DISPLAY1("\nStarting Complex_Select_WiFiNINA on", BOARD_NAME);
+  MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_MODULE)
   {
-    Serial.println("Communication with WiFi module failed!");
+    MYSQL_DISPLAY("Communication with WiFi module failed!");
     // don't continue
     while (true);
   }
@@ -114,14 +107,13 @@ void setup()
 
   if (fv < WIFI_FIRMWARE_LATEST_VERSION)
   {
-    Serial.println("Please upgrade the firmware");
+    MYSQL_DISPLAY("Please upgrade the firmware");
   }
 
   // attempt to connect to Wifi network:
   while (status != WL_CONNECTED)
   {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
+    MYSQL_DISPLAY1("Attempting to connect to SSID:", ssid);
     // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid, pass);
 
@@ -131,16 +123,16 @@ void setup()
 
   printWifiStatus();
 
-  Serial.print("Connecting to SQL Server @ ");
-  Serial.print(server_addr);
-  Serial.println(String(", Port = ") + server_port);
-  Serial.println(String("User = ") + user + String(", PW = ") + password + String(", DB = ") + default_database);
+  // End WiFi section
+
+  MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
+  MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);
 }
 
-void runQuery(void)
+void runQuery()
 {
-  Serial.println("====================================================");
-  Serial.println("> Running SELECT with dynamically supplied parameter");
+  MYSQL_DISPLAY("====================================================");
+  MYSQL_DISPLAY("> Running SELECT with dynamically supplied parameter");
   
   // Supply the parameter for the query
   // Here we use the QUERY_POP as the format string and query as the
@@ -149,7 +141,7 @@ void runQuery(void)
   // memory as needed (just make sure you allocate enough memory and
   // free it when you're done!).
   sprintf(query, QUERY_POP, QUERY_POPULATION + (( millis() % 100000 ) * 10) );
-  Serial.println(query);
+  MYSQL_DISPLAY(query);
   
   // Initiate the query class instance
   MySQL_Query query_mem = MySQL_Query(&conn);
@@ -158,7 +150,7 @@ void runQuery(void)
   // KH, check if valid before fetching
   if ( !query_mem.execute(query) )
   {
-    Serial.println("Querying error");
+    MYSQL_DISPLAY("Querying error");
     return;
   }
   
@@ -167,15 +159,15 @@ void runQuery(void)
 
   for (int f = 0; f < cols->num_fields; f++) 
   {
-    Serial.print(cols->fields[f]->name);
+    MYSQL_DISPLAY0(cols->fields[f]->name);
     
     if (f < cols->num_fields - 1) 
     {
-      Serial.print(",");
+      MYSQL_DISPLAY0(",");
     }
   }
   
-  Serial.println();
+  MYSQL_DISPLAY();
   
   // Read the rows and print them
   row_values *row = NULL;
@@ -188,22 +180,22 @@ void runQuery(void)
     {
       for (int f = 0; f < cols->num_fields; f++) 
       {
-        Serial.print(row->values[f]);
+        MYSQL_DISPLAY0(row->values[f]);
         
         if (f < cols->num_fields - 1) 
         {
-          Serial.print(",");
+          MYSQL_DISPLAY0(",");
         }
       }
       
-      Serial.println();
+      MYSQL_DISPLAY();
     }
   } while (row != NULL);
 }
 
 void loop()
 {
-  Serial.println("Connecting...");
+  MYSQL_DISPLAY("Connecting...");
   
   //if (conn.connect(server_addr, server_port, user, password))
   if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
@@ -214,11 +206,11 @@ void loop()
   } 
   else 
   {
-    Serial.println("\nConnect failed. Trying again on next iteration.");
+    MYSQL_DISPLAY("\nConnect failed. Trying again on next iteration.");
   }
 
-  Serial.println("\nSleeping...");
-  Serial.println("================================================");
+  MYSQL_DISPLAY("\nSleeping...");
+  MYSQL_DISPLAY("================================================");
  
   delay(10000);
 }

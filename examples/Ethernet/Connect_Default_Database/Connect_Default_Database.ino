@@ -11,7 +11,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.3
+  Version: 1.1.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -20,6 +20,7 @@
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
   1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
   1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
+  1.1.0   K Hoang      08/06/2021 Add support to RP2040-based boards such as Nano_RP2040_Connect, RASPBERRY_PI_PICO. etc.
  **********************************************************************************************************************************/
 /*
   MySQL Connector/Arduino Example : connect with default database
@@ -61,7 +62,7 @@ uint16_t server_port = 5698;    //3306;
 char user[]             = "invited-guest";              // MySQL user login username
 char password[]         = "the-invited-guest";          // MySQL user login password
 
-char default_db[]       = "world";
+char default_database[]       = "world";
 
 MySQL_Connection conn((Client *)&client);
 
@@ -70,7 +71,8 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
 
-  Serial.println("\nStarting Connect_Default_Database on " + String(BOARD_NAME) + ", with " + String(SHIELD_TYPE));
+  MYSQL_DISPLAY3("\nStarting Connect_Default_Database on", BOARD_NAME, ", with", SHIELD_TYPE);
+  MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
   MYSQL_LOGERROR(F("========================================="));
   MYSQL_LOGERROR(F("Default SPI pinout:"));
@@ -147,6 +149,45 @@ void setup()
 
   #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET_LARGE  || USE_ETHERNET_ENC )
 
+#elif ETHERNET_USE_RPIPICO
+
+  pinMode(USE_THIS_SS_PIN, OUTPUT);
+  digitalWrite(USE_THIS_SS_PIN, HIGH);
+  
+  // ETHERNET_USE_RPIPICO, use default SS = 5 or 17
+  #ifndef USE_THIS_SS_PIN
+    #if defined(ARDUINO_ARCH_MBED)
+      #define USE_THIS_SS_PIN   5     // For Arduino Mbed core
+    #else  
+      #define USE_THIS_SS_PIN   17    // For E.Philhower core
+    #endif
+  #endif
+
+  MYSQL_LOGERROR1(F("RPIPICO setCsPin:"), USE_THIS_SS_PIN);
+
+  // For other boards, to change if necessary
+  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
+    // Must use library patch for Ethernet, EthernetLarge libraries
+    // For RPI Pico using Arduino Mbed RP2040 core
+    // SCK: GPIO2,  MOSI: GPIO3, MISO: GPIO4, SS/CS: GPIO5
+    // For RPI Pico using E. Philhower RP2040 core
+    // SCK: GPIO18,  MOSI: GPIO19, MISO: GPIO16, SS/CS: GPIO17
+    // Default pin 5/17 to SS/CS
+  
+    //Ethernet.setCsPin (USE_THIS_SS_PIN);
+    Ethernet.init (USE_THIS_SS_PIN);
+  
+  #elif USE_ETHERNET3
+    // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+    #ifndef ETHERNET3_MAX_SOCK_NUM
+      #define ETHERNET3_MAX_SOCK_NUM      4
+    #endif
+  
+    Ethernet.setCsPin (USE_THIS_SS_PIN);
+    Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+    
+  #endif    //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+  
 #else   //defined(ESP8266)
   // unknown board, do nothing, use default SS = 10
   #ifndef USE_THIS_SS_PIN
@@ -190,35 +231,30 @@ void setup()
   MYSQL_LOGERROR1(F("SS:"),   SS);
   MYSQL_LOGERROR(F("========================================="));
 
-  Serial.print("Using mac index = ");
-  Serial.println(index);
+  MYSQL_DISPLAY1("Using mac index =", index);
+  MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
 
-  Serial.print("Connected! IP address: ");
-  Serial.println(Ethernet.localIP());
-
-  Serial.print("Connecting to SQL Server @ ");
-  Serial.print(server_addr);
-  Serial.println(String(", Port = ") + server_port);
-  Serial.println(String("User = ") + user + String(", PW = ") + password + String(", DB = ") + default_db);
+  MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
+  MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);
 }
 
 void loop()
 {
-  Serial.println("Connecting...");
+  MYSQL_DISPLAY("Connecting...");
   
-  //if (conn.connect(server_addr, server_port, user, password, default_db))
-  if (conn.connectNonBlocking(server_addr, server_port, user, password, default_db) != RESULT_FAIL)
+  //if (conn.connect(server_addr, server_port, user, password))
+  if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
   {
-    Serial.println("Closing connection...");
+    MYSQL_DISPLAY("Closing connection...");
     conn.close();                     // close the connection
   } 
   else 
   {
-    Serial.println("\nConnect failed. Trying again on next iteration.");
+    MYSQL_DISPLAY("\nConnect failed. Trying again on next iteration.");
   }
 
-  Serial.println("\nSleeping...");
-  Serial.println("================================================");
+  MYSQL_DISPLAY("\nSleeping...");
+  MYSQL_DISPLAY("================================================");
  
-  delay(10000);
+  delay(60000);
 }
