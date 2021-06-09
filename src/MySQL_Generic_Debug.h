@@ -13,7 +13,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.3
+  Version: 1.1.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -22,6 +22,7 @@
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
   1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
   1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
+  1.1.0   K Hoang      08/06/2021 Add support to RP2040-based boards such as Nano_RP2040_Connect, RASPBERRY_PI_PICO. etc.
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -73,42 +74,71 @@ const char NOT_CONNECTED[]  /*PROGMEM*/ = "ERROR: Class requires connected serve
 #define _MYSQL_LOGLEVEL_       0
 #endif
 
+//////////////////////////////////////////
 
-#define MYSQL_LOGERROR(x)        if(_MYSQL_LOGLEVEL_>0) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.println(x); }
-#define MYSQL_LOGERROR0(x)       if(_MYSQL_LOGLEVEL_>0) { MYSQL_DEBUG_OUTPUT.print(x); }
-#define MYSQL_LOGERROR0LN(x)     if(_MYSQL_LOGLEVEL_>0) { MYSQL_DEBUG_OUTPUT.println(x); }
-#define MYSQL_LOGERROR1(x,y)     if(_MYSQL_LOGLEVEL_>0) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(y); }
-#define MYSQL_LOGERROR2(x,y,z)   if(_MYSQL_LOGLEVEL_>0) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(y); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(z); }
-#define MYSQL_LOGERROR3(x,y,z,w) if(_MYSQL_LOGLEVEL_>0) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(y); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(z); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(w); }
+const char MYSQL_MARK[] = "[SQL] ";
+const char MYSQL_SP[]   = " ";
 
-#define MYSQL_LOGWARN(x)         if(_MYSQL_LOGLEVEL_>1) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.println(x); }
-#define MYSQL_LOGWARN0(x)        if(_MYSQL_LOGLEVEL_>1) { MYSQL_DEBUG_OUTPUT.print(x); }
-#define MYSQL_LOGWARN0LN(x)      if(_MYSQL_LOGLEVEL_>1) { MYSQL_DEBUG_OUTPUT.println(x); }
-#define MYSQL_LOGWARN1(x,y)      if(_MYSQL_LOGLEVEL_>1) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(y); }
-#define MYSQL_LOGWARN2(x,y,z)    if(_MYSQL_LOGLEVEL_>1) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(y); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(z); }
-#define MYSQL_LOGWARN3(x,y,z,w)    if(_MYSQL_LOGLEVEL_>1) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(y); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(z); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(w); }
+#define MYSQL_PRINT         MYSQL_DEBUG_OUTPUT.print
+#define MYSQL_PRINTLN       MYSQL_DEBUG_OUTPUT.println
 
-#define MYSQL_LOGINFO(x)         if(_MYSQL_LOGLEVEL_>2) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.println(x); }
-#define MYSQL_LOGINFO0(x)        if(_MYSQL_LOGLEVEL_>2) { MYSQL_DEBUG_OUTPUT.print(x); }
-#define MYSQL_LOGINFO0LN(x)      if(_MYSQL_LOGLEVEL_>2) { MYSQL_DEBUG_OUTPUT.println(x); }
-#define MYSQL_LOGINFO1(x,y)      if(_MYSQL_LOGLEVEL_>2) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(y); }
-#define MYSQL_LOGINFO2(x,y,z)    if(_MYSQL_LOGLEVEL_>2) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(y); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(z); }
-#define MYSQL_LOGINFO3(x,y,z,w)  if(_MYSQL_LOGLEVEL_>2) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(y); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(z); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(w); }
+#define MYSQL_PRINT_MARK    MYSQL_PRINT(MYSQL_MARK)
+#define MYSQL_PRINT_SP      MYSQL_PRINT(MYSQL_SP)
 
+///////////////////////////////////////////////////
 
-#define MYSQL_LOGDEBUG(x)        if(_MYSQL_LOGLEVEL_>3) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.println(x); }
-#define MYSQL_LOGDEBUG0(x)       if(_MYSQL_LOGLEVEL_>3) { MYSQL_DEBUG_OUTPUT.print(x); }
-#define MYSQL_LOGDEBUG0LN(x)     if(_MYSQL_LOGLEVEL_>3) { MYSQL_DEBUG_OUTPUT.println(x); }
-#define MYSQL_LOGDEBUG1(x,y)     if(_MYSQL_LOGLEVEL_>3) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(y); }
-#define MYSQL_LOGDEBUG2(x,y,z)   if(_MYSQL_LOGLEVEL_>3) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(y); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(z); }
-#define MYSQL_LOGDEBUG3(x,y,z,w) if(_MYSQL_LOGLEVEL_>3) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(y); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(z); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(w); }
+#define MYSQL_DISPLAY(x)        { MYSQL_PRINTLN(x); }
+#define MYSQL_DISPLAY0(x)       { MYSQL_PRINT(x); }
+#define MYSQL_DISPLAY1(x,y)     { MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINTLN(y); }
+#define MYSQL_DISPLAY2(x,y,z)   { MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINTLN(z); }
+#define MYSQL_DISPLAY3(x,y,z,w) { MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINT(z); MYSQL_PRINT_SP; MYSQL_PRINTLN(w); }
+#define MYSQL_DISPLAY5(x,y,z,w,xx,yy) { MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINT(z); MYSQL_PRINT_SP; MYSQL_PRINT(w); MYSQL_PRINT_SP; MYSQL_PRINT(xx); MYSQL_PRINT_SP; MYSQL_PRINTLN(yy); }
 
-#define MYSQL_LOGLEVEL5(x)        if(_MYSQL_LOGLEVEL_>4) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.println(x); }
-#define MYSQL_LOGLEVEL5_0(x)      if(_MYSQL_LOGLEVEL_>4) { MYSQL_DEBUG_OUTPUT.print(x); }
-#define MYSQL_LOGLEVEL5_0LN(x)    if(_MYSQL_LOGLEVEL_>4) { MYSQL_DEBUG_OUTPUT.println(x); }
-#define MYSQL_LOGLEVEL5_1(x,y)    if(_MYSQL_LOGLEVEL_>4) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(y); }
-#define MYSQL_LOGLEVEL5_2(x,y,z)  if(_MYSQL_LOGLEVEL_>4) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(y); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(z); }
-#define MYSQL_LOGLEVEL5_3(x,y,z,w) if(_MYSQL_LOGLEVEL_>4) { MYSQL_DEBUG_OUTPUT.print("[SQL] "); MYSQL_DEBUG_OUTPUT.print(x); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(y); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.print(z); MYSQL_DEBUG_OUTPUT.print(" "); MYSQL_DEBUG_OUTPUT.println(w); }
+///////////////////////////////////////////////////
 
+#define MYSQL_LOGERROR(x)        if(_MYSQL_LOGLEVEL_>0) { MYSQL_PRINT_MARK; MYSQL_PRINTLN(x); }
+#define MYSQL_LOGERROR0(x)       if(_MYSQL_LOGLEVEL_>0) { MYSQL_PRINT(x); }
+#define MYSQL_LOGERROR0LN(x)     if(_MYSQL_LOGLEVEL_>0) { MYSQL_PRINTLN(x); }
+#define MYSQL_LOGERROR1(x,y)     if(_MYSQL_LOGLEVEL_>0) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINTLN(y); }
+#define MYSQL_LOGERROR2(x,y,z)   if(_MYSQL_LOGLEVEL_>0) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINTLN(z); }
+#define MYSQL_LOGERROR3(x,y,z,w) if(_MYSQL_LOGLEVEL_>0) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINT(z); MYSQL_PRINT_SP; MYSQL_PRINTLN(w); }
+
+///////////////////////////////////////////////////
+
+#define MYSQL_LOGWARN(x)         if(_MYSQL_LOGLEVEL_>1) { MYSQL_PRINT_MARK; MYSQL_PRINTLN(x); }
+#define MYSQL_LOGWARN0(x)        if(_MYSQL_LOGLEVEL_>1) { MYSQL_PRINT(x); }
+#define MYSQL_LOGWARN0LN(x)      if(_MYSQL_LOGLEVEL_>1) { MYSQL_PRINTLN(x); }
+#define MYSQL_LOGWARN1(x,y)      if(_MYSQL_LOGLEVEL_>1) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINTLN(y); }
+#define MYSQL_LOGWARN2(x,y,z)    if(_MYSQL_LOGLEVEL_>1) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINTLN(z); }
+#define MYSQL_LOGWARN3(x,y,z,w)    if(_MYSQL_LOGLEVEL_>1) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINT(z); MYSQL_PRINT_SP; MYSQL_PRINTLN(w); }
+
+///////////////////////////////////////////////////
+
+#define MYSQL_LOGINFO(x)         if(_MYSQL_LOGLEVEL_>2) { MYSQL_PRINT_MARK; MYSQL_PRINTLN(x); }
+#define MYSQL_LOGINFO0(x)        if(_MYSQL_LOGLEVEL_>2) { MYSQL_PRINT(x); }
+#define MYSQL_LOGINFO0LN(x)      if(_MYSQL_LOGLEVEL_>2) { MYSQL_PRINTLN(x); }
+#define MYSQL_LOGINFO1(x,y)      if(_MYSQL_LOGLEVEL_>2) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINTLN(y); }
+#define MYSQL_LOGINFO2(x,y,z)    if(_MYSQL_LOGLEVEL_>2) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINTLN(z); }
+#define MYSQL_LOGINFO3(x,y,z,w)  if(_MYSQL_LOGLEVEL_>2) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINT(z); MYSQL_PRINT_SP; MYSQL_PRINTLN(w); }
+
+///////////////////////////////////////////////////
+
+#define MYSQL_LOGDEBUG(x)        if(_MYSQL_LOGLEVEL_>3) { MYSQL_PRINT_MARK; MYSQL_PRINTLN(x); }
+#define MYSQL_LOGDEBUG0(x)       if(_MYSQL_LOGLEVEL_>3) { MYSQL_PRINT(x); }
+#define MYSQL_LOGDEBUG0LN(x)     if(_MYSQL_LOGLEVEL_>3) { MYSQL_PRINTLN(x); }
+#define MYSQL_LOGDEBUG1(x,y)     if(_MYSQL_LOGLEVEL_>3) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINTLN(y); }
+#define MYSQL_LOGDEBUG2(x,y,z)   if(_MYSQL_LOGLEVEL_>3) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINTLN(z); }
+#define MYSQL_LOGDEBUG3(x,y,z,w) if(_MYSQL_LOGLEVEL_>3) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINT(z); MYSQL_PRINT_SP; MYSQL_PRINTLN(w); }
+
+///////////////////////////////////////////////////
+
+#define MYSQL_LOGLEVEL5(x)        if(_MYSQL_LOGLEVEL_>4) { MYSQL_PRINT_MARK; MYSQL_PRINTLN(x); }
+#define MYSQL_LOGLEVEL5_0(x)      if(_MYSQL_LOGLEVEL_>4) { MYSQL_PRINT(x); }
+#define MYSQL_LOGLEVEL5_0LN(x)    if(_MYSQL_LOGLEVEL_>4) { MYSQL_PRINTLN(x); }
+#define MYSQL_LOGLEVEL5_1(x,y)    if(_MYSQL_LOGLEVEL_>4) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINTLN(y); }
+#define MYSQL_LOGLEVEL5_2(x,y,z)  if(_MYSQL_LOGLEVEL_>4) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINTLN(z); }
+#define MYSQL_LOGLEVEL5_3(x,y,z,w) if(_MYSQL_LOGLEVEL_>4) { MYSQL_PRINT_MARK; MYSQL_PRINT(x); MYSQL_PRINT_SP; MYSQL_PRINT(y); MYSQL_PRINT_SP; MYSQL_PRINT(z); MYSQL_PRINT_SP; MYSQL_PRINTLN(w); }
+
+///////////////////////////////////////////////////
 
 #endif    // MYSQL_GENERIC_DEBUG_H

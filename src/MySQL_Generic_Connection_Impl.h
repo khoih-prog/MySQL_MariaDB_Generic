@@ -13,7 +13,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.3
+  Version: 1.1.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -22,6 +22,7 @@
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
   1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
   1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
+  1.1.0   K Hoang      08/06/2021 Add support to RP2040-based boards such as Nano_RP2040_Connect, RASPBERRY_PI_PICO. etc.
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -111,7 +112,7 @@ bool MySQL_Connection::connect(IPAddress server, int port, char *user, char *pas
   MYSQL_LOGERROR("Try send_authentication packets");
 
   send_authentication_packet(user, password, db);
-  
+   
   if ( !read_packet() )
   {
     MYSQL_LOGERROR("Can't connect. Error reading auth packets");

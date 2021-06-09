@@ -13,7 +13,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.0.3
+  Version: 1.1.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -22,6 +22,7 @@
   1.0.1   K Hoang      18/08/2020 Add support to Ethernet ENC28J60. Fix bug, optimize code.
   1.0.2   K Hoang      20/08/2020 Fix crashing bug when timeout. Make code more error-proof. Drop support to ESP8266_AT_Webserver.
   1.0.3   K Hoang      02/10/2020 Add support to Ethernet ENC28J60 using new EthernetENC library.
+  1.1.0   K Hoang      08/06/2021 Add support to RP2040-based boards such as Nano_RP2040_Connect, RASPBERRY_PI_PICO. etc.
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -45,11 +46,15 @@
 #include <Arduino.h>
 #include <Client.h>
 
+#define MYSQL_GENERIC_VERSION               "1.1.0"
+
+#ifndef MYSQL_MARIADB_GENERIC_VERSION
+  #define MYSQL_MARIADB_GENERIC_VERSION       ("MySQL_MariaDB_Generic v" MYSQL_GENERIC_VERSION)
+#endif
+
 #define MYSQL_OK_PACKET         0x00
 #define MYSQL_EOF_PACKET        0xfe
 #define MYSQL_ERROR_PACKET      0xff
-
-#define MYSQL_GENERIC_VERSION   "1.0.2"
 
 // KH, for validating packet size
 #define MAX_TRANSMISSION_UNIT   1500

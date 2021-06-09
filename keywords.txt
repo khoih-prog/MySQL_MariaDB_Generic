@@ -14,8 +14,6 @@ row_values	KEYWORD1
 _buffer	KEYWORD1
 _state	KEYWORD1
 
-
-
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
