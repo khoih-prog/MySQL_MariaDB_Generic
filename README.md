@@ -114,7 +114,7 @@
     * [ 8. Query_Progmem_WiFiNINA](examples/WiFiNINA/Query_Progmem_WiFiNINA)
     * [ 9. Query_Results_WiFiNINA](examples/WiFiNINA/Query_Results_WiFiNINA)
     * [10. Reboot_WiFiNINA](examples/WiFiNINA/Reboot_WiFiNINA)
- * [For WT32_ETH01](#for-wt32_eth01)
+  * [For WT32_ETH01](#for-wt32_eth01)
     * [ 1. Basic_Insert_WT32_ETH01](examples/WT32_ETH01/Basic_Insert_WT32_ETH01)
     * [ 2. Basic_Select_WT32_ETH01](examples/WT32_ETH01/Basic_Select_WT32_ETH01)
     * [ 3. Complex_Insert_WT32_ETH01](examples/WT32_ETH01/Complex_Insert_WT32_ETH01)
