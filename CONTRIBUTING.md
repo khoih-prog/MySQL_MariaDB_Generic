@@ -29,7 +29,7 @@ Please ensure to specify the following:
 Arduino IDE version: 1.8.15
 Arduino SAMD Core Version 1.8.11
 OS: Ubuntu 20.04 LTS
-Linux xy-Inspiron-3593 5.4.0-74-generic #83-Ubuntu SMP Sat May 8 02:35:39 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+Linux xy-Inspiron-3593 5.4.0-77-generic #86-Ubuntu SMP Thu Jun 17 02:35:03 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
 
 Context:
 The board couldn't autoreconnect to Local Blynk Server after router power recycling.
