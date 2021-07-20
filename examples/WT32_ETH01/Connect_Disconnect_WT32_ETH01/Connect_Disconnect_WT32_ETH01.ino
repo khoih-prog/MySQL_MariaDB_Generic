@@ -51,13 +51,32 @@
   Created by: Dr. Charles A. Bell
 */
 
-#include "defines.h"
-#include "Credentials.h"
+#if !(defined(ESP32))
+  #error This code is intended to run on the WT32 boards and ESP32 platform ! Please check your Tools->Board setting.
+#endif
+
+#define MYSQL_DEBUG_PORT      Serial
+
+// Debug Level from 0 to 4
+#define _MYSQL_LOGLEVEL_      1
+
+#include <WebServer_WT32_ETH01.h>
 
 #include <MySQL_Generic_WiFi.h>
 
+// Select the IP address according to your local network
+IPAddress myIP(192, 168, 2, 232);
+IPAddress myGW(192, 168, 2, 1);
+IPAddress mySN(255, 255, 255, 0);
+
+// Google DNS Server IP
+IPAddress myDNS(8, 8, 8, 8);
+
 IPAddress server_addr(192, 168, 2, 112);
 uint16_t server_port = 5698;    //3306;
+
+char user[]             = "invited-guest";      // MySQL user login username
+char password[]         = "the-invited-guest";  // MySQL user login password
 
 MySQL_Connection conn((Client *)&client);
 MySQL_Query query = MySQL_Query(&conn);
@@ -67,46 +86,25 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
 
-  MYSQL_DISPLAY1("\nStarting Connect_Disconnect_WiFi on", BOARD_NAME);
+  MYSQL_DISPLAY1("\nStarting Connect_Disconnect_WT32_ETH01 on", BOARD_NAME);
+  MYSQL_DISPLAY(WEBSERVER_WT32_ETH01_VERSION);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
-  // Remember to initialize your WiFi module
-#if ( USING_WIFI_ESP8266_AT  || USING_WIFIESPAT_LIB ) 
-  #if ( USING_WIFI_ESP8266_AT )
-    MYSQL_DISPLAY("Using ESP8266_AT/ESP8266_AT_WebServer Library");
-  #elif ( USING_WIFIESPAT_LIB )
-    MYSQL_DISPLAY("Using WiFiEspAT Library");
-  #endif
-  
-  // initialize serial for ESP module
-  EspSerial.begin(115200);
-  // initialize ESP module
-  WiFi.init(&EspSerial);
+  //bool begin(uint8_t phy_addr=ETH_PHY_ADDR, int power=ETH_PHY_POWER, int mdc=ETH_PHY_MDC, int mdio=ETH_PHY_MDIO, 
+  //           eth_phy_type_t type=ETH_PHY_TYPE, eth_clock_mode_t clk_mode=ETH_CLK_MODE);
+  //ETH.begin(ETH_PHY_ADDR, ETH_PHY_POWER, ETH_PHY_MDC, ETH_PHY_MDIO, ETH_PHY_TYPE, ETH_CLK_MODE);
+  ETH.begin(ETH_PHY_ADDR, ETH_PHY_POWER);
 
-  MYSQL_DISPLAY(F("WiFi shield init done"));
+  // Static IP, leave without this line to get IP via DHCP
+  //bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = 0, IPAddress dns2 = 0);
+  ETH.config(myIP, myGW, mySN, myDNS);
 
-  // check for the presence of the shield
-  if (WiFi.status() == WL_NO_SHIELD)
-  {
-    MYSQL_DISPLAY(F("WiFi shield not present"));
-    // don't continue
-    while (true);
-  }
-#endif
+  WT32_ETH01_onEvent();
 
-  // Begin WiFi section
-  MYSQL_DISPLAY1("Connecting to", ssid);
-
-  WiFi.begin(ssid, pass);
-  
-  while (WiFi.status() != WL_CONNECTED) 
-  {
-    delay(500);
-    MYSQL_DISPLAY0(".");
-  }
+  WT32_ETH01_waitForConnect();
 
   // print out info about the connection:
-  MYSQL_DISPLAY1("Connected to network. My IP address is:", WiFi.localIP());
+  MYSQL_DISPLAY1("Connected to network. My IP address is:", ETH.localIP());
 }
 
 void runQuery()

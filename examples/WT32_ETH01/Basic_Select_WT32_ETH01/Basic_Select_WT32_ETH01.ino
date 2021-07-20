@@ -1,5 +1,5 @@
 /*********************************************************************************************************************************
-  Basic_Select_WiFiNINA.ino
+  Basic_Select_WiFi.ino
 
   Library for communicating with a MySQL or MariaDB Server
 
@@ -57,77 +57,71 @@
   Created by: Dr. Charles A. Bell
 */
 
-#include "defines.h"
-#include "Credentials.h"
+#if !(defined(ESP32))
+  #error This code is intended to run on the WT32 boards and ESP32 platform ! Please check your Tools->Board setting.
+#endif
 
-#include <MySQL_Generic_WiFiNINA.h>
+#define MYSQL_DEBUG_PORT      Serial
+
+// Debug Level from 0 to 4
+#define _MYSQL_LOGLEVEL_      1
+
+#include <WebServer_WT32_ETH01.h>
+
+#include <MySQL_Generic_WiFi.h>
+
+// Select the IP address according to your local network
+IPAddress myIP(192, 168, 2, 232);
+IPAddress myGW(192, 168, 2, 1);
+IPAddress mySN(255, 255, 255, 0);
+
+// Google DNS Server IP
+IPAddress myDNS(8, 8, 8, 8);
 
 IPAddress server_addr(192, 168, 2, 112);
-
 uint16_t server_port = 5698;    //3306;
 
-char default_database[] = "world";       //"test_arduino";
+char user[]             = "invited-guest";      // MySQL user login username
+char password[]         = "the-invited-guest";  // MySQL user login password
+
+char default_database[] = "world";              //"test_arduino";
 char default_table[]    = "city";        //"test_arduino";
 
 String default_column   = "population"; 
 String default_value    = "Toronto"; 
 
-// Sample query
-String query = String("SELECT ") + default_column + " FROM " + default_database + "." + default_table
-               + " WHERE name = '" + default_value + "'";
+String query = String("SELECT ") + default_column + " FROM " + default_database + "." + default_table 
+                 + " WHERE name = '" + default_value + "'";
 
 MySQL_Connection conn((Client *)&client);
+
 // Create an instance of the cursor passing in the connection
 MySQL_Query sql_query = MySQL_Query(&conn);
-
-int status = WL_IDLE_STATUS;
-
-void printWifiStatus()
-{
-  // print the SSID and IP address of the network you're attached to:
-  MYSQL_DISPLAY3("SSID:", WiFi.SSID(), "IP Address:", WiFi.localIP());
-
-  // print the received signal strength:
-  MYSQL_DISPLAY2("Signal strength (RSSI):", WiFi.RSSI(), "dBm");
-}
 
 void setup()
 {
   Serial.begin(115200);
-  while (!Serial); // wait for serial port to connect
+  while (!Serial);
 
-  MYSQL_DISPLAY1("\nStarting Basic_Select_WiFiNINA on", BOARD_NAME);
+  MYSQL_DISPLAY1("\nStarting Basic_Select_WT32_ETH01 on", BOARD_NAME);
+  MYSQL_DISPLAY(WEBSERVER_WT32_ETH01_VERSION);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
-  // check for the WiFi module:
-  if (WiFi.status() == WL_NO_MODULE)
-  {
-    MYSQL_DISPLAY("Communication with WiFi module failed!");
-    // don't continue
-    while (true);
-  }
+  //bool begin(uint8_t phy_addr=ETH_PHY_ADDR, int power=ETH_PHY_POWER, int mdc=ETH_PHY_MDC, int mdio=ETH_PHY_MDIO, 
+  //           eth_phy_type_t type=ETH_PHY_TYPE, eth_clock_mode_t clk_mode=ETH_CLK_MODE);
+  //ETH.begin(ETH_PHY_ADDR, ETH_PHY_POWER, ETH_PHY_MDC, ETH_PHY_MDIO, ETH_PHY_TYPE, ETH_CLK_MODE);
+  ETH.begin(ETH_PHY_ADDR, ETH_PHY_POWER);
 
-  String fv = WiFi.firmwareVersion();
+  // Static IP, leave without this line to get IP via DHCP
+  //bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = 0, IPAddress dns2 = 0);
+  ETH.config(myIP, myGW, mySN, myDNS);
 
-  if (fv < WIFI_FIRMWARE_LATEST_VERSION)
-  {
-    MYSQL_DISPLAY("Please upgrade the firmware");
-  }
+  WT32_ETH01_onEvent();
 
-  // attempt to connect to Wifi network:
-  while (status != WL_CONNECTED)
-  {
-    MYSQL_DISPLAY1("Attempting to connect to SSID:", ssid);
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-    status = WiFi.begin(ssid, pass);
+  WT32_ETH01_waitForConnect();
 
-    // wait 10 seconds for connection:
-    //delay(10000);
-  }
-
-  printWifiStatus();
-
-  // End WiFi section
+  // print out info about the connection:
+  MYSQL_DISPLAY1("Connected to network. My IP address is:", ETH.localIP());
 
   MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
   MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);

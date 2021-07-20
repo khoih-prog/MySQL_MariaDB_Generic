@@ -1,5 +1,5 @@
 /*********************************************************************************************************************************
-  Reboot_WiFiNINA.ino
+  Reboot_WiFi.ino
 
   Library for communicating with a MySQL or MariaDB Server
 
@@ -23,13 +23,12 @@
   1.1.0   K Hoang      08/06/2021 Add support to RP2040-based boards such as Nano_RP2040_Connect, RASPBERRY_PI_PICO. etc.
   1.2.0   K Hoang      20/07/2021 Add support to WT32_ETH01 (ESP32 + LAN8720A)
  **********************************************************************************************************************************/
- 
 /*
   MySQL Connector/Arduino Example : reboot if connection lost
 
   This example demonstrates how to reboot an Arduino if connection to the
   server is lost for a period of time.
-
+  
   For more information and documentation, visit the wiki:
   https://github.com/ChuckBell/MySQL_Connector_Arduino/wiki.
 
@@ -49,84 +48,69 @@
   Created by: Dr. Charles A. Bell
 */
 
-#include "defines.h"
-#include "Credentials.h"
+#if !(defined(ESP32))
+  #error This code is intended to run on the WT32 boards and ESP32 platform ! Please check your Tools->Board setting.
+#endif
 
-#include <MySQL_Generic_WiFiNINA.h>
+#define MYSQL_DEBUG_PORT      Serial
+
+// Debug Level from 0 to 4
+#define _MYSQL_LOGLEVEL_      1
+
+#include <WebServer_WT32_ETH01.h>
+
+#include <MySQL_Generic_WiFi.h>
+
+// Select the IP address according to your local network
+IPAddress myIP(192, 168, 2, 232);
+IPAddress myGW(192, 168, 2, 1);
+IPAddress mySN(255, 255, 255, 0);
+
+// Google DNS Server IP
+IPAddress myDNS(8, 8, 8, 8);
 
 IPAddress server_addr(192, 168, 2, 112);
 uint16_t server_port = 5698;    //3306;
 
+char user[]             = "invited-guest";      // MySQL user login username
+char password[]         = "the-invited-guest";  // MySQL user login password
+
 MySQL_Connection conn((Client *)&client);
 MySQL_Query query = MySQL_Query(&conn);
-
-int status = WL_IDLE_STATUS;
-
-void printWifiStatus()
-{
-  // print the SSID and IP address of the network you're attached to:
-  MYSQL_DISPLAY3("SSID:", WiFi.SSID(), "IP Address:", WiFi.localIP());
-
-  // print the received signal strength:
-  MYSQL_DISPLAY2("Signal strength (RSSI):", WiFi.RSSI(), "dBm");
-}
 
 void setup()
 {
   Serial.begin(115200);
-  while (!Serial); // wait for serial port to connect
+  while (!Serial);
 
-  MYSQL_DISPLAY1("\nStarting Reboot_WiFiNINA on", BOARD_NAME);
+  MYSQL_DISPLAY1("\nStarting Reboot_WT32_ETH01 on", BOARD_NAME);
+  MYSQL_DISPLAY(WEBSERVER_WT32_ETH01_VERSION);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
-  // check for the WiFi module:
-  if (WiFi.status() == WL_NO_MODULE)
-  {
-    MYSQL_DISPLAY("Communication with WiFi module failed!");
-    // don't continue
-    while (true);
-  }
+  //bool begin(uint8_t phy_addr=ETH_PHY_ADDR, int power=ETH_PHY_POWER, int mdc=ETH_PHY_MDC, int mdio=ETH_PHY_MDIO, 
+  //           eth_phy_type_t type=ETH_PHY_TYPE, eth_clock_mode_t clk_mode=ETH_CLK_MODE);
+  //ETH.begin(ETH_PHY_ADDR, ETH_PHY_POWER, ETH_PHY_MDC, ETH_PHY_MDIO, ETH_PHY_TYPE, ETH_CLK_MODE);
+  ETH.begin(ETH_PHY_ADDR, ETH_PHY_POWER);
 
-  String fv = WiFi.firmwareVersion();
+  // Static IP, leave without this line to get IP via DHCP
+  //bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = 0, IPAddress dns2 = 0);
+  ETH.config(myIP, myGW, mySN, myDNS);
 
-  if (fv < WIFI_FIRMWARE_LATEST_VERSION)
-  {
-    MYSQL_DISPLAY("Please upgrade the firmware");
-  }
+  WT32_ETH01_onEvent();
 
-  // attempt to connect to Wifi network:
-  while (status != WL_CONNECTED)
-  {
-    MYSQL_DISPLAY1("Attempting to connect to SSID:", ssid);
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-    status = WiFi.begin(ssid, pass);
+  WT32_ETH01_waitForConnect();
 
-    // wait 10 seconds for connection:
-    //delay(10000);
-  }
-
-  printWifiStatus();
-
-  // End WiFi section
-
-  MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
-  MYSQL_DISPLAY3("User =", user, ", PW =", password);
-
-  if (conn.connect(server_addr, server_port, user, password))
-  {
-    delay(1000);
-  }
-  else
-    MYSQL_DISPLAY("Connection failed.");
+  // print out info about the connection:
+  MYSQL_DISPLAY1("Connected to network. My IP address is:", ETH.localIP());
 }
 
 // Begin reboot code
-int num_fails;                      // variable for number of failure attempts
-#define MAX_FAILED_CONNECTS     5   // maximum number of failed connects to MySQL
+int num_fails;                  // variable for number of failure attempts
+#define MAX_FAILED_CONNECTS 5   // maximum number of failed connects to MySQL
 
 void soft_reset()
 {
-#if WIFININA_USE_SAMD
+#if WIFI_USE_SAMD
   #if ( defined(__SAMD51__) || defined(__SAMD51J20A__) || defined(__SAMD51J19A__) || defined(__SAMD51G19A__)  )
     // For SAMD51
     // see Table 17-5 Timeout Period (valid values 0-11)
@@ -150,18 +134,18 @@ void soft_reset()
     WDT->CLEAR.reg = 0x00;
     while (WDT->STATUS.bit.SYNCBUSY == 1);
   #endif
-#elif WIFININA_USE_NRF52
+#elif WIFI_USE_NRF528XX
   //delay(1000);
   // Restart for nRF52
   NVIC_SystemReset();
-#elif WIFININA_USE_SAMDUE
+#elif WIFI_USE_SAMDUE
   void(*resetFunc)() = 0;
   resetFunc();
-#elif WIFININA_USE_STM32
+#elif WIFI_USE_STM32
   void(*resetFunc)() = 0;
   resetFunc();
 
-#elif WIFININA_USE_TEENSY
+#elif WIFI_USE_TEENSY
   #if defined(__IMXRT1062__)
     // Teensy 4.1/4.0
     SCB_AIRCR = 0x05FA0004; //write value for restart for Teensy
@@ -169,8 +153,8 @@ void soft_reset()
     void(*resetFunc)() = 0;
     resetFunc();
   #endif
-
-#elif ( defined(WIFININA_USE_RP2040) && defined(ARDUINO_ARCH_MBED) )
+  
+#elif ( defined(WIFI_USE_RP2040) && defined(ARDUINO_ARCH_MBED) )
 
   NVIC_SystemReset();
   

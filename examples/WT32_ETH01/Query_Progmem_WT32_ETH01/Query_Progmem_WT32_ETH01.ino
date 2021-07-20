@@ -1,5 +1,5 @@
 /*********************************************************************************************************************************
-  Connect_Disconnect_WiFi.ino
+  Query_Progmem_WiFi.ino
 
   Library for communicating with a MySQL or MariaDB Server
 
@@ -24,20 +24,18 @@
   1.2.0   K Hoang      20/07/2021 Add support to WT32_ETH01 (ESP32 + LAN8720A)
  **********************************************************************************************************************************/
 /*
-  MySQL Connector/Arduino Example : connect and disconnect (close)
+  MySQL Connector/Arduino Example : query with PROGMEM strings
 
-  This example demonstrates how to use the connection to open at the start
-  of a loop, perform some query, then close the connection. Use this technique
-  for solutions that must sleep for a long period or otherwise require
-  additional processing or delays. The connect/close pair allow you to
-  control how long the connection is open and thus reduce the amount of
-  time a connection is held open. It also helps for lossy connections.
-
-  This example demonstrates how to connect to a MySQL server and specifying
-  the default database when connecting.
+  This example demonstrates how to issue queries using strings stored in
+  PROGMEM. As you will see, you need only add a parameter to the execute()
+  method in the cursor class, const and PROGMEM to the string declaration
+  and add the #include <avr/pgmspace.h> directive.
 
   For more information and documentation, visit the wiki:
   https://github.com/ChuckBell/MySQL_Connector_Arduino/wiki.
+
+  NOTICE: You must download and install the World sample database to run
+          this sketch unaltered. See http://dev.mysql.com/doc/index-other.html.
 
   INSTRUCTIONS FOR USE
 
@@ -48,81 +46,92 @@
   5) Compile and upload the sketch to your Arduino
   6) Once uploaded, open Serial Monitor (use 115200 speed) and observe
 
+  Note: The MAC address can be anything so long as it is unique on your network.
+
   Created by: Dr. Charles A. Bell
 */
 
-#include "defines.h"
-#include "Credentials.h"
+#if !(defined(ESP32))
+  #error This code is intended to run on the WT32 boards and ESP32 platform ! Please check your Tools->Board setting.
+#endif
+
+#define MYSQL_DEBUG_PORT      Serial
+
+// Debug Level from 0 to 4
+#define _MYSQL_LOGLEVEL_      1
+
+#include <WebServer_WT32_ETH01.h>
 
 #include <MySQL_Generic_WiFi.h>
+
+// Select the IP address according to your local network
+IPAddress myIP(192, 168, 2, 232);
+IPAddress myGW(192, 168, 2, 1);
+IPAddress mySN(255, 255, 255, 0);
+
+// Google DNS Server IP
+IPAddress myDNS(8, 8, 8, 8);
 
 IPAddress server_addr(192, 168, 2, 112);
 uint16_t server_port = 5698;    //3306;
 
+char user[]             = "invited-guest";      // MySQL user login username
+char password[]         = "the-invited-guest";  // MySQL user login password
+
+// Sample query
+const char PROGMEM query[] = "SELECT * FROM test_arduino.hello_arduino LIMIT 6;";
+
 MySQL_Connection conn((Client *)&client);
-MySQL_Query query = MySQL_Query(&conn);
 
 void setup()
 {
   Serial.begin(115200);
   while (!Serial);
 
-  MYSQL_DISPLAY1("\nStarting Connect_Disconnect_WiFi on", BOARD_NAME);
+  MYSQL_DISPLAY1("\nStarting Query_Progmem_WT32_ETH01 on", BOARD_NAME);
+  MYSQL_DISPLAY(WEBSERVER_WT32_ETH01_VERSION);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
-  // Remember to initialize your WiFi module
-#if ( USING_WIFI_ESP8266_AT  || USING_WIFIESPAT_LIB ) 
-  #if ( USING_WIFI_ESP8266_AT )
-    MYSQL_DISPLAY("Using ESP8266_AT/ESP8266_AT_WebServer Library");
-  #elif ( USING_WIFIESPAT_LIB )
-    MYSQL_DISPLAY("Using WiFiEspAT Library");
-  #endif
-  
-  // initialize serial for ESP module
-  EspSerial.begin(115200);
-  // initialize ESP module
-  WiFi.init(&EspSerial);
+  //bool begin(uint8_t phy_addr=ETH_PHY_ADDR, int power=ETH_PHY_POWER, int mdc=ETH_PHY_MDC, int mdio=ETH_PHY_MDIO, 
+  //           eth_phy_type_t type=ETH_PHY_TYPE, eth_clock_mode_t clk_mode=ETH_CLK_MODE);
+  //ETH.begin(ETH_PHY_ADDR, ETH_PHY_POWER, ETH_PHY_MDC, ETH_PHY_MDIO, ETH_PHY_TYPE, ETH_CLK_MODE);
+  ETH.begin(ETH_PHY_ADDR, ETH_PHY_POWER);
 
-  MYSQL_DISPLAY(F("WiFi shield init done"));
+  // Static IP, leave without this line to get IP via DHCP
+  //bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = 0, IPAddress dns2 = 0);
+  ETH.config(myIP, myGW, mySN, myDNS);
 
-  // check for the presence of the shield
-  if (WiFi.status() == WL_NO_SHIELD)
-  {
-    MYSQL_DISPLAY(F("WiFi shield not present"));
-    // don't continue
-    while (true);
-  }
-#endif
+  WT32_ETH01_onEvent();
 
-  // Begin WiFi section
-  MYSQL_DISPLAY1("Connecting to", ssid);
-
-  WiFi.begin(ssid, pass);
-  
-  while (WiFi.status() != WL_CONNECTED) 
-  {
-    delay(500);
-    MYSQL_DISPLAY0(".");
-  }
+  WT32_ETH01_waitForConnect();
 
   // print out info about the connection:
-  MYSQL_DISPLAY1("Connected to network. My IP address is:", WiFi.localIP());
+  MYSQL_DISPLAY1("Connected to network. My IP address is:", ETH.localIP());
+
+  MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
+  MYSQL_DISPLAY3("User =", user, ", PW =", password);
 }
 
 void runQuery()
 {
-  MYSQL_DISPLAY("Running a query: SELECT * FROM test_arduino.hello_arduino LIMIT 6;");
+  MYSQL_DISPLAY("\nRunning SELECT from PROGMEM and printing results\n");
+  MYSQL_DISPLAY(query);
   
-  // Execute the query
+  // Initiate the query class instance
+  MySQL_Query query_mem = MySQL_Query(&conn);
+  
+  // Execute the query with the PROGMEM option
   // KH, check if valid before fetching
-  if ( !query.execute("SELECT * FROM test_arduino.hello_arduino LIMIT 6;") )
+  if ( !query_mem.execute(query, true) )
   {
     MYSQL_DISPLAY("Querying error");
     return;
   }
   
-  query.show_results();             // show the results
-  query.close();                    // close the query
+  // Show the results
+  query_mem.show_results();
+  // close the query
+  query_mem.close();
 }
 
 void loop()
