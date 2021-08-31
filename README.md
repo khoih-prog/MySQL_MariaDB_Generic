@@ -5,8 +5,6 @@
 [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/master/LICENSE)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/MySQL_MariaDB_Generic.svg)](http://github.com/khoih-prog/MySQL_MariaDB_Generic/issues)
-[![star this repo](https://githubbadges.com/star.svg?user=khoih-prog&repo=MySQL_MariaDB_Generic)](https://github.com/khoih-prog/MySQL_MariaDB_Generic)
-[![fork this repo](https://githubbadges.com/fork.svg?user=khoih-prog&repo=MySQL_MariaDB_Generic)](https://github.com/khoih-prog/MySQL_MariaDB_Generic/fork)
 
 ---
 ---
@@ -127,16 +125,16 @@
     * [ 9. Query_Results_WT32_ETH01](examples/WT32_ETH01/Query_Results_WT32_ETH01)
     * [10. Reboot_WT32_ETH01](examples/WT32_ETH01/Reboot_WT32_ETH01)
   * [For Teensy 4.1 NativeEthernet](#for-teensy-41-nativeethernet)
-    * [ 1. Basic_Insert](examples/Ethernet/Basic_Insert)
-    * [ 2. Basic_Select](examples/Ethernet/Basic_Select)
-    * [ 3. Complex_Insert](examples/Ethernet/Complex_Insert)
-    * [ 4. Complex_Select](examples/Ethernet/Complex_Select)
-    * [ 5. Connect](examples/Ethernet/Connect)
-    * [ 6. Connect_By_Hostname](examples/Ethernet/Connect_By_Hostname)
-    * [ 7. Connect_Default_Database](examples/Ethernet/Connect_Default_Database)
-    * [ 8. Connect_Disconnect](examples/Ethernet/Connect_Disconnect)
-    * [ 9. Query_Progmem](examples/Ethernet/Query_Progmem)
-    * [10. Query_Results](examples/Ethernet/Query_Results)
+    * [ 1. Basic_Insert](examples/NativeEthernet/Basic_Insert)
+    * [ 2. Basic_Select](examples/NativeEthernet/Basic_Select)
+    * [ 3. Complex_Insert](examples/NativeEthernet/Complex_Insert)
+    * [ 4. Complex_Select](examples/NativeEthernet/Complex_Select)
+    * [ 5. Connect](examples/NativeEthernet/Connect)
+    * [ 6. Connect_By_Hostname](examples/NativeEthernet/Connect_By_Hostname)
+    * [ 7. Connect_Default_Database](examples/NativeEthernet/Connect_Default_Database)
+    * [ 8. Connect_Disconnect](examples/NativeEthernet/Connect_Disconnect)
+    * [ 9. Query_Progmem](examples/NativeEthernet/Query_Progmem)
+    * [10. Query_Results](examples/NativeEthernet/Query_Results)
 * [Example Complex_Select](#example-complex_select)
   * [1. File Complex_Select.ino](#1-file-complex_selectino)
   * [2. File defines.h](#2-file-definesh)
@@ -319,9 +317,9 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
  1. [`Arduino IDE v1.8.15+` for Arduino](https://www.arduino.cc/en/Main/Software)
  2. [`ESP32 Core 1.0.6+`](https://github.com/espressif/arduino-esp32) for ESP32-based boards. [![Latest release](https://img.shields.io/github/release/espressif/arduino-esp32.svg)](https://github.com/espressif/arduino-esp32/releases/latest/)
  3. [`ESP32S2 Core 1.0.6+`](https://github.com/espressif/arduino-esp32/tree/esp32s2) for ESP32S2-based boards.
- 4. [`ESP8266 Core 3.0.2+`](https://github.com/esp8266/Arduino) for ESP8266-based boards. [![Latest release](https://img.shields.io/github/release/esp8266/Arduino.svg)](https://github.com/esp8266/Arduino/releases/latest/). To use ESP8266 core 2.7.1+ for LittleFS.
+ 4. [`ESP8266 Core 3.0.2+`](https://github.com/esp8266/Arduino) for ESP8266-based boards. [![Latest release](https://img.shields.io/github/release/esp8266/Arduino.svg)](https://github.com/esp8266/Arduino/releases/latest/).
  5. [`Arduino AVR core 1.8.3+`](https://github.com/arduino/ArduinoCore-avr) for Arduino (Use Arduino Board Manager) for AVR boards. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-avr.svg)](https://github.com/arduino/ArduinoCore-avr/releases/latest)
- 6. [`Teensy core v1.54+`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0) boards. To be used with Arduino IDE v1.8.13-
+ 6. [`Teensy core v1.54+`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0) boards.
  7. [`Arduino SAM DUE core v1.6.12+`](https://github.com/arduino/ArduinoCore-sam) for SAM DUE ARM Cortex-M3 boards.
  8. [`Arduino SAMD core 1.8.11+`](https://github.com/arduino/ArduinoCore-samd) for SAMD ARM Cortex-M0+ boards. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-samd.svg)](https://github.com/arduino/ArduinoCore-samd/releases/latest)
  9. [`Adafruit SAMD core 1.7.4+`](https://github.com/adafruit/ArduinoCore-samd) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.). [![GitHub release](https://img.shields.io/github/release/adafruit/ArduinoCore-samd.svg)](https://github.com/adafruit/ArduinoCore-samd/releases/latest)
@@ -2751,8 +2749,8 @@ Submit issues to: [MySQL_MariaDB_Generic issues](https://github.com/khoih-prog/M
   <tr>
     <td align="center"><a href="https://github.com/ChuckBell"><img src="https://github.com/ChuckBell.png" width="100px;" alt="ChuckBell"/><br /><sub><b>⭐️ ChuckBell</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/tcpipchip"><img src="https://github.com/tcpipchip.png" width="100px;" alt="tcpipchip"/><br /><sub><b>Miguel Wisintainer</b></sub></a><br /></td>
-  </tr> 
     <td align="center"><a href="https://github.com/graham999au"><img src="https://github.com/graham999au.png" width="100px;" alt="graham999au"/><br /><sub><b>graham999au</b></sub></a><br /></td>
+  </tr> 
 </table>
 
 ---
