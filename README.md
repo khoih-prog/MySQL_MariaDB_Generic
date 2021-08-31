@@ -17,6 +17,7 @@
   * [Currently supported WiFi shields/modules](#currently-supported-wifi-shieldsmodules)
   * [Currently supported Ethernet shields/modules](#currently-supported-ethernet-shieldsmodules)
 * [Changelog](#changelog)
+  * [Release v1.3.1](#release-v131)
   * [Release v1.3.0](#release-v130)
   * [Release v1.2.0](#release-v120)
   * [Major Release v1.1.0](#major-release-v110)
@@ -250,6 +251,10 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
 ---
 
 ## Changelog
+
+### Release v1.3.1
+
+1. Remove unnecessary SPI-bus code in NativeEthernet examples
 
 ### Release v1.3.0
 
@@ -1767,7 +1772,7 @@ This is terminal debug output when running [Query_Progmem](examples/Ethernet/Que
 
 ```
 Starting Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet3 Library
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 Ethernet3 W5500 init, using SPI_CS = 10, number of sockets = 4
 Using mac index = 10
 Connected! IP address: 192.168.2.145
@@ -1806,7 +1811,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NUCLEO_F767ZI using LAN8742A/STM32Ethernet Library
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 Using mac index = 0
 Connected! IP address: 192.168.2.165
 Connecting to SQL Server @ 192.168.2.112, Port = 5698
@@ -1873,7 +1878,7 @@ This is terminal debug output when running [Query_Results_WiFi](examples/WiFi/Qu
 
 ```
 Starting Query_Results_WiFi on ITSYBITSY_M4
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 Using WiFiEspAT Library
 WiFi shield init done
 Connecting to HueNet1
@@ -1912,7 +1917,7 @@ This is terminal debug output when running [Basic_Select_WiFi](examples/WiFi/Bas
 
 ```
 Starting Basic_Select_WiFi on SEEED_XIAO_M0
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 Using WiFiEspAT Library
 WiFi shield init done
 Connecting to HueNet1
@@ -1948,7 +1953,7 @@ This is terminal debug output when running [Query_Results_WiFiNINA](examples/WiF
 
 ```
 Starting Query_Results_WiFiNINA on SAMD_NANO_33_IOT
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 Attempting to connect to SSID: HueNet1
 SSID: HueNet1
 IP Address: 192.168.2.118
@@ -1994,7 +1999,7 @@ This is terminal debug output when running [Connect_By_Hostname](examples/Ethern
 
 ```
 Starting Connect_By_Hostname on SAM DUE using W5x00/EthernetLarge Library
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 _pinCS = 0
 W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 10
 W5100::init: W5100, SSIZE =4096
@@ -2020,7 +2025,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NRF52840_FEATHER using ENC28J60/UIPEthernet Library
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 ENC28J60_CONTROL_CS =10
 SS =5
 SPI_MOSI =25
@@ -2119,7 +2124,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NRF52840_FEATHER, with ENC28J60 using EthernetENC Library
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 25
@@ -2176,7 +2181,7 @@ This is terminal debug output when running [Query_Progmem](examples/Ethernet/Que
 
 ```
 Starting Query_Progmem on NRF52840_FEATHER, with ENC28J60 using EthernetENC Library
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 25
@@ -2229,7 +2234,7 @@ This is terminal debug output when running [Basic_Insert_ESP](examples/WiFi/Basi
 
 ```
 Starting Basic_Insert_ESP on ESP8266_NODEMCU_ESP12E
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 Connecting to HueNet1
 ...........Connected to network. My IP address is: 192.168.2.135
 Connecting to SQL Server @ 192.168.2.112 , Port = 5698
@@ -2258,7 +2263,7 @@ This is terminal debug output when running [Basic_Insert_ESP](examples/WiFi/Basi
 
 ```
 Starting Basic_Insert_ESP on ESP32S2_DEV
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 Connecting to HueNet1
 .......Connected to network. My IP address is: 192.168.2.190
 Connecting to SQL Server @ 192.168.2.112 , Port = 5698
@@ -2287,7 +2292,7 @@ This is terminal debug output when running [Basic_Select_WiFiNINA](examples/WiFi
 
 ```
 Starting Basic_Select_WiFiNINA on MBED NANO_RP2040_CONNECT
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 Attempting to connect to SSID: HueNet1
 SSID: HueNet1
 IP Address: 192.168.2.153
@@ -2323,7 +2328,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on MBED RASPBERRY_PI_PICO , with W5x00 using EthernetLarge Library
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 3
@@ -2411,7 +2416,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on RASPBERRY_PI_PICO , with W5x00 using EthernetLarge Library
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 19
@@ -2472,7 +2477,7 @@ This is terminal debug output when running [Complex_Select_WT32_ETH01](examples/
 ```
 Starting Complex_Select_WT32_ETH01 on WT32-ETH01
 WebServer_WT32_ETH01 v1.2.0
-MySQL_MariaDB_Generic v1.3.0
+MySQL_MariaDB_Generic v1.3.1
 ETH MAC: A8:03:2A:A1:61:73, IPv4: 192.168.2.232
 FULL_DUPLEX, 100Mbps
 Connected to network. My IP address is: 192.168.2.232
@@ -2531,22 +2536,7 @@ This is terminal debug output when running [Complex_Select](examples/NativeEther
 
 ```
 Starting Complex_Select on Teensy 4.1 , with NativeEthernet
-MySQL_MariaDB_Generic v1.3.0
-[SQL] =========================================
-[SQL] Default SPI pinout:
-[SQL] MOSI: 11
-[SQL] MISO: 12
-[SQL] SCK: 13
-[SQL] SS: 10
-[SQL] =========================================
-[SQL] Board : Teensy 4.1 , setCsPin: 10
-[SQL] =========================================
-[SQL] Currently Used SPI pinout:
-[SQL] MOSI: 11
-[SQL] MISO: 12
-[SQL] SCK: 13
-[SQL] SS: 10
-[SQL] =========================================
+MySQL_MariaDB_Generic v1.3.1
 Using mac index = 2
 Connected! IP address: 192.168.2.86
 Connecting to SQL Server @ 192.168.2.112 , Port = 5698
@@ -2634,6 +2624,10 @@ Sometimes, the library will only work if you update the board core to the latest
 
 
 ## Releases
+
+### Release v1.3.1
+
+1. Remove unnecessary SPI-bus code in NativeEthernet examples
 
 ### Release v1.3.0
 
