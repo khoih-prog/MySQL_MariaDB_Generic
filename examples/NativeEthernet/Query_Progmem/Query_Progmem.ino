@@ -43,10 +43,7 @@
 #include "defines.h"
 
 #include <MySQL_Generic.h>
-
-#if !(ESP32 || ESP8266)
-  #include <avr/pgmspace.h>
-#endif
+#include <avr/pgmspace.h>
 
 // Select the static Local IP address according to your local network
 IPAddress ip(192, 168, 2, 222);
@@ -78,114 +75,7 @@ void setup()
   MYSQL_LOGERROR1(F("SS:"),   SS);
   MYSQL_LOGERROR(F("========================================="));
 
-#if defined(ESP8266)
-  // For ESP8266, change for other boards if necessary
-  #ifndef USE_THIS_SS_PIN
-    #define USE_THIS_SS_PIN   D2    // For ESP8266
-  #endif
-  
-    MYSQL_LOGERROR1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
-  
-  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
-    // For ESP8266
-    // Pin                D0(GPIO16)    D1(GPIO5)    D2(GPIO4)    D3(GPIO0)    D4(GPIO2)    D8
-    // Ethernet           0                 X            X            X            X        0
-    // Ethernet2          X                 X            X            X            X        0
-    // Ethernet3          X                 X            X            X            X        0
-    // EthernetLarge      X                 X            X            X            X        0
-    // Ethernet_ESP8266   0                 0            0            0            0        0
-    // D2 is safe to used for Ethernet, Ethernet2, Ethernet3, EthernetLarge libs
-    // Must use library patch for Ethernet, EthernetLarge libraries
-    Ethernet.init (USE_THIS_SS_PIN);
-  
-  #elif USE_ETHERNET3
-    // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
-    #ifndef ETHERNET3_MAX_SOCK_NUM
-      #define ETHERNET3_MAX_SOCK_NUM      4
-    #endif
-  
-    Ethernet.setCsPin (USE_THIS_SS_PIN);
-    Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
-  
-  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET_LARGE || USE_ETHERNET_ENC )
-
-#elif defined(ESP32)
-
-  // You can use Ethernet.init(pin) to configure the CS pin
-  //Ethernet.init(10);  // Most Arduino shields
-  //Ethernet.init(5);   // MKR ETH shield
-  //Ethernet.init(0);   // Teensy 2.0
-  //Ethernet.init(20);  // Teensy++ 2.0
-  //Ethernet.init(15);  // ESP8266 with Adafruit Featherwing Ethernet
-  //Ethernet.init(33);  // ESP32 with Adafruit Featherwing Ethernet
-
-  #ifndef USE_THIS_SS_PIN
-    #define USE_THIS_SS_PIN   22    // For ESP32
-  #endif
-
-  MYSQL_LOGERROR1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
-
-  // For other boards, to change if necessary
-  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
-    // Must use library patch for Ethernet, EthernetLarge libraries
-    // ESP32 => GPIO2,4,5,13,15,21,22 OK with Ethernet, Ethernet2, EthernetLarge
-    // ESP32 => GPIO2,4,5,15,21,22 OK with Ethernet3
-  
-    //Ethernet.setCsPin (USE_THIS_SS_PIN);
-    Ethernet.init (USE_THIS_SS_PIN);
-
-  #elif USE_ETHERNET3
-    // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
-    #ifndef ETHERNET3_MAX_SOCK_NUM
-      #define ETHERNET3_MAX_SOCK_NUM      4
-    #endif
-  
-    Ethernet.setCsPin (USE_THIS_SS_PIN);
-    Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
-
-  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET_LARGE  || USE_ETHERNET_ENC )
-
-#elif ETHERNET_USE_RPIPICO
-
-  pinMode(USE_THIS_SS_PIN, OUTPUT);
-  digitalWrite(USE_THIS_SS_PIN, HIGH);
-  
-  // ETHERNET_USE_RPIPICO, use default SS = 5 or 17
-  #ifndef USE_THIS_SS_PIN
-    #if defined(ARDUINO_ARCH_MBED)
-      #define USE_THIS_SS_PIN   5     // For Arduino Mbed core
-    #else  
-      #define USE_THIS_SS_PIN   17    // For E.Philhower core
-    #endif
-  #endif
-
-  MYSQL_LOGERROR1(F("RPIPICO setCsPin:"), USE_THIS_SS_PIN);
-
-  // For other boards, to change if necessary
-  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
-    // Must use library patch for Ethernet, EthernetLarge libraries
-    // For RPI Pico using Arduino Mbed RP2040 core
-    // SCK: GPIO2,  MOSI: GPIO3, MISO: GPIO4, SS/CS: GPIO5
-    // For RPI Pico using E. Philhower RP2040 core
-    // SCK: GPIO18,  MOSI: GPIO19, MISO: GPIO16, SS/CS: GPIO17
-    // Default pin 5/17 to SS/CS
-  
-    //Ethernet.setCsPin (USE_THIS_SS_PIN);
-    Ethernet.init (USE_THIS_SS_PIN);
-  
-  #elif USE_ETHERNET3
-    // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
-    #ifndef ETHERNET3_MAX_SOCK_NUM
-      #define ETHERNET3_MAX_SOCK_NUM      4
-    #endif
-  
-    Ethernet.setCsPin (USE_THIS_SS_PIN);
-    Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
-    
-  #endif    //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
-  
-#else   //defined(ESP8266)
-  // unknown board, do nothing, use default SS = 10
+  // use default SS = 10
   #ifndef USE_THIS_SS_PIN
     #define USE_THIS_SS_PIN   10    // For other boards
   #endif
@@ -193,23 +83,8 @@ void setup()
   MYSQL_LOGERROR3(F("Board :"), BOARD_NAME, F(", setCsPin:"), USE_THIS_SS_PIN);
 
   // For other boards, to change if necessary
-  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
-    // Must use library patch for Ethernet, Ethernet2, EthernetLarge libraries
-  
-    Ethernet.init (USE_THIS_SS_PIN);
-
-  #elif USE_ETHERNET3
-    // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
-    #ifndef ETHERNET3_MAX_SOCK_NUM
-      #define ETHERNET3_MAX_SOCK_NUM      4
-    #endif
-  
-    Ethernet.setCsPin (USE_THIS_SS_PIN);
-    Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
-  
-  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET_LARGE || USE_ETHERNET_ENC )
-
-#endif    //defined(ESP8266)
+ 
+  Ethernet.init (USE_THIS_SS_PIN);
 
   // start the ethernet connection and the server:
   // Use DHCP dynamic IP and random mac

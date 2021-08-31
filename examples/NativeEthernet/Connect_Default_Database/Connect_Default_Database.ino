@@ -1,5 +1,5 @@
 /*********************************************************************************************************************************
-  Basic_Insert_ESP.ino
+  Connect_Default_Database.ino
       
   Library for communicating with a MySQL or MariaDB Server
   
@@ -13,13 +13,11 @@
   Licensed under MIT license
  **********************************************************************************************************************************/
 /*
-  MySQL Connector/Arduino Example : connect by wifi
+  MySQL Connector/Arduino Example : connect with default database
 
-  This example demonstrates how to connect to a MySQL server from an
-  Arduino using an Arduino-compatible Wifi shield. Note that "compatible"
-  means it must conform to the Ethernet class library or be a derivative
-  with the same classes and methods.
-  
+  This example demonstrates how to connect to a MySQL server and specifying
+  the default database when connecting. 
+
   For more information and documentation, visit the wiki:
   https://github.com/ChuckBell/MySQL_Connector_Arduino/wiki.
 
@@ -27,98 +25,85 @@
 
   1) Change the address of the server to the IP address of the MySQL server
   2) Change the user and password to a valid MySQL user and password
-  3) Change the SSID and pass to match your WiFi network
-  4) Connect a USB cable to your Arduino
-  5) Select the correct board and port
-  6) Compile and upload the sketch to your Arduino
-  7) Once uploaded, open Serial Monitor (use 115200 speed) and observe
+  3) Connect a USB cable to your Arduino
+  4) Select the correct board and port
+  5) Compile and upload the sketch to your Arduino
+  6) Once uploaded, open Serial Monitor (use 115200 speed) and observe
 
   If you do not see messages indicating you have a connection, refer to the
   manual for troubleshooting tips. The most common issues are the server is
   not accessible from the network or the user name and password is incorrect.
 
+  Note: The MAC address can be anything so long as it is unique on your network.
+
   Created by: Dr. Charles A. Bell
 */
 
-#if ! (ESP8266 || ESP32 )
-  #error This code is intended to run on the ESP8266/ESP32 platform! Please check your Tools->Board setting
-#endif
-
-#include "Credentials.h"
-
-#define MYSQL_DEBUG_PORT      Serial
-
-// Debug Level from 0 to 4
-#define _MYSQL_LOGLEVEL_      1
+#include "defines.h"
 
 #include <MySQL_Generic.h>
+
+// Select the static Local IP address according to your local network
+IPAddress ip(192, 168, 2, 222);
 
 IPAddress server_addr(192, 168, 2, 112);
 uint16_t server_port = 5698;    //3306;
 
-char default_database[] = "test_arduino";           //"test_arduino";
-char default_table[]    = "hello_arduino";          //"test_arduino";
+char user[]             = "invited-guest";              // MySQL user login username
+char password[]         = "the-invited-guest";          // MySQL user login password
 
-String default_value    = "Hello, Arduino!"; 
-
-// Sample query
-String INSERT_SQL = String("INSERT INTO ") + default_database + "." + default_table 
-                 + " (message) VALUES ('" + default_value + "')";
+char default_database[]       = "world";
 
 MySQL_Connection conn((Client *)&client);
-
-MySQL_Query *query_mem;
 
 void setup()
 {
   Serial.begin(115200);
   while (!Serial);
 
-  MYSQL_DISPLAY1("\nStarting Basic_Insert_ESP on", ARDUINO_BOARD);
+  MYSQL_DISPLAY3("\nStarting Connect_Default_Database on", BOARD_NAME, ", with", SHIELD_TYPE);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
-  // Begin WiFi section
-  MYSQL_DISPLAY1("Connecting to", ssid);
-  
-  WiFi.begin(ssid, pass);
-  
-  while (WiFi.status() != WL_CONNECTED) 
-  {
-    delay(500);
-    MYSQL_DISPLAY0(".");
-  }
+  MYSQL_LOGERROR(F("========================================="));
+  MYSQL_LOGERROR(F("Default SPI pinout:"));
+  MYSQL_LOGERROR1(F("MOSI:"), MOSI);
+  MYSQL_LOGERROR1(F("MISO:"), MISO);
+  MYSQL_LOGERROR1(F("SCK:"),  SCK);
+  MYSQL_LOGERROR1(F("SS:"),   SS);
+  MYSQL_LOGERROR(F("========================================="));
 
-  // print out info about the connection:
-  MYSQL_DISPLAY1("Connected to network. My IP address is:", WiFi.localIP());
+  // use default SS = 10
+  #ifndef USE_THIS_SS_PIN
+    #define USE_THIS_SS_PIN   10    // For other boards
+  #endif
+
+  MYSQL_LOGERROR3(F("Board :"), BOARD_NAME, F(", setCsPin:"), USE_THIS_SS_PIN);
+
+  // For other boards, to change if necessary
+ 
+  Ethernet.init (USE_THIS_SS_PIN);
+
+  // start the ethernet connection and the server:
+  // Use DHCP dynamic IP and random mac
+  uint16_t index = millis() % NUMBER_OF_MAC;
+  // Use Static IP
+  //Ethernet.begin(mac[index], ip);
+  Ethernet.begin(mac[index]);
+
+  // Just info to know how to connect correctly
+  MYSQL_LOGERROR(F("========================================="));
+  MYSQL_LOGERROR(F("Currently Used SPI pinout:"));
+  MYSQL_LOGERROR1(F("MOSI:"), MOSI);
+  MYSQL_LOGERROR1(F("MISO:"), MISO);
+  MYSQL_LOGERROR1(F("SCK:"),  SCK);
+  MYSQL_LOGERROR1(F("SS:"),   SS);
+  MYSQL_LOGERROR(F("========================================="));
+
+  MYSQL_DISPLAY1("Using mac index =", index);
+  MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
 
   MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
   MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);
-}
-
-void runInsert()
-{
-  // Initiate the query class instance
-  MySQL_Query query_mem = MySQL_Query(&conn);
-
-  if (conn.connected())
-  {
-    MYSQL_DISPLAY(INSERT_SQL);
-    
-    // Execute the query
-    // KH, check if valid before fetching
-    if ( !query_mem.execute(INSERT_SQL.c_str()) )
-    {
-      MYSQL_DISPLAY("Insert error");
-    }
-    else
-    {
-      MYSQL_DISPLAY("Data Inserted.");
-    }
-  }
-  else
-  {
-    MYSQL_DISPLAY("Disconnected from Server. Can't insert.");
-  }
 }
 
 void loop()
@@ -128,8 +113,7 @@ void loop()
   //if (conn.connect(server_addr, server_port, user, password))
   if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
   {
-    delay(500);
-    runInsert();
+    MYSQL_DISPLAY("Closing connection...");
     conn.close();                     // close the connection
   } 
   else 

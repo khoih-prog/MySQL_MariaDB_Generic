@@ -1,17 +1,18 @@
 /*********************************************************************************************************************************
-  Basic_Insert_WiFi.ino
-
+  Basic_Insert.ino
+      
   Library for communicating with a MySQL or MariaDB Server
-
+  
   Based on and modified from Dr. Charles A. Bell's MySQL_Connector_Arduino Library https://github.com/ChuckBell/MySQL_Connector_Arduino
   to support nRF52, SAMD21/SAMD51, SAM DUE, STM32F/L/H/G/WB/MP1, ESP8266, ESP32, etc. boards using W5x00, ENC28J60, LAM8742A Ethernet,
   WiFiNINA, ESP-AT, built-in ESP8266/ESP32 WiFi.
 
   The library provides simple and easy Client interface to MySQL or MariaDB Server.
-
+  
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
  **********************************************************************************************************************************/
+
 /*
   MySQL Connector/Arduino Example : basic insert
 
@@ -56,12 +57,17 @@
 */
 
 #include "defines.h"
-#include "Credentials.h"
 
 #include <MySQL_Generic.h>
 
+// Select the static Local IP address according to your local network
+IPAddress ip(192, 168, 2, 222);
+
 IPAddress server_addr(192, 168, 2, 112);
 uint16_t server_port = 5698;    //3306;
+
+char user[]         = "invited-guest";              // MySQL user login username
+char password[]     = "the-invited-guest";          // MySQL user login password
 
 char default_database[] = "test_arduino";           //"test_arduino";
 char default_table[]    = "hello_arduino";          //"test_arduino";
@@ -74,53 +80,51 @@ String INSERT_SQL = String("INSERT INTO ") + default_database + "." + default_ta
 
 MySQL_Connection conn((Client *)&client);
 
-MySQL_Query *query_mem;
-
 void setup()
 {
   Serial.begin(115200);
-  while (!Serial);
+  while (!Serial); // wait for serial port to connect
 
-  MYSQL_DISPLAY1("\nStarting Basic_Insert_WiFi on", BOARD_NAME);
+  MYSQL_DISPLAY3("\nStarting Basic_Insert on", BOARD_NAME, ", with", SHIELD_TYPE);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
-  // Remember to initialize your WiFi module
-#if ( USING_WIFI_ESP8266_AT  || USING_WIFIESPAT_LIB ) 
-  #if ( USING_WIFI_ESP8266_AT )
-    MYSQL_DISPLAY("Using ESP8266_AT/ESP8266_AT_WebServer Library");
-  #elif ( USING_WIFIESPAT_LIB )
-    MYSQL_DISPLAY("Using WiFiEspAT Library");
+  MYSQL_LOGERROR(F("========================================="));
+  MYSQL_LOGERROR(F("Default SPI pinout:"));
+  MYSQL_LOGERROR1(F("MOSI:"), MOSI);
+  MYSQL_LOGERROR1(F("MISO:"), MISO);
+  MYSQL_LOGERROR1(F("SCK:"),  SCK);
+  MYSQL_LOGERROR1(F("SS:"),   SS);
+  MYSQL_LOGERROR(F("========================================="));
+
+  // use default SS = 10
+  #ifndef USE_THIS_SS_PIN
+    #define USE_THIS_SS_PIN   10    // For other boards
   #endif
-  
-  // initialize serial for ESP module
-  EspSerial.begin(115200);
-  // initialize ESP module
-  WiFi.init(&EspSerial);
 
-  MYSQL_DISPLAY(F("WiFi shield init done"));
+  MYSQL_LOGERROR3(F("Board :"), BOARD_NAME, F(", setCsPin:"), USE_THIS_SS_PIN);
 
-  // check for the presence of the shield
-  if (WiFi.status() == WL_NO_SHIELD)
-  {
-    MYSQL_DISPLAY(F("WiFi shield not present"));
-    // don't continue
-    while (true);
-  }
-#endif
+  // For other boards, to change if necessary
+ 
+  Ethernet.init (USE_THIS_SS_PIN);
 
-  // Begin WiFi section
-  MYSQL_DISPLAY1("Connecting to", ssid);
+  // start the ethernet connection and the server:
+  // Use DHCP dynamic IP and random mac
+  uint16_t index = millis() % NUMBER_OF_MAC;
+  // Use Static IP
+  //Ethernet.begin(mac[index], ip);
+  Ethernet.begin(mac[index]);
 
-  WiFi.begin(ssid, pass);
-  
-  while (WiFi.status() != WL_CONNECTED) 
-  {
-    delay(500);
-    MYSQL_DISPLAY0(".");
-  }
+  // Just info to know how to connect correctly
+  MYSQL_LOGERROR(F("========================================="));
+  MYSQL_LOGERROR(F("Currently Used SPI pinout:"));
+  MYSQL_LOGERROR1(F("MOSI:"), MOSI);
+  MYSQL_LOGERROR1(F("MISO:"), MISO);
+  MYSQL_LOGERROR1(F("SCK:"),  SCK);
+  MYSQL_LOGERROR1(F("SS:"),   SS);
+  MYSQL_LOGERROR(F("========================================="));
 
-  // print out info about the connection:
-  MYSQL_DISPLAY1("Connected to network. My IP address is:", WiFi.localIP());
+  MYSQL_DISPLAY1("Using mac index =", index);
+  MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
 
   MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
   MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);

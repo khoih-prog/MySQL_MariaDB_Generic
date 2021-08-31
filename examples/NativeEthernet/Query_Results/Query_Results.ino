@@ -1,5 +1,5 @@
 /*********************************************************************************************************************************
-  Query_Results_WiFi.ino
+  Query_Results.ino
 
   Library for communicating with a MySQL or MariaDB Server
 
@@ -18,7 +18,7 @@
   This example demonstrates how to issue a SELECT query and how to read columns
   and rows from the result set. Study this example until you are familiar with how to
   do this before writing your own sketch to read and consume query results.
-  
+
   For more information and documentation, visit the wiki:
   https://github.com/ChuckBell/MySQL_Connector_Arduino/wiki.
 
@@ -40,64 +40,68 @@
 */
 
 #include "defines.h"
-#include "Credentials.h"
 
 #include <MySQL_Generic.h>
+
+// Select the static Local IP address according to your local network
+IPAddress ip(192, 168, 2, 222);
 
 IPAddress server_addr(192, 168, 2, 112);
 uint16_t server_port = 5698;    //3306;
 
+char user[]     = "invited-guest";              // MySQL user login username
+char password[] = "the-invited-guest";          // MySQL user login password
+
 // Sample query
-const char query[] = "SELECT * FROM world.city LIMIT 6";
-//const char query[] = "SELECT * FROM test_arduino.hello_arduino LIMIT 6;";
+char query[] = "SELECT * FROM test_arduino.hello_arduino LIMIT 6";
 
 MySQL_Connection conn((Client *)&client);
 
 void setup()
 {
   Serial.begin(115200);
-  while (!Serial);
+  while (!Serial); // wait for serial port to connect
 
-  MYSQL_DISPLAY1("\nStarting Query_Results_WiFi on", BOARD_NAME);
+  MYSQL_DISPLAY3("\nStarting Query_Results on", BOARD_NAME, ", with", SHIELD_TYPE);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
-  // Remember to initialize your WiFi module
-#if ( USING_WIFI_ESP8266_AT  || USING_WIFIESPAT_LIB ) 
-  #if ( USING_WIFI_ESP8266_AT )
-    MYSQL_DISPLAY("Using ESP8266_AT/ESP8266_AT_WebServer Library");
-  #elif ( USING_WIFIESPAT_LIB )
-    MYSQL_DISPLAY("Using WiFiEspAT Library");
+  MYSQL_LOGERROR(F("========================================="));
+  MYSQL_LOGERROR(F("Default SPI pinout:"));
+  MYSQL_LOGERROR1(F("MOSI:"), MOSI);
+  MYSQL_LOGERROR1(F("MISO:"), MISO);
+  MYSQL_LOGERROR1(F("SCK:"),  SCK);
+  MYSQL_LOGERROR1(F("SS:"),   SS);
+  MYSQL_LOGERROR(F("========================================="));
+
+  // use default SS = 10
+  #ifndef USE_THIS_SS_PIN
+    #define USE_THIS_SS_PIN   10    // For other boards
   #endif
-  
-  // initialize serial for ESP module
-  EspSerial.begin(115200);
-  // initialize ESP module
-  WiFi.init(&EspSerial);
 
-  MYSQL_DISPLAY(F("WiFi shield init done"));
+  MYSQL_LOGERROR3(F("Board :"), BOARD_NAME, F(", setCsPin:"), USE_THIS_SS_PIN);
 
-  // check for the presence of the shield
-  if (WiFi.status() == WL_NO_SHIELD)
-  {
-    MYSQL_DISPLAY(F("WiFi shield not present"));
-    // don't continue
-    while (true);
-  }
-#endif
+  // For other boards, to change if necessary
+ 
+  Ethernet.init (USE_THIS_SS_PIN);
 
-  // Begin WiFi section
-  MYSQL_DISPLAY1("Connecting to", ssid);
+  // start the ethernet connection and the server:
+  // Use DHCP dynamic IP and random mac
+  uint16_t index = millis() % NUMBER_OF_MAC;
+  // Use Static IP
+  //Ethernet.begin(mac[index], ip);
+  Ethernet.begin(mac[index]);
 
-  WiFi.begin(ssid, pass);
-  
-  while (WiFi.status() != WL_CONNECTED) 
-  {
-    delay(500);
-    MYSQL_DISPLAY0(".");
-  }
+  // Just info to know how to connect correctly
+  MYSQL_LOGERROR(F("========================================="));
+  MYSQL_LOGERROR(F("Currently Used SPI pinout:"));
+  MYSQL_LOGERROR1(F("MOSI:"), MOSI);
+  MYSQL_LOGERROR1(F("MISO:"), MISO);
+  MYSQL_LOGERROR1(F("SCK:"),  SCK);
+  MYSQL_LOGERROR1(F("SS:"),   SS);
+  MYSQL_LOGERROR(F("========================================="));
 
-  // print out info about the connection:
-  MYSQL_DISPLAY1("Connected to network. My IP address is:", WiFi.localIP());
+  MYSQL_DISPLAY1("Using mac index =", index);
+  MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
 
   MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
   MYSQL_DISPLAY3("User =", user, ", PW =", password);
@@ -163,21 +167,21 @@ void runQuery()
 void loop()
 {
   MYSQL_DISPLAY("Connecting...");
-  
+
   //if (conn.connect(server_addr, server_port, user, password))
   if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
   {
     delay(500);
     runQuery();
     conn.close();                     // close the connection
-  } 
-  else 
+  }
+  else
   {
     MYSQL_DISPLAY("\nConnect failed. Trying again on next iteration.");
   }
 
   MYSQL_DISPLAY("\nSleeping...");
   MYSQL_DISPLAY("================================================");
- 
-  delay(60000);
+
+  delay(10000);
 }
