@@ -19,6 +19,7 @@
   * [Currently supported WiFi shields/modules](#currently-supported-wifi-shieldsmodules)
   * [Currently supported Ethernet shields/modules](#currently-supported-ethernet-shieldsmodules)
 * [Changelog](#changelog)
+  * [Release v1.3.0](#release-v130)
   * [Release v1.2.0](#release-v120)
   * [Major Release v1.1.0](#major-release-v110)
   * [Release v1.0.3](#release-v103)
@@ -125,6 +126,17 @@
     * [ 8. Query_Progmem_WT32_ETH01](examples/WT32_ETH01/Query_Progmem_WT32_ETH01)
     * [ 9. Query_Results_WT32_ETH01](examples/WT32_ETH01/Query_Results_WT32_ETH01)
     * [10. Reboot_WT32_ETH01](examples/WT32_ETH01/Reboot_WT32_ETH01)
+  * [For Teensy 4.1 NativeEthernet](#for-teensy-41-nativeethernet)
+    * [ 1. Basic_Insert](examples/Ethernet/Basic_Insert)
+    * [ 2. Basic_Select](examples/Ethernet/Basic_Select)
+    * [ 3. Complex_Insert](examples/Ethernet/Complex_Insert)
+    * [ 4. Complex_Select](examples/Ethernet/Complex_Select)
+    * [ 5. Connect](examples/Ethernet/Connect)
+    * [ 6. Connect_By_Hostname](examples/Ethernet/Connect_By_Hostname)
+    * [ 7. Connect_Default_Database](examples/Ethernet/Connect_Default_Database)
+    * [ 8. Connect_Disconnect](examples/Ethernet/Connect_Disconnect)
+    * [ 9. Query_Progmem](examples/Ethernet/Query_Progmem)
+    * [10. Query_Results](examples/Ethernet/Query_Results)
 * [Example Complex_Select](#example-complex_select)
   * [1. File Complex_Select.ino](#1-file-complex_selectino)
   * [2. File defines.h](#2-file-definesh)
@@ -144,6 +156,7 @@
   * [13. Complex_Select on MBED RASPBERRY_PI_PICO using W5x00/EthernetLarge Library](#13-complex_select-on-mbed-raspberry_pi_pico-using-w5x00ethernetlarge-library) 
   * [14. Complex_Select on RASPBERRY_PI_PICO using W5x00/EthernetLarge Library](#14-complex_select-on-raspberry_pi_pico-using-w5x00ethernetlarge-library)
   * [15. Complex_Select_WT32_ETH01 on WT32-ETH01](#15-complex_select_wt32_eth01-on-wt32-eth01)
+  * [16. Complex_Select on Teensy 4.1 with NativeEthernet](#16-complex_select-on-teensy-41-with-nativeethernet)
 * [Debug](#debug)
 * [Troubleshooting](#troubleshooting)
 * [Releases](#releases)
@@ -170,7 +183,7 @@ This also means you can setup your own, local MySQL server to store your data fu
 
 This [**MySQL_MariaDB_Generic library**](https://github.com/khoih-prog/MySQL_MariaDB_Generic) will let you to do exactly that and more!
 
-This [**MySQL_MariaDB_Generic library**](https://github.com/khoih-prog/MySQL_MariaDB_Generic) is based on and modified from [**Dr. Charles Bell's MySQL_Connector_Arduino Library**](https://github.com/ChuckBell/MySQL_Connector_Arduino), to provide support to many more boards and shields, such as **Arduino SAMD21, Adafruit SAMD21/SAMD51, Seeeduino SAMD21/SAMD51, nRF52, STM32F/L/H/G/WB/MP1, Teensy, SAM DUE, AVR Mega, RP2040-based (Nano RP2040 Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040), etc. boards**. Those supported boards can be used with **ESP8266/ESP32’s WiFi, WiFiNINA, W5x00/ENC28J60/LAN8742A Ethernet, ESP8266/ESP32-AT modules/shields.**
+This [**MySQL_MariaDB_Generic library**](https://github.com/khoih-prog/MySQL_MariaDB_Generic) is based on and modified from [**Dr. Charles Bell's MySQL_Connector_Arduino Library**](https://github.com/ChuckBell/MySQL_Connector_Arduino), to provide support to many more boards and shields, such as **Arduino SAMD21, Adafruit SAMD21/SAMD51, Seeeduino SAMD21/SAMD51, nRF52, STM32F/L/H/G/WB/MP1, Teensy, SAM DUE, AVR Mega, RP2040-based (Nano RP2040 Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040), etc. boards**. Those supported boards can be used with **ESP8266/ESP32’s WiFi, WiFiNINA, W5x00/ENC28J60/LAN8742A Ethernet, ESP8266/ESP32-AT, NativeEthernet modules/shields.**
 
 ---
 
@@ -190,7 +203,7 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
   - Seeeduino: Wio Terminal, Grove UI Wireless
   
  4. **SAM DUE** 
- 5. **Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0)**
+ 5. **Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0)** using either Ethernet, WiFi, or for Teensy 4.1 NativeEthernet 
  6. **STM32F/L/H/G/WB/MP1 boards (with 32+K Flash)**
   - Nucleo-144
   - Nucleo-64
@@ -239,6 +252,10 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
 ---
 
 ## Changelog
+
+### Release v1.3.0
+
+1. Add support to **Teensy 4.1 using NativeEthernet**
 
 ### Release v1.2.0
 
@@ -302,24 +319,22 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
  1. [`Arduino IDE v1.8.15+` for Arduino](https://www.arduino.cc/en/Main/Software)
  2. [`ESP32 Core 1.0.6+`](https://github.com/espressif/arduino-esp32) for ESP32-based boards. [![Latest release](https://img.shields.io/github/release/espressif/arduino-esp32.svg)](https://github.com/espressif/arduino-esp32/releases/latest/)
  3. [`ESP32S2 Core 1.0.6+`](https://github.com/espressif/arduino-esp32/tree/esp32s2) for ESP32S2-based boards.
- 4. [`ESP8266 Core 3.0.1+`](https://github.com/esp8266/Arduino) for ESP8266-based boards. [![Latest release](https://img.shields.io/github/release/esp8266/Arduino.svg)](https://github.com/esp8266/Arduino/releases/latest/). To use ESP8266 core 2.7.1+ for LittleFS.
+ 4. [`ESP8266 Core 3.0.2+`](https://github.com/esp8266/Arduino) for ESP8266-based boards. [![Latest release](https://img.shields.io/github/release/esp8266/Arduino.svg)](https://github.com/esp8266/Arduino/releases/latest/). To use ESP8266 core 2.7.1+ for LittleFS.
  5. [`Arduino AVR core 1.8.3+`](https://github.com/arduino/ArduinoCore-avr) for Arduino (Use Arduino Board Manager) for AVR boards. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-avr.svg)](https://github.com/arduino/ArduinoCore-avr/releases/latest)
  6. [`Teensy core v1.54+`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0) boards. To be used with Arduino IDE v1.8.13-
  7. [`Arduino SAM DUE core v1.6.12+`](https://github.com/arduino/ArduinoCore-sam) for SAM DUE ARM Cortex-M3 boards.
  8. [`Arduino SAMD core 1.8.11+`](https://github.com/arduino/ArduinoCore-samd) for SAMD ARM Cortex-M0+ boards. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-samd.svg)](https://github.com/arduino/ArduinoCore-samd/releases/latest)
- 9. [`Adafruit SAMD core 1.7.2+`](https://github.com/adafruit/ArduinoCore-samd) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.). [![GitHub release](https://img.shields.io/github/release/adafruit/ArduinoCore-samd.svg)](https://github.com/adafruit/ArduinoCore-samd/releases/latest)
+ 9. [`Adafruit SAMD core 1.7.4+`](https://github.com/adafruit/ArduinoCore-samd) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.). [![GitHub release](https://img.shields.io/github/release/adafruit/ArduinoCore-samd.svg)](https://github.com/adafruit/ArduinoCore-samd/releases/latest)
 10. [`Seeeduino SAMD core 1.8.1+`](https://github.com/Seeed-Studio/ArduinoCore-samd) for SAMD21/SAMD51 boards (XIAO M0, Wio Terminal, etc.). [![Latest release](https://img.shields.io/github/release/Seeed-Studio/ArduinoCore-samd.svg)](https://github.com/Seeed-Studio/ArduinoCore-samd/releases/latest/)
  
-11. [`Adafruit nRF52 v0.24.0+`](https://github.com/adafruit/Adafruit_nRF52_Arduino) for nRF52 boards such as Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, **NINA_B302_ublox**, etc. [![GitHub release](https://img.shields.io/github/release/adafruit/Adafruit_nRF52_Arduino.svg)](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/latest)
-
-  **Warnings** : Use [`Adafruit nRF52 v0.22.0+`](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/tag/0.22.0) will create **compiler errors** to some boards. If so, please use the [`Adafruit nRF52 v0.21.0`](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/tag/0.21.0) until the issue fixed.
-  
+11. [`Adafruit nRF52 v1.0.0+`](https://github.com/adafruit/Adafruit_nRF52_Arduino) for nRF52 boards such as Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, **NINA_B302_ublox**, etc. [![GitHub release](https://img.shields.io/github/release/adafruit/Adafruit_nRF52_Arduino.svg)](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/latest)
+ 
 12. [`Arduino Core for STM32 v2.0.0+`](https://github.com/stm32duino/Arduino_Core_STM32) for STM32F/L/H/G/WB/MP1 boards. [![GitHub release](https://img.shields.io/github/release/stm32duino/Arduino_Core_STM32.svg)](https://github.com/stm32duino/Arduino_Core_STM32/releases/latest)
 
-13. [`Earle Philhower's arduino-pico core v1.9.2+`](https://github.com/earlephilhower/arduino-pico) for RP2040-based boards such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
-14. [`Arduino mbed_rp2040 core 2.3.1+`](https://github.com/arduino/ArduinoCore-mbed) for Arduino (Use Arduino Board Manager) RP2040-based boards, such as RASPBERRY_PI_PICO. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
+13. [`Earle Philhower's arduino-pico core v1.9.4+`](https://github.com/earlephilhower/arduino-pico) for RP2040-based boards such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
+14. [`Arduino mbed_rp2040 core 2.4.1+`](https://github.com/arduino/ArduinoCore-mbed) for Arduino (Use Arduino Board Manager) RP2040-based boards, such as RASPBERRY_PI_PICO. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
 
-15. [`WiFiNINA_Generic library v1.8.12+`](https://github.com/khoih-prog/WiFiNINA_Generic) for WiFiNINA. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiNINA_Generic.svg?)](https://www.ardu-badge.com/WiFiNINA_Generic).
+15. [`WiFiNINA_Generic library v1.8.13+`](https://github.com/khoih-prog/WiFiNINA_Generic) for WiFiNINA. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiNINA_Generic.svg?)](https://www.ardu-badge.com/WiFiNINA_Generic).
 
 16. Depending on which Ethernet module/shield you're using :
    - [`EthernetLarge library v2.0.0+`](https://github.com/OPEnSLab-OSU/EthernetLarge) for W5100, W5200 and W5500.
@@ -328,8 +343,10 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
    - [`EthernetENC library v2.0.1+`](https://github.com/jandrassy/EthernetENC) for ENC28J60. [![GitHub release](https://img.shields.io/github/release/jandrassy/EthernetENC.svg)](https://github.com/jandrassy/EthernetENC/releases/latest). **New and Better**
    - [`UIPEthernet library v2.0.10+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60. [![GitHub release](https://img.shields.io/github/release/UIPEthernet/UIPEthernet.svg)](https://github.com/UIPEthernet/UIPEthernet/releases/latest)
    - [`STM32Ethernet library v1.2.0+`](https://github.com/stm32duino/STM32Ethernet) for built-in LAN8742A Ethernet on (Nucleo-144, Discovery). [![GitHub release](https://img.shields.io/github/release/stm32duino/STM32Ethernet.svg)](https://github.com/stm32duino/STM32Ethernet/releases/latest). To be used with [`LwIP library v2.1.2+`](https://github.com/stm32duino/LwIP). [![GitHub release](https://img.shields.io/github/release/stm32duino/LwIP.svg)](https://github.com/stm32duino/LwIP/releases/latest)
+   - [`NativeEthernetLarge library v1.0.5+`](https://github.com/vjmuzik/NativeEthernet) for NativeEthernet and Teensy 4.1.
+   
 14. [`WiFiEspAT library v1.3.1+`](https://github.com/jandrassy/WiFiEspAT) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiEspAT.svg?)](https://www.ardu-badge.com/WiFiEspAT).
-15. [`ESP_AT_Lib library v1.3.0+`](https://github.com/khoih-prog/ESP_AT_Lib) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_AT_Lib.svg?)](https://www.ardu-badge.com/ESP_AT_Lib).
+15. [`ESP_AT_Lib library v1.4.0+`](https://github.com/khoih-prog/ESP_AT_Lib) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_AT_Lib.svg?)](https://www.ardu-badge.com/ESP_AT_Lib).
 16. [`WebServer_WT32_ETH01 library v1.2.0+`](https://github.com/khoih-prog/WebServer_WT32_ETH01) to use WT32_ETH01 (ESP32 + LAN8720). To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WebServer_WT32_ETH01.svg?)](https://www.ardu-badge.com/WebServer_WT32_ETH01).
 
 ---
@@ -362,20 +379,19 @@ Another way to install is to:
 
 ### Packages' Patches
 
+
 #### 1. For Adafruit nRF52840 and nRF52832 boards
 
-**Don't use v0.22.0+ yet because of compiler error. Wait until it's fixed if you have error.**
+**To be able to compile, run and automatically detect and display BOARD_NAME on nRF52840/nRF52832 boards**, you have to copy the whole [nRF52 1.0.0](Packages_Patches/adafruit/hardware/nrf52/1.0.0) directory into Adafruit nRF52 directory (~/.arduino15/packages/adafruit/hardware/nrf52/1.0.0). 
 
-**To be able to compile, run and automatically detect and display BOARD_NAME on nRF52840/nRF52832 boards**, you have to copy the whole [nRF52 0.21.0](Packages_Patches/adafruit/hardware/nrf52/0.21.0) directory into Adafruit nRF52 directory (~/.arduino15/packages/adafruit/hardware/nrf52/0.21.0). 
-
-Supposing the Adafruit nRF52 version is 0.21.0. These files must be copied into the directory:
-- `~/.arduino15/packages/adafruit/hardware/nrf52/0.21.0/platform.txt`
-- `~/.arduino15/packages/adafruit/hardware/nrf52/0.21.0/boards.txt`
-- `~/.arduino15/packages/adafruit/hardware/nrf52/0.21.0/variants/NINA_B302_ublox/variant.h`
-- `~/.arduino15/packages/adafruit/hardware/nrf52/0.21.0/variants/NINA_B302_ublox/variant.cpp`
-- `~/.arduino15/packages/adafruit/hardware/nrf52/0.21.0/variants/NINA_B112_ublox/variant.h`
-- `~/.arduino15/packages/adafruit/hardware/nrf52/0.21.0/variants/NINA_B112_ublox/variant.cpp`
-- **`~/.arduino15/packages/adafruit/hardware/nrf52/0.21.0/cores/nRF5/Udp.h`**
+Supposing the Adafruit nRF52 version is 1.0.0. These files must be copied into the directory:
+- `~/.arduino15/packages/adafruit/hardware/nrf52/1.0.0/platform.txt`
+- `~/.arduino15/packages/adafruit/hardware/nrf52/1.0.0/boards.txt`
+- `~/.arduino15/packages/adafruit/hardware/nrf52/1.0.0/variants/NINA_B302_ublox/variant.h`
+- `~/.arduino15/packages/adafruit/hardware/nrf52/1.0.0/variants/NINA_B302_ublox/variant.cpp`
+- `~/.arduino15/packages/adafruit/hardware/nrf52/1.0.0/variants/NINA_B112_ublox/variant.h`
+- `~/.arduino15/packages/adafruit/hardware/nrf52/1.0.0/variants/NINA_B112_ublox/variant.cpp`
+- **`~/.arduino15/packages/adafruit/hardware/nrf52/1.0.0/cores/nRF5/Udp.h`**
 
 Whenever a new version is installed, remember to copy these files into the new version directory. For example, new version is x.yy.z
 These files must be copied into the directory:
@@ -1022,6 +1038,19 @@ MySQL_Query sql_query = MySQL_Query(&conn);
  9. [Query_Results_WT32_ETH01](examples/WT32_ETH01/Query_Results_WT32_ETH01)
 10. [Reboot_WT32_ETH01](examples/WT32_ETH01/Reboot_WT32_ETH01)
 
+#### For Teensy 4.1 NativeEthernet
+
+ 1. [Basic_Insert](examples/NativeEthernet/Basic_Insert)
+ 2. [Basic_Select](examples/NativeEthernet/Basic_Select)
+ 3. [Complex_Insert](examples/NativeEthernet/Complex_Insert)
+ 4. [Complex_Select](examples/NativeEthernet/Complex_Select)
+ 5. [Connect](examples/NativeEthernet/Connect)
+ 6. [Connect_By_Hostname](examples/NativeEthernet/Connect_By_Hostname)
+ 7. [Connect_Default_Database](examples/NativeEthernet/Connect_Default_Database)
+ 8. [Connect_Disconnect](examples/NativeEthernet/Connect_Disconnect)
+ 9. [Query_Progmem](examples/NativeEthernet/Query_Progmem)
+10. [Query_Results](examples/NativeEthernet/Query_Results)
+
 ---
 ---
 
@@ -1034,7 +1063,7 @@ Please take a look at other examples, as well.
 ```cpp
 #include "defines.h"
 
-#include <MySQL_Generic_Ethernet.h>
+#include <MySQL_Generic.h>
 
 // Select the static Local IP address according to your local network
 IPAddress ip(192, 168, 2, 222);
@@ -1740,7 +1769,7 @@ This is terminal debug output when running [Query_Progmem](examples/Ethernet/Que
 
 ```
 Starting Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet3 Library
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 Ethernet3 W5500 init, using SPI_CS = 10, number of sockets = 4
 Using mac index = 10
 Connected! IP address: 192.168.2.145
@@ -1779,7 +1808,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NUCLEO_F767ZI using LAN8742A/STM32Ethernet Library
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 Using mac index = 0
 Connected! IP address: 192.168.2.165
 Connecting to SQL Server @ 192.168.2.112, Port = 5698
@@ -1846,7 +1875,7 @@ This is terminal debug output when running [Query_Results_WiFi](examples/WiFi/Qu
 
 ```
 Starting Query_Results_WiFi on ITSYBITSY_M4
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 Using WiFiEspAT Library
 WiFi shield init done
 Connecting to HueNet1
@@ -1885,7 +1914,7 @@ This is terminal debug output when running [Basic_Select_WiFi](examples/WiFi/Bas
 
 ```
 Starting Basic_Select_WiFi on SEEED_XIAO_M0
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 Using WiFiEspAT Library
 WiFi shield init done
 Connecting to HueNet1
@@ -1921,7 +1950,7 @@ This is terminal debug output when running [Query_Results_WiFiNINA](examples/WiF
 
 ```
 Starting Query_Results_WiFiNINA on SAMD_NANO_33_IOT
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 Attempting to connect to SSID: HueNet1
 SSID: HueNet1
 IP Address: 192.168.2.118
@@ -1967,7 +1996,7 @@ This is terminal debug output when running [Connect_By_Hostname](examples/Ethern
 
 ```
 Starting Connect_By_Hostname on SAM DUE using W5x00/EthernetLarge Library
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 _pinCS = 0
 W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 10
 W5100::init: W5100, SSIZE =4096
@@ -1993,7 +2022,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NRF52840_FEATHER using ENC28J60/UIPEthernet Library
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 ENC28J60_CONTROL_CS =10
 SS =5
 SPI_MOSI =25
@@ -2092,7 +2121,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NRF52840_FEATHER, with ENC28J60 using EthernetENC Library
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 25
@@ -2149,7 +2178,7 @@ This is terminal debug output when running [Query_Progmem](examples/Ethernet/Que
 
 ```
 Starting Query_Progmem on NRF52840_FEATHER, with ENC28J60 using EthernetENC Library
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 25
@@ -2202,7 +2231,7 @@ This is terminal debug output when running [Basic_Insert_ESP](examples/WiFi/Basi
 
 ```
 Starting Basic_Insert_ESP on ESP8266_NODEMCU_ESP12E
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 Connecting to HueNet1
 ...........Connected to network. My IP address is: 192.168.2.135
 Connecting to SQL Server @ 192.168.2.112 , Port = 5698
@@ -2231,7 +2260,7 @@ This is terminal debug output when running [Basic_Insert_ESP](examples/WiFi/Basi
 
 ```
 Starting Basic_Insert_ESP on ESP32S2_DEV
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 Connecting to HueNet1
 .......Connected to network. My IP address is: 192.168.2.190
 Connecting to SQL Server @ 192.168.2.112 , Port = 5698
@@ -2260,7 +2289,7 @@ This is terminal debug output when running [Basic_Select_WiFiNINA](examples/WiFi
 
 ```
 Starting Basic_Select_WiFiNINA on MBED NANO_RP2040_CONNECT
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 Attempting to connect to SSID: HueNet1
 SSID: HueNet1
 IP Address: 192.168.2.153
@@ -2296,7 +2325,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on MBED RASPBERRY_PI_PICO , with W5x00 using EthernetLarge Library
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 3
@@ -2384,7 +2413,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on RASPBERRY_PI_PICO , with W5x00 using EthernetLarge Library
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 19
@@ -2445,7 +2474,7 @@ This is terminal debug output when running [Complex_Select_WT32_ETH01](examples/
 ```
 Starting Complex_Select_WT32_ETH01 on WT32-ETH01
 WebServer_WT32_ETH01 v1.2.0
-MySQL_MariaDB_Generic v1.2.0
+MySQL_MariaDB_Generic v1.3.0
 ETH MAC: A8:03:2A:A1:61:73, IPv4: 192.168.2.232
 FULL_DUPLEX, 100Mbps
 Connected to network. My IP address is: 192.168.2.232
@@ -2496,6 +2525,90 @@ Sleeping...
 ```
 
 ---
+
+
+#### 16. Complex_Select on Teensy 4.1 with NativeEthernet
+
+This is terminal debug output when running [Complex_Select](examples/NativeEthernet/Complex_Select) on **Teensy 4.1 with NativeEthernet** connecting to MariaDB Server.
+
+```
+Starting Complex_Select on Teensy 4.1 , with NativeEthernet
+MySQL_MariaDB_Generic v1.3.0
+[SQL] =========================================
+[SQL] Default SPI pinout:
+[SQL] MOSI: 11
+[SQL] MISO: 12
+[SQL] SCK: 13
+[SQL] SS: 10
+[SQL] =========================================
+[SQL] Board : Teensy 4.1 , setCsPin: 10
+[SQL] =========================================
+[SQL] Currently Used SPI pinout:
+[SQL] MOSI: 11
+[SQL] MISO: 12
+[SQL] SCK: 13
+[SQL] SS: 10
+[SQL] =========================================
+Using mac index = 2
+Connected! IP address: 192.168.2.86
+Connecting to SQL Server @ 192.168.2.112 , Port = 5698
+User = invited-guest , PW = the-invited-guest , DB = world
+Connecting...
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connect OK. Try reading packets
+[SQL] Try parsing packets
+[SQL] Try send_authentication packets
+[SQL] Writing this_buffer, size_send = 72
+[SQL] Connected. Server Version = 5.5.5-10.3.29-MariaDB-0+deb10u1
+====================================================
+> Running SELECT with dynamically supplied parameter
+SELECT name, population FROM world.city WHERE population < 940450 ORDER BY population DESC LIMIT 12;
+name,population
+Santa Cruz de la Sierra,935361
+Varanasi (Benares),929270
+Patna,917243
+Hohhot,916700
+Rosario,907718
+Voronez,907700
+Soweto,904165
+Torino,903705
+San Jose,894943
+Srinagar,892506
+Agra,891790
+Kampala,890800
+[SQL] Disconnected
+
+Sleeping...
+================================================
+Connecting...
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connect OK. Try reading packets
+[SQL] Try parsing packets
+[SQL] Try send_authentication packets
+[SQL] Writing this_buffer, size_send = 72
+[SQL] Connected. Server Version = 5.5.5-10.3.29-MariaDB-0+deb10u1
+====================================================
+> Running SELECT with dynamically supplied parameter
+SELECT name, population FROM world.city WHERE population < 1054490 ORDER BY population DESC LIMIT 12;
+name,population
+Shiraz,1053025
+Donetsk,1050000
+Ludhiana,1042740
+Jilin,1040000
+Tangshan,1040000
+Vadodara (Baroda),1031346
+Maputo,1018938
+Montr�al,1016376
+Kitakyushu,1016264
+Kalyan,1014557
+Birmingham,1013000
+Rostov-na-Donu,1012700
+[SQL] Disconnected
+
+Sleeping...
+```
+
+---
 ---
 
 ### Debug
@@ -2523,6 +2636,10 @@ Sometimes, the library will only work if you update the board core to the latest
 
 
 ## Releases
+
+### Release v1.3.0
+
+1. Add support to **Teensy 4.1 using NativeEthernet**
 
 ### Release v1.2.0
 
@@ -2619,6 +2736,7 @@ Submit issues to: [MySQL_MariaDB_Generic issues](https://github.com/khoih-prog/M
 18. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico core**](https://github.com/earlephilhower/arduino-pico) to use LittleFS with or without Blynk/WiFiManager features.
 19. Add support to RP2040-based boards, such as **Nano_RP2040_Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) to use LittleFS with or without Blynk/WiFiManager features.
 20. Add support to WT32_ETH01 (ESP32 + LAN8720A)
+21. Add support to **Teensy 4.1 using NativeEthernet**
 
 ---
 ---
@@ -2627,12 +2745,14 @@ Submit issues to: [MySQL_MariaDB_Generic issues](https://github.com/khoih-prog/M
 
 1. Based on and modified from [Dr. Charles Bell's MySQL_Connector_Arduino Library](https://github.com/ChuckBell/MySQL_Connector_Arduino)
 2. Thanks to good work of [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for initiating, inspriring, working with, developing, debugging and testing.
+3. Thanks to [graham999au](https://github.com/graham999au) for the enhanement request [**NativeEthernet support for Teensy 4.1** #8](https://github.com/khoih-prog/MySQL_MariaDB_Generic/issues/8), and help testing, leading to new version v1.3.0
 
 <table>
   <tr>
     <td align="center"><a href="https://github.com/ChuckBell"><img src="https://github.com/ChuckBell.png" width="100px;" alt="ChuckBell"/><br /><sub><b>⭐️ ChuckBell</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/tcpipchip"><img src="https://github.com/tcpipchip.png" width="100px;" alt="tcpipchip"/><br /><sub><b>Miguel Wisintainer</b></sub></a><br /></td>
   </tr> 
+    <td align="center"><a href="https://github.com/graham999au"><img src="https://github.com/graham999au.png" width="100px;" alt="graham999au"/><br /><sub><b>graham999au</b></sub></a><br /></td>
 </table>
 
 ---
