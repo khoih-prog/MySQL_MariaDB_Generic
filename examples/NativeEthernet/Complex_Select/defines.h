@@ -45,8 +45,6 @@
   #endif
 #endif
 
-#include <SPI.h>
-
 // Only one of the following to be true.
 #define USE_ETHERNET              false
 #define USE_ETHERNET_LARGE        false

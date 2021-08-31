@@ -81,40 +81,12 @@ void setup()
   MYSQL_DISPLAY3("\nStarting Complex_Select on", BOARD_NAME, ", with", SHIELD_TYPE);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
-  MYSQL_LOGERROR(F("========================================="));
-  MYSQL_LOGERROR(F("Default SPI pinout:"));
-  MYSQL_LOGERROR1(F("MOSI:"), MOSI);
-  MYSQL_LOGERROR1(F("MISO:"), MISO);
-  MYSQL_LOGERROR1(F("SCK:"),  SCK);
-  MYSQL_LOGERROR1(F("SS:"),   SS);
-  MYSQL_LOGERROR(F("========================================="));
-
-  // use default SS = 10
-  #ifndef USE_THIS_SS_PIN
-    #define USE_THIS_SS_PIN   10    // For other boards
-  #endif
-
-  MYSQL_LOGERROR3(F("Board :"), BOARD_NAME, F(", setCsPin:"), USE_THIS_SS_PIN);
-
-  // For other boards, to change if necessary
- 
-  Ethernet.init (USE_THIS_SS_PIN);
-
   // start the ethernet connection and the server:
   // Use DHCP dynamic IP and random mac
   uint16_t index = millis() % NUMBER_OF_MAC;
   // Use Static IP
   //Ethernet.begin(mac[index], ip);
   Ethernet.begin(mac[index]);
-
-  // Just info to know how to connect correctly
-  MYSQL_LOGERROR(F("========================================="));
-  MYSQL_LOGERROR(F("Currently Used SPI pinout:"));
-  MYSQL_LOGERROR1(F("MOSI:"), MOSI);
-  MYSQL_LOGERROR1(F("MISO:"), MISO);
-  MYSQL_LOGERROR1(F("SCK:"),  SCK);
-  MYSQL_LOGERROR1(F("SS:"),   SS);
-  MYSQL_LOGERROR(F("========================================="));
 
   MYSQL_DISPLAY1("Using mac index =", index);
   MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
