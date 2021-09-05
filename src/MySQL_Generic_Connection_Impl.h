@@ -13,7 +13,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.3.1
+  Version: 1.4.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -26,6 +26,7 @@
   1.2.0   K Hoang      20/07/2021 Add support to WT32_ETH01 (ESP32 + LAN8720A)
   1.3.0   K Hoang      30/08/2021 Add support to Teensy 4.1 using NativeEthernet
   1.3.1   K Hoang      31/08/2021 Remove unnecessary SPI-bus code in NativeEthernet examples
+  1.4.0   K Hoang      05/09/2021 Add support to Teensy 4.1 using QNEthernet
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -49,7 +50,7 @@
 
 #include <MySQL_Generic_Encrypt_Sha1.h>
 
-#define MAX_CONNECT_ATTEMPTS      5      //3
+#define MAX_CONNECT_ATTEMPTS      10  //5      //3
 #define CONNECT_DELAY_MS          1000   //500
 #define SUCCESS                   1
 
@@ -85,10 +86,12 @@ bool MySQL_Connection::connect(IPAddress server, int port, char *user, char *pas
   while (retries++ < MAX_CONNECT_ATTEMPTS)
   {
     connected = client->connect(server, port);
+    
+    MYSQL_LOGDEBUG1("connected =", connected);
 
     if (connected != SUCCESS)
     {
-      MYSQL_LOGERROR1("Can't connect. Retry #", retries);
+      MYSQL_LOGDEBUG1("Can't connect. Retry #", retries);
       delay(CONNECT_DELAY_MS);
     }
     else
@@ -148,13 +151,17 @@ Connection_Result MySQL_Connection::connectNonBlocking(IPAddress server, int por
   if (db)
     MYSQL_LOGERROR1("Using Database:", db);
   
-  while (retries++ < MAX_CONNECT_ATTEMPTS)
+  while (retries < MAX_CONNECT_ATTEMPTS)
   {  
     if ( (now == 0) || ( millis() - now ) > CONNECT_DELAY_MS )
     {
       now = millis();
       
       connected = client->connect(server, port);
+      
+      retries++;
+      
+      MYSQL_LOGDEBUG1("connected =", connected);
 
       if (connected == SUCCESS)
       {
@@ -162,12 +169,14 @@ Connection_Result MySQL_Connection::connectNonBlocking(IPAddress server, int por
       }
       else
       {
-        MYSQL_LOGERROR1("Can't connect. Retry #", retries);
-        //return RESULT_PENDING;
+        MYSQL_LOGDEBUG1("Can't connect. Retry #", retries);
       }     
     }
     else
-      return RESULT_PENDING;
+    {
+      //delay(CONNECT_DELAY_MS);
+      yield();
+    }
   }
 
   if (connected != SUCCESS)
@@ -207,6 +216,156 @@ Connection_Result MySQL_Connection::connectNonBlocking(IPAddress server, int por
 
   return RESULT_OK;
 }
+
+//////////////////////////////////////////////////////////////
+// KH, add to use hostname. from v1.4.0
+
+bool MySQL_Connection::connect(const char *hostname, int port, char *user, char *password, char *db)
+{
+  int connected = 0;
+  int retries = 0;
+  
+  MYSQL_LOGERROR3("Connecting to Server:", hostname, ", Port = ", port);
+  
+  if (db)
+    MYSQL_LOGERROR1("Using Database:", db);
+
+  // Retry up to MAX_CONNECT_ATTEMPTS times.
+  while (retries++ < MAX_CONNECT_ATTEMPTS)
+  {
+    connected = client->connect(hostname, port);
+    
+    MYSQL_LOGDEBUG1("connected =", connected);
+
+    if (connected != SUCCESS)
+    {
+      MYSQL_LOGDEBUG1("Can't connect. Retry #", retries);
+      delay(CONNECT_DELAY_MS);
+    }
+    else
+    {
+      break;
+    }
+  }
+
+  if (connected != SUCCESS)
+    return false;
+
+  MYSQL_LOGERROR("Connect OK. Try reading packets");
+
+  if ( !read_packet() )
+  {
+    MYSQL_LOGERROR("Can't connect. Error reading packets");
+    return false;
+  }
+
+  MYSQL_LOGERROR("Try parsing packets");
+
+  parse_handshake_packet();
+
+  MYSQL_LOGERROR("Try send_authentication packets");
+
+  send_authentication_packet(user, password, db);
+   
+  if ( !read_packet() )
+  {
+    MYSQL_LOGERROR("Can't connect. Error reading auth packets");
+    return false;
+  }
+
+  if (get_packet_type() != MYSQL_OK_PACKET)
+  {
+    parse_error_packet();
+    return false;
+  }
+
+  MYSQL_LOGERROR1("Connected. Server Version =", server_version);
+
+  free(server_version); // don't need it anymore
+
+  return true;
+}
+
+Connection_Result MySQL_Connection::connectNonBlocking(const char *hostname, int port, char *user, char *password, char *db)
+{
+  int connected = 0;
+  int retries   = 0;
+  
+  long now = 0;
+  
+  MYSQL_LOGERROR3("Connecting to Server:", hostname, ", Port = ", port);
+  
+  if (db)
+    MYSQL_LOGERROR1("Using Database:", db);
+  
+  while (retries < MAX_CONNECT_ATTEMPTS)
+  {  
+    if ( (now == 0) || ( millis() - now ) > CONNECT_DELAY_MS )
+    {
+      now = millis();
+      
+      connected = client->connect(hostname, port);
+      
+      retries++;
+      
+      MYSQL_LOGDEBUG1("connected =", connected);
+
+      if (connected == SUCCESS)
+      {
+        break;
+      }
+      else
+      {
+        MYSQL_LOGDEBUG1("Can't connect. Retry #", retries);
+      }     
+    }
+    else
+    {
+      //delay(CONNECT_DELAY_MS);
+      yield();
+    }
+  }
+
+  if (connected != SUCCESS)
+    return RESULT_FAIL;
+
+  MYSQL_LOGERROR("Connect OK. Try reading packets");
+
+  if ( !read_packet() )
+  {
+    MYSQL_LOGERROR("Can't connect. Error reading packets");
+    return RESULT_FAIL;
+  }
+
+  MYSQL_LOGERROR("Try parsing packets");
+
+  parse_handshake_packet();
+
+  MYSQL_LOGERROR("Try send_authentication packets");
+
+  send_authentication_packet(user, password, db);
+  
+  if ( !read_packet() )
+  {
+    MYSQL_LOGERROR("Can't connect. Error reading auth packets");
+    return RESULT_FAIL;
+  }
+
+  if (get_packet_type() != MYSQL_OK_PACKET)
+  {
+    parse_error_packet();
+    return RESULT_FAIL;
+  }
+
+  MYSQL_LOGERROR1("Connected. Server Version =", server_version);
+
+  free(server_version); // don't need it anymore
+
+  return RESULT_OK;
+}
+
+
+//////////////////////////////////////////////////////////////
 
 /*
   close - cancel the connection

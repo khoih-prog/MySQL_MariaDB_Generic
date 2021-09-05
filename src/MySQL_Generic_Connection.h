@@ -13,7 +13,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.3.1
+  Version: 1.4.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -26,6 +26,7 @@
   1.2.0   K Hoang      20/07/2021 Add support to WT32_ETH01 (ESP32 + LAN8720A)
   1.3.0   K Hoang      30/08/2021 Add support to Teensy 4.1 using NativeEthernet
   1.3.1   K Hoang      31/08/2021 Remove unnecessary SPI-bus code in NativeEthernet examples
+  1.4.0   K Hoang      05/09/2021 Add support to Teensy 4.1 using QNEthernet
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -65,6 +66,12 @@ class MySQL_Connection : public MySQL_Packet
     bool connect(IPAddress server, int port, char *user, char *password, char *db = NULL);
     
     Connection_Result connectNonBlocking(IPAddress server, int port, char *user, char *password, char *db = NULL);
+    
+    // KH, add to use hostname. from v1.4.0
+    bool connect(const char *hostname, int port, char *user, char *password, char *db = NULL);
+    
+    Connection_Result connectNonBlocking(const char *hostname, int port, char *user, char *password, char *db = NULL);
+    ////////
     
     int connected() 
     {

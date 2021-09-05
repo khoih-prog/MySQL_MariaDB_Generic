@@ -14,7 +14,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.3.1
+  Version: 1.4.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -27,6 +27,7 @@
   1.2.0   K Hoang      20/07/2021 Add support to WT32_ETH01 (ESP32 + LAN8720A)
   1.3.0   K Hoang      30/08/2021 Add support to Teensy 4.1 using NativeEthernet
   1.3.1   K Hoang      31/08/2021 Remove unnecessary SPI-bus code in NativeEthernet examples
+  1.4.0   K Hoang      05/09/2021 Add support to Teensy 4.1 using QNEthernet
  **********************************************************************************************************************************/
 
 #ifndef MYSQL_GENERIC_ENCRYPT_SHA1_IMPL_H
