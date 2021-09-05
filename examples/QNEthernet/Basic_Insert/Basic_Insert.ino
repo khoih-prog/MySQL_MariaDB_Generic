@@ -60,9 +60,6 @@
 
 #include <MySQL_Generic.h>
 
-// Select the static Local IP address according to your local network
-IPAddress ip(192, 168, 2, 222);
-
 #define USING_HOST_NAME     true
 
 #if USING_HOST_NAME
@@ -93,8 +90,16 @@ void setup()
   Serial.begin(115200);
   while (!Serial); // wait for serial port to connect
 
-  MYSQL_DISPLAY3("\nStarting Basic_Insert on", BOARD_NAME, ", with", SHIELD_TYPE);
+  MYSQL_DISPLAY2("\nStarting Basic_Insert on", BOARD_NAME, SHIELD_TYPE);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
+
+#if USE_NATIVE_ETHERNET
+  MYSQL_DISPLAY(F("======== USE_NATIVE_ETHERNET ========"));
+#elif USE_QN_ETHERNET
+  MYSQL_DISPLAY(F("=========== USE_QN_ETHERNET ==========="));
+#endif
+
+#if USE_NATIVE_ETHERNET
 
   // start the ethernet connection and the server:
   // Use DHCP dynamic IP and random mac
@@ -103,8 +108,45 @@ void setup()
   //Ethernet.begin(mac[index], ip);
   Ethernet.begin(mac[index]);
 
+  MYSQL_DISPLAY(F("========================="));
+
   MYSQL_DISPLAY1("Using mac index =", index);
   MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
+
+#else
+
+  #if USING_DHCP
+    // Start the Ethernet connection, using DHCP
+    Serial.print("Initialize Ethernet using DHCP => ");
+    Ethernet.begin();
+  #else   
+    // Start the Ethernet connection, using static IP
+    Serial.print("Initialize Ethernet using static IP => ");
+    Ethernet.begin(myIP, myNetmask, myGW);
+    Ethernet.setDNSServerIP(mydnsServer);
+  #endif
+
+  if (!Ethernet.waitForLocalIP(5000))
+  {
+    MYSQL_DISPLAY(F("Failed to configure Ethernet"));
+
+    if (!Ethernet.linkStatus())
+    {
+      MYSQL_DISPLAY(F("Ethernet cable is not connected."));
+    }
+
+    // Stay here forever
+    while (true)
+    {
+      delay(1);
+    }
+  }
+  else
+  {
+    MYSQL_DISPLAY1(F("Connected! IP address:"), Ethernet.localIP());
+  }
+
+#endif
 
   MYSQL_DISPLAY3("Connecting to SQL Server @", server, ", Port =", server_port);
   MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);

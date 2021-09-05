@@ -47,18 +47,21 @@
 // Select the static Local IP address according to your local network
 IPAddress ip(192, 168, 2, 222);
 
+#define USING_HOST_NAME     true
 
-char hostname[] = "your_account.ddns.net"; // change to your server's hostname/URL
+#if USING_HOST_NAME
+  // Optional using hostname, and Ethernet built-in DNS lookup
+  char server[] = "your_account.ddns.net"; // change to your server's hostname/URL
+#else
+  IPAddress server(192, 168, 2, 112);
+#endif
 
 uint16_t server_port = 5698;    //3306;
 
 char user[]             = "invited-guest";              // MySQL user login username
 char password[]         = "the-invited-guest";          // MySQL user login password
 
-IPAddress server_addr;
-
 MySQL_Connection conn((Client *)&client);
-DNSClient dns_client;   // DNS instance
 
 void setup()
 {
@@ -227,14 +230,8 @@ void setup()
 
   MYSQL_DISPLAY1("Using mac index =", index);
   MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
- 
-  // Begin DNS lookup
-  dns_client.begin(Ethernet.dnsServerIP());
-  dns_client.getHostByName(hostname, server_addr);
-  
-  MYSQL_DISPLAY3("DNS Lookup: Hostname :", hostname, "=> IP =", server_addr);
-  
-  MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
+   
+  MYSQL_DISPLAY3("Connecting to SQL Server @", server, ", Port =", server_port);
   MYSQL_DISPLAY3("User =", user, ", PW =", password);
 }
 
@@ -242,8 +239,8 @@ void loop()
 {
   MYSQL_DISPLAY("Connecting...");
   
-  //if (conn.connect(server_addr, server_port, user, password))
-  if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
+  //if (conn.connect(server, server_port, user, password))
+  if (conn.connectNonBlocking(server, server_port, user, password) != RESULT_FAIL)
   {
     MYSQL_DISPLAY("Closing connection...");
     conn.close();                     // close the connection

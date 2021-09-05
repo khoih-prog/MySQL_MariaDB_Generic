@@ -1,5 +1,5 @@
 /*********************************************************************************************************************************
-  Complex_Select.ino
+  Basic_Select.ino
       
   Library for communicating with a MySQL or MariaDB Server
   
@@ -14,21 +14,24 @@
  **********************************************************************************************************************************/
 
 /*
-  MySQL Connector/Arduino Example : complex select
+  MySQL Connector/Arduino Example : basic select
 
-  This example demonstrates how to issue a SELECT query with parameters that
-  we provide from code. Thus, it demonstrates how to build query parameters
-  dynamically.
+  This example demonstrates how to issue a SELECT query with no parameters
+  and use the data returned. For this, we use the Cursor class to execute
+  the query and get the results.
 
-  Notice also the sketch demonstrates how to read columns and rows from
-  the result set. Study this example until you are familiar with how to
-  do this before writing your own sketch to read and consume query results.
-
-  For more information and documentation, visit the wiki:
-  https://github.com/ChuckBell/MySQL_Connector_Arduino/wiki.
+  It demonstrates who methods for running queries. The first allows you to
+  allocate memory for the cursor and later reclaim it, the second shows how
+  to use a single instance of the cursor use throughout a sketch.
 
   NOTICE: You must download and install the World sample database to run
           this sketch unaltered. See http://dev.mysql.com/doc/index-other.html.
+
+  CAUTION: Don't mix and match the examples. Use one or the other in your
+           own sketch -- you'll get compilation errors at the least.
+
+  For more information and documentation, visit the wiki:
+  https://github.com/ChuckBell/MySQL_Connector_Arduino/wiki.
 
   INSTRUCTIONS FOR USE
 
@@ -48,9 +51,6 @@
 
 #include <MySQL_Generic.h>
 
-// Select the static Local IP address according to your local network
-IPAddress ip(192, 168, 2, 222);
-
 #define USING_HOST_NAME     true
 
 #if USING_HOST_NAME
@@ -68,26 +68,31 @@ char password[] = "the-invited-guest";          // MySQL user login password
 char default_database[] = "world";              //"test_arduino";
 char default_table[]    = "city";               //"test_arduino";
 
-// Sample query
-//
-// Notice the "%lu" - that's a placeholder for the parameter we will
-// supply. See sprintf() documentation for more formatting specifier
-// options
-unsigned long QUERY_POPULATION = 800000;
+String default_column   = "population"; 
+String default_value    = "Toronto"; 
 
-const char QUERY_POP[] = "SELECT name, population FROM world.city WHERE population < %lu ORDER BY population DESC LIMIT 12;";
-
-char query[128];
+String query = String("SELECT ") + default_column + " FROM " + default_database + "." + default_table 
+                 + " WHERE name = '" + default_value + "'";
 
 MySQL_Connection conn((Client *)&client);
+// Create an instance of the cursor passing in the connection
+MySQL_Query sql_query = MySQL_Query(&conn);
 
 void setup()
 {
   Serial.begin(115200);
   while (!Serial); // wait for serial port to connect
 
-  MYSQL_DISPLAY3("\nStarting Complex_Select on", BOARD_NAME, ", with", SHIELD_TYPE);
+  MYSQL_DISPLAY2("\nStarting Basic_Select on", BOARD_NAME, SHIELD_TYPE);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
+
+  #if USE_NATIVE_ETHERNET
+  MYSQL_DISPLAY(F("======== USE_NATIVE_ETHERNET ========"));
+#elif USE_QN_ETHERNET
+  MYSQL_DISPLAY(F("=========== USE_QN_ETHERNET ==========="));
+#endif
+
+#if USE_NATIVE_ETHERNET
 
   // start the ethernet connection and the server:
   // Use DHCP dynamic IP and random mac
@@ -96,8 +101,45 @@ void setup()
   //Ethernet.begin(mac[index], ip);
   Ethernet.begin(mac[index]);
 
+  MYSQL_DISPLAY(F("========================="));
+
   MYSQL_DISPLAY1("Using mac index =", index);
   MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
+
+#else
+
+  #if USING_DHCP
+    // Start the Ethernet connection, using DHCP
+    Serial.print("Initialize Ethernet using DHCP => ");
+    Ethernet.begin();
+  #else   
+    // Start the Ethernet connection, using static IP
+    Serial.print("Initialize Ethernet using static IP => ");
+    Ethernet.begin(myIP, myNetmask, myGW);
+    Ethernet.setDNSServerIP(mydnsServer);
+  #endif
+
+  if (!Ethernet.waitForLocalIP(5000))
+  {
+    MYSQL_DISPLAY(F("Failed to configure Ethernet"));
+
+    if (!Ethernet.linkStatus())
+    {
+      MYSQL_DISPLAY(F("Ethernet cable is not connected."));
+    }
+
+    // Stay here forever
+    while (true)
+    {
+      delay(1);
+    }
+  }
+  else
+  {
+    MYSQL_DISPLAY1(F("Connected! IP address:"), Ethernet.localIP());
+  }
+
+#endif
 
   MYSQL_DISPLAY3("Connecting to SQL Server @", server, ", Port =", server_port);
   MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);
@@ -105,66 +147,69 @@ void setup()
 
 void runQuery()
 {
-  MYSQL_DISPLAY("====================================================");
-  MYSQL_DISPLAY("> Running SELECT with dynamically supplied parameter");
-  
-  // Supply the parameter for the query
-  // Here we use the QUERY_POP as the format string and query as the
-  // destination. This uses twice the memory so another option would be
-  // to allocate one buffer for all formatted queries or allocate the
-  // memory as needed (just make sure you allocate enough memory and
-  // free it when you're done!).
-  sprintf(query, QUERY_POP, QUERY_POPULATION + (( millis() % 100000 ) * 10) );
-  MYSQL_DISPLAY(query);
-  
+  row_values *row = NULL;
+  long head_count = 0;
+
+  MYSQL_DISPLAY("1) Demonstrating using a dynamically allocated query.");
   // Initiate the query class instance
   MySQL_Query query_mem = MySQL_Query(&conn);
   
   // Execute the query
+  MYSQL_DISPLAY(query);
+
+  // Execute the query
   // KH, check if valid before fetching
-  if ( !query_mem.execute(query) )
+  if ( !query_mem.execute(query.c_str()) )
   {
     MYSQL_DISPLAY("Querying error");
     return;
   }
   
-  // Fetch the columns and print them
-  column_names *cols = query_mem.get_columns();
+  // Fetch the columns (required) but we don't use them.
+  //column_names *columns = query_mem.get_columns();
+  query_mem.get_columns();
 
-  for (int f = 0; f < cols->num_fields; f++) 
-  {
-    MYSQL_DISPLAY0(cols->fields[f]->name);
-    
-    if (f < cols->num_fields - 1) 
-    {
-      MYSQL_DISPLAY0(",");
-    }
-  }
-  
-  MYSQL_DISPLAY();
-  
-  // Read the rows and print them
-  row_values *row = NULL;
-  
+  // Read the row (we are only expecting the one)
   do 
   {
     row = query_mem.get_next_row();
     
     if (row != NULL) 
     {
-      for (int f = 0; f < cols->num_fields; f++) 
-      {
-        MYSQL_DISPLAY0(row->values[f]);
-        
-        if (f < cols->num_fields - 1) 
-        {
-          MYSQL_DISPLAY0(",");
-        }
-      }
-      
-      MYSQL_DISPLAY();
+      head_count = atol(row->values[0]);
     }
   } while (row != NULL);
+
+  // Show the result
+  MYSQL_DISPLAY1("  Toronto pop =", head_count);
+
+  delay(500);
+
+  MYSQL_DISPLAY("2) Demonstrating using a local, global query.");
+  
+  // Execute the query
+  MYSQL_DISPLAY(query);
+  sql_query.execute(query.c_str());
+  
+  // Fetch the columns (required) but we don't use them.
+  sql_query.get_columns();
+  
+  // Read the row (we are only expecting the one)
+  do 
+  {
+    row = sql_query.get_next_row();
+    if (row != NULL) 
+    {
+      head_count = atol(row->values[0]);
+    }
+  } while (row != NULL);
+  
+  // Now we close the cursor to free any memory
+  sql_query.close();
+
+  // Show the result but this time do some math on it
+  MYSQL_DISPLAY1("  Toronto pop =", head_count);
+  MYSQL_DISPLAY1("  Toronto pop increased by 11725 =", head_count + 11725);
 }
 
 void loop()
@@ -186,5 +231,5 @@ void loop()
   MYSQL_DISPLAY("\nSleeping...");
   MYSQL_DISPLAY("================================================");
  
-  delay(10000);
+  delay(60000);
 }

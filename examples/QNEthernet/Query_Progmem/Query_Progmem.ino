@@ -1,28 +1,24 @@
 /*********************************************************************************************************************************
-  Complex_Select.ino
-      
+  Query_Progmem.ino
+
   Library for communicating with a MySQL or MariaDB Server
-  
+
   Based on and modified from Dr. Charles A. Bell's MySQL_Connector_Arduino Library https://github.com/ChuckBell/MySQL_Connector_Arduino
   to support nRF52, SAMD21/SAMD51, SAM DUE, STM32F/L/H/G/WB/MP1, ESP8266, ESP32, etc. boards using W5x00, ENC28J60, LAM8742A Ethernet,
   WiFiNINA, ESP-AT, built-in ESP8266/ESP32 WiFi.
 
   The library provides simple and easy Client interface to MySQL or MariaDB Server.
-  
+
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
  **********************************************************************************************************************************/
-
 /*
-  MySQL Connector/Arduino Example : complex select
+  MySQL Connector/Arduino Example : query with PROGMEM strings
 
-  This example demonstrates how to issue a SELECT query with parameters that
-  we provide from code. Thus, it demonstrates how to build query parameters
-  dynamically.
-
-  Notice also the sketch demonstrates how to read columns and rows from
-  the result set. Study this example until you are familiar with how to
-  do this before writing your own sketch to read and consume query results.
+  This example demonstrates how to issue queries using strings stored in
+  PROGMEM. As you will see, you need only add a parameter to the execute()
+  method in the cursor class, const and PROGMEM to the string declaration
+  and add the #include <avr/pgmspace.h> directive.
 
   For more information and documentation, visit the wiki:
   https://github.com/ChuckBell/MySQL_Connector_Arduino/wiki.
@@ -47,9 +43,7 @@
 #include "defines.h"
 
 #include <MySQL_Generic.h>
-
-// Select the static Local IP address according to your local network
-IPAddress ip(192, 168, 2, 222);
+#include <avr/pgmspace.h>
 
 #define USING_HOST_NAME     true
 
@@ -65,19 +59,8 @@ uint16_t server_port = 5698;    //3306;
 char user[]     = "invited-guest";              // MySQL user login username
 char password[] = "the-invited-guest";          // MySQL user login password
 
-char default_database[] = "world";              //"test_arduino";
-char default_table[]    = "city";               //"test_arduino";
-
 // Sample query
-//
-// Notice the "%lu" - that's a placeholder for the parameter we will
-// supply. See sprintf() documentation for more formatting specifier
-// options
-unsigned long QUERY_POPULATION = 800000;
-
-const char QUERY_POP[] = "SELECT name, population FROM world.city WHERE population < %lu ORDER BY population DESC LIMIT 12;";
-
-char query[128];
+const char PROGMEM query[] = "SELECT * FROM test_arduino.hello_arduino LIMIT 6";
 
 MySQL_Connection conn((Client *)&client);
 
@@ -86,8 +69,16 @@ void setup()
   Serial.begin(115200);
   while (!Serial); // wait for serial port to connect
 
-  MYSQL_DISPLAY3("\nStarting Complex_Select on", BOARD_NAME, ", with", SHIELD_TYPE);
+  MYSQL_DISPLAY2("\nStarting Query_Progmem on", BOARD_NAME, SHIELD_TYPE);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
+
+#if USE_NATIVE_ETHERNET
+  MYSQL_DISPLAY(F("======== USE_NATIVE_ETHERNET ========"));
+#elif USE_QN_ETHERNET
+  MYSQL_DISPLAY(F("=========== USE_QN_ETHERNET ==========="));
+#endif
+
+#if USE_NATIVE_ETHERNET
 
   // start the ethernet connection and the server:
   // Use DHCP dynamic IP and random mac
@@ -96,75 +87,70 @@ void setup()
   //Ethernet.begin(mac[index], ip);
   Ethernet.begin(mac[index]);
 
+  MYSQL_DISPLAY(F("========================="));
+
   MYSQL_DISPLAY1("Using mac index =", index);
   MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
 
+#else
+
+  #if USING_DHCP
+    // Start the Ethernet connection, using DHCP
+    Serial.print("Initialize Ethernet using DHCP => ");
+    Ethernet.begin();
+  #else   
+    // Start the Ethernet connection, using static IP
+    Serial.print("Initialize Ethernet using static IP => ");
+    Ethernet.begin(myIP, myNetmask, myGW);
+    Ethernet.setDNSServerIP(mydnsServer);
+  #endif
+
+  if (!Ethernet.waitForLocalIP(5000))
+  {
+    MYSQL_DISPLAY(F("Failed to configure Ethernet"));
+
+    if (!Ethernet.linkStatus())
+    {
+      MYSQL_DISPLAY(F("Ethernet cable is not connected."));
+    }
+
+    // Stay here forever
+    while (true)
+    {
+      delay(1);
+    }
+  }
+  else
+  {
+    MYSQL_DISPLAY1(F("Connected! IP address:"), Ethernet.localIP());
+  }
+
+#endif
+
   MYSQL_DISPLAY3("Connecting to SQL Server @", server, ", Port =", server_port);
-  MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);
+  MYSQL_DISPLAY3("User =", user, ", PW =", password);
 }
 
 void runQuery()
 {
-  MYSQL_DISPLAY("====================================================");
-  MYSQL_DISPLAY("> Running SELECT with dynamically supplied parameter");
-  
-  // Supply the parameter for the query
-  // Here we use the QUERY_POP as the format string and query as the
-  // destination. This uses twice the memory so another option would be
-  // to allocate one buffer for all formatted queries or allocate the
-  // memory as needed (just make sure you allocate enough memory and
-  // free it when you're done!).
-  sprintf(query, QUERY_POP, QUERY_POPULATION + (( millis() % 100000 ) * 10) );
+  MYSQL_DISPLAY("\nRunning SELECT from PROGMEM and printing results\n");
   MYSQL_DISPLAY(query);
   
   // Initiate the query class instance
   MySQL_Query query_mem = MySQL_Query(&conn);
   
-  // Execute the query
+  // Execute the query with the PROGMEM option
   // KH, check if valid before fetching
-  if ( !query_mem.execute(query) )
+  if ( !query_mem.execute(query, true) )
   {
     MYSQL_DISPLAY("Querying error");
     return;
   }
   
-  // Fetch the columns and print them
-  column_names *cols = query_mem.get_columns();
-
-  for (int f = 0; f < cols->num_fields; f++) 
-  {
-    MYSQL_DISPLAY0(cols->fields[f]->name);
-    
-    if (f < cols->num_fields - 1) 
-    {
-      MYSQL_DISPLAY0(",");
-    }
-  }
-  
-  MYSQL_DISPLAY();
-  
-  // Read the rows and print them
-  row_values *row = NULL;
-  
-  do 
-  {
-    row = query_mem.get_next_row();
-    
-    if (row != NULL) 
-    {
-      for (int f = 0; f < cols->num_fields; f++) 
-      {
-        MYSQL_DISPLAY0(row->values[f]);
-        
-        if (f < cols->num_fields - 1) 
-        {
-          MYSQL_DISPLAY0(",");
-        }
-      }
-      
-      MYSQL_DISPLAY();
-    }
-  } while (row != NULL);
+  // Show the results
+  query_mem.show_results();
+  // close the query
+  query_mem.close();
 }
 
 void loop()
