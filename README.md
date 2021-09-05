@@ -195,7 +195,7 @@ This also means you can setup your own, local MySQL server to store your data fu
 
 This [**MySQL_MariaDB_Generic library**](https://github.com/khoih-prog/MySQL_MariaDB_Generic) will let you to do exactly that and more!
 
-This [**MySQL_MariaDB_Generic library**](https://github.com/khoih-prog/MySQL_MariaDB_Generic) is based on and modified from [**Dr. Charles Bell's MySQL_Connector_Arduino Library**](https://github.com/ChuckBell/MySQL_Connector_Arduino), to provide support to many more boards and shields, such as **Arduino SAMD21, Adafruit SAMD21/SAMD51, Seeeduino SAMD21/SAMD51, nRF52, STM32F/L/H/G/WB/MP1, Teensy, SAM DUE, AVR Mega, RP2040-based (Nano RP2040 Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040), etc. boards**. Those supported boards can be used with **ESP8266/ESP32’s WiFi, WiFiNINA, W5x00/ENC28J60/LAN8742A Ethernet, ESP8266/ESP32-AT, NativeEthernet modules/shields.**
+This [**MySQL_MariaDB_Generic library**](https://github.com/khoih-prog/MySQL_MariaDB_Generic) is based on and modified from [**Dr. Charles Bell's MySQL_Connector_Arduino Library**](https://github.com/ChuckBell/MySQL_Connector_Arduino), to provide support to many more boards and shields, such as **Arduino SAMD21, Adafruit SAMD21/SAMD51, Seeeduino SAMD21/SAMD51, nRF52, STM32F/L/H/G/WB/MP1, Teensy, SAM DUE, AVR Mega, RP2040-based (Nano RP2040 Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040), etc. boards**. Those supported boards can be used with **ESP8266/ESP32’s WiFi, WiFiNINA, W5x00/ENC28J60/LAN8742A Ethernet, ESP8266/ESP32-AT, NativeEthernet/QNEthernet modules/shields.**
 
 ---
 
@@ -215,7 +215,7 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
   - Seeeduino: Wio Terminal, Grove UI Wireless
   
  4. **SAM DUE** 
- 5. **Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0)** using either Ethernet, WiFi, or for Teensy 4.1 NativeEthernet 
+ 5. **Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0)** using either Ethernet, WiFi, or for Teensy 4.1 NativeEthernet/QNEthernet 
  6. **STM32F/L/H/G/WB/MP1 boards (with 32+K Flash)**
   - Nucleo-144
   - Nucleo-64
@@ -245,7 +245,7 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
 #### Currently supported WiFi shields/modules
 
 1. WiFiNINA using [`WiFiNINA_Generic library`](https://github.com/khoih-prog/WiFiNINA_Generic)
-2. WiFi101 using [`WiFi101 library v0.16.1+`](https://github.com/arduino-libraries/WiFi101)
+2. WiFi101 using [`WiFi101 library`](https://github.com/arduino-libraries/WiFi101)
 3. u-blox W101, W102 using [`WiFiNINA_Generic library`](https://github.com/khoih-prog/WiFiNINA_Generic)
 4. ESP8266-AT command using [`WiFiEspAT library`](https://github.com/jandrassy/WiFiEspAT)
 5. ESP8266/ESP32-AT command using [`ESP_AT_Lib library`](https://github.com/khoih-prog/ESP_AT_Lib)
@@ -256,9 +256,9 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
 
 1. W5x00 using [`Ethernet`](https://www.arduino.cc/en/Reference/Ethernet), [`EthernetLarge`](https://github.com/OPEnSLab-OSU/EthernetLarge), [`Ethernet2`](https://github.com/adafruit/Ethernet2) or [`Ethernet3`](https://github.com/sstaub/Ethernet3) library
 2. ENC28J60 using [`EthernetENC`](https://github.com/jandrassy/EthernetENC) or [`UIPEthernet`](https://github.com/UIPEthernet/UIPEthernet) library
-3. Teensy 4.1 built-in NativeEthernet using [NativeEthernet Library](https://github.com/vjmuzik/NativeEthernet)
-4. LAN8720 / LAN8720A used in **WT32_ETH01 (ESP32 + LAN8720A)**
-
+3. LAN8720 / LAN8720A used in **WT32_ETH01 (ESP32 + LAN8720A)**
+4. Teensy 4.1 built-in Ethernet using [`NativeEthernet`](https://github.com/vjmuzik/NativeEthernet) library
+5. Teensy 4.1 built-in Ethernet using [`QNEthernet`](https://github.com/ssilverman/QNEthernet) library
 
 ---
 ---
@@ -1826,7 +1826,7 @@ Using mac index = 10
 Connected! IP address: 192.168.2.145
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -1864,7 +1864,7 @@ Using mac index = 0
 Connected! IP address: 192.168.2.165
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest, DB = world
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -1890,7 +1890,7 @@ Coimbatore,816321
 Sleeping...
 ================================================
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -1934,7 +1934,7 @@ Connected to network. My IP address is: 192.168.2.32
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -1973,7 +1973,7 @@ Connected to network. My IP address is: 192.168.2.32
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest, DB = world
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2009,7 +2009,7 @@ signal strength (RSSI):-40 dBm
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2053,10 +2053,9 @@ W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 10
 W5100::init: W5100, SSIZE =4096
 Using mac index = 2
 Connected! IP address: 192.168.2.177
-DNS Lookup: Hostname : account.ddns.net => IP = 216.154.***.***
-Connecting to SQL Server @ 216.154.***.***, Port = 5698
+Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest
-[SQL] Connecting to Server: 216.154.***.*** , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2084,7 +2083,7 @@ Connected! IP address: 192.168.2.161
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest, DB = world
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2110,7 +2109,7 @@ Pikine,855287
 Sleeping...
 ================================================
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2136,7 +2135,7 @@ Peshawar,988005
 Sleeping...
 ================================================
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2193,7 +2192,7 @@ Connected! IP address: 192.168.2.98
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest, DB = world
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2250,7 +2249,7 @@ Connected! IP address: 192.168.2.106
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2288,7 +2287,7 @@ Connecting to HueNet1
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = test_arduino
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2317,7 +2316,7 @@ Connecting to HueNet1
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = test_arduino
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2348,7 +2347,7 @@ signal strength (RSSI):-44 dBm
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest, DB = world
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2400,7 +2399,7 @@ Connected! IP address: 192.168.2.94
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = world
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2427,7 +2426,7 @@ L⸮dz,800110
 Sleeping...
 ================================================
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2488,7 +2487,7 @@ Connected! IP address: 192.168.2.118
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = world
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2532,7 +2531,7 @@ Connected to network. My IP address is: 192.168.2.232
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = world
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2553,7 +2552,7 @@ Ciudad de Guatemala,823301
 Sleeping...
 ================================================
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2590,7 +2589,7 @@ Connected! IP address: 192.168.2.86
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = world
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
@@ -2617,7 +2616,7 @@ Kampala,890800
 Sleeping...
 ================================================
 Connecting...
-[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
 [SQL] Connect OK. Try reading packets
 [SQL] Try parsing packets
 [SQL] Try send_authentication packets
