@@ -62,7 +62,15 @@ IPAddress mySN(255, 255, 255, 0);
 // Google DNS Server IP
 IPAddress myDNS(8, 8, 8, 8);
 
-IPAddress server_addr(192, 168, 2, 112);
+#define USING_HOST_NAME     true
+
+#if USING_HOST_NAME
+  // Optional using hostname, and Ethernet built-in DNS lookup
+  char server[] = "your_account.ddns.net"; // change to your server's hostname/URL
+#else
+  IPAddress server(192, 168, 2, 112);
+#endif
+
 uint16_t server_port = 5698;    //3306;
 
 char user[]             = "invited-guest";      // MySQL user login username
@@ -95,7 +103,7 @@ void setup()
   // print out info about the connection:
   MYSQL_DISPLAY1("Connected to network. My IP address is:", ETH.localIP());
 
-  MYSQL_DISPLAY3("Connecting to SQL Server @", server_addr, ", Port =", server_port);
+  MYSQL_DISPLAY3("Connecting to SQL Server @", server, ", Port =", server_port);
   MYSQL_DISPLAY3("User =", user, ", PW =", password);
 }
 
@@ -103,8 +111,8 @@ void loop()
 {
   MYSQL_DISPLAY("Connecting...");
   
-  //if (conn.connect(server_addr, server_port, user, password))
-  if (conn.connectNonBlocking(server_addr, server_port, user, password) != RESULT_FAIL)
+  //if (conn.connect(server, server_port, user, password))
+  if (conn.connectNonBlocking(server, server_port, user, password) != RESULT_FAIL)
   {
     MYSQL_DISPLAY("Closing connection...");
     conn.close();                     // close the connection
