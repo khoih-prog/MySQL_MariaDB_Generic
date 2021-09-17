@@ -4,14 +4,14 @@
   Library for communicating with a MySQL or MariaDB Server
   
   Based on and modified from Dr. Charles A. Bell's MySQL_Connector_Arduino Library https://github.com/ChuckBell/MySQL_Connector_Arduino
-  to support nRF52, SAMD21/SAMD51, SAM DUE, STM32F/L/H/G/WB/MP1, ESP8266, ESP32, etc. boards using W5x00, ENC28J60, LAM8742A Ethernet,
-  WiFiNINA, ESP-AT, built-in ESP8266/ESP32 WiFi.
+  to support nRF52, SAMD21/SAMD51, SAM DUE, STM32F/L/H/G/WB/MP1, ESP8266, ESP32, WT32_ETH01, Teensy, Portenta_H7, etc. boards 
+  using W5x00, ENC28J60, LAM8742A Ethernet, WiFiNINA, ESP-AT, built-in ESP8266/ESP32 WiFi, Portenta Ethernet/WiFi
 
   The library provides simple and easy Client interface to MySQL or MariaDB Server.
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.4.0
+  Version: 1.5.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -25,6 +25,7 @@
   1.3.0   K Hoang      30/08/2021 Add support to Teensy 4.1 using NativeEthernet
   1.3.1   K Hoang      31/08/2021 Remove unnecessary SPI-bus code in NativeEthernet examples
   1.4.0   K Hoang      05/09/2021 Add support to Teensy 4.1 using QNEthernet
+  1.5.0   K Hoang      17/09/2021 Add support to Portenta_H7, using either WiFi or Vision-shield Ethernet
  **********************************************************************************************************************************/
 
 #ifndef MYSQL_GENERIC_ETHERNET_H
@@ -84,7 +85,14 @@
   using namespace qindesign::network;
   EthernetClient client;
   #warning Using Teensy 4.1 QNEthernet lib
-   
+
+// KH, from v1.5.0  
+#elif USE_ETHERNET_PORTENTA_H7
+  #include <Portenta_Ethernet.h>
+  #include <Ethernet.h>
+  EthernetClient client;
+  #warning Using Portenta_Ethernet lib for Portenta_H7.
+     
 #elif USE_CUSTOM_ETHERNET
   #include "Ethernet_XYZ.h"
   EthernetClient client;

@@ -16,16 +16,7 @@
   * [Currently supported Boards](#currently-supported-boards)
   * [Currently supported WiFi shields/modules](#currently-supported-wifi-shieldsmodules)
   * [Currently supported Ethernet shields/modules](#currently-supported-ethernet-shieldsmodules)
-* [Changelog](#changelog)
-  * [Major Release v1.4.0](#major-release-v140)
-  * [Release v1.3.1](#release-v131)
-  * [Release v1.3.0](#release-v130)
-  * [Release v1.2.0](#release-v120)
-  * [Major Release v1.1.0](#major-release-v110)
-  * [Release v1.0.3](#release-v103)
-  * [Release v1.0.2](#release-v102)
-  * [Release v1.0.1](#release-v101)
-  * [Release v1.0.0](#release-v100)
+* [Changelog](changelog.md)
 * [Prerequisites](#prerequisites)
 * [Installation](#installation)
   * [Use Arduino Library Manager](#use-arduino-library-manager)
@@ -46,6 +37,7 @@
   * [8. For RP2040-based boards using Earle Philhower arduino-pico core](#8-for-rp2040-based-boards-using-earle-philhower-arduino-pico-core)
     * [8.1. To use BOARD_NAME](#81-to-use-board_name)
     * [8.2. To avoid compile error relating to microsecondsToClockCycles](#82-to-avoid-compile-error-relating-to-microsecondstoclockcycles)
+  * [9. For Portenta_H7 boards using Arduino IDE in Linux](#9-for-portenta_h7-boards-using-arduino-ide-in-linux)
 * [Libraries' Patches](#libraries-patches)
   * [1. For application requiring 2K+ HTML page](#1-for-application-requiring-2k-html-page)
   * [2. For Ethernet library](#2-for-ethernet-library)
@@ -55,22 +47,6 @@
   * [6. For UIPEthernet library](#6-for-uipethernet-library)
   * [7. For fixing ESP32 compile error](#7-for-fixing-esp32-compile-error)
   * [8. For fixing ESP8266 compile error](#8-for-fixing-esp8266-compile-error)
-* [HOWTO Install esp32 core for ESP32-S2 (Saola, AI-Thinker ESP-12K) and ESP32-C3 boards into Arduino IDE](#howto-install-esp32-core-for-esp32-s2-saola-ai-thinker-esp-12k-and-esp32-c3-boards-into-arduino-ide)
-  * [1. Save the original esp32 core](#1-save-the-original-esp32-core)
-  * [2. Install esp32 core v1.0.6](#2-install-esp32-core-v106)
-    * [2.1 Install esp32 core](#21-install-esp32-core)
-    * [2.2 Download latest zip with esp32-s2 support](#22-download-latest-zip-with-esp32-s2-support)
-    * [2.3 Unzip](#23-unzip)
-    * [2.3 Update esp32 core directories](#24-update-esp32-core-directories)
-  * [3. Download tools for ESP32-S2](#3-download-tools-for-esp32-s2) 
-    * [3.1 Download Toolchain for Xtensa (ESP32-S2) based on GCC](#31-download-toolchain-for-xtensa-esp32-s2-based-on-gcc)
-    * [3.2 Download esptool](#32-download-esptool)
-    * [3.3 Unzip](#33-unzip)
-  * [4. Update tools](#4-update-tools)
-    * [4.1 Update Toolchain](#41-update-toolchain)
-    * [4.2 Update esptool](#42-update-esptool)
-  * [5. Download tools for ESP32-C3](#5-download-tools-for-esp32-c3)
-  * [6. esp32-s2 WebServer Library Patch](#6-esp32-s2-webserver-library-patch)
 * [HOWTO Use analogRead() with ESP32 running WiFi and/or BlueTooth (BT/BLE)](#howto-use-analogread-with-esp32-running-wifi-andor-bluetooth-btble)
   * [1. ESP32 has 2 ADCs, named ADC1 and ADC2](#1--esp32-has-2-adcs-named-adc1-and-adc2)
   * [2. ESP32 ADCs functions](#2-esp32-adcs-functions)
@@ -82,74 +58,15 @@
   * [ 3. To use WiFiNINA module/shield](#3-to-use-wifinina-moduleshield)
 * [Examples](#examples)
   * [For Ethernet module/shield](#for-ethernet-moduleshield)
-    * [ 1. Basic_Insert](examples/Ethernet/Basic_Insert)
-    * [ 2. Basic_Select](examples/Ethernet/Basic_Select)
-    * [ 3. Complex_Insert](examples/Ethernet/Complex_Insert)
-    * [ 4. Complex_Select](examples/Ethernet/Complex_Select)
-    * [ 5. Connect](examples/Ethernet/Connect)
-    * [ 6. Connect_By_Hostname](examples/Ethernet/Connect_By_Hostname)
-    * [ 7. Connect_Default_Database](examples/Ethernet/Connect_Default_Database)
-    * [ 8. Connect_Disconnect](examples/Ethernet/Connect_Disconnect)
-    * [ 9. Query_Progmem](examples/Ethernet/Query_Progmem)
-    * [10. Query_Results](examples/Ethernet/Query_Results)
   * [For WiFi module/shield](#for-wifi-moduleshield)
-    * [ 1. Basic_Insert_ESP](examples/WiFi/Basic_Insert_ESP)
-    * [ 2. Basic_Insert_WiFi](examples/WiFi/Basic_Insert_WiFi)
-    * [ 3. Basic_Select_WiFi](examples/WiFi/Basic_Select_WiFi)
-    * [ 4. Complex_Insert_WiFi](examples/WiFi/Complex_Insert_WiFi)
-    * [ 5. Complex_Select_WiFi](examples/WiFi/Complex_Select_WiFi)
-    * [ 6. Connect_WiFi](examples/WiFi/Connect_WiFi)
-    * [ 7. Connect_Default_Database_WiFi](examples/WiFi/Connect_Default_Database_WiFi)
-    * [ 8. Connect_Disconnect_WiFi](examples/WiFi/Connect_Disconnect_WiFi)
-    * [ 9. Query_Progmem_WiFi](examples/WiFi/Query_Progmem_WiFi)
-    * [10. Query_Results_WiFi](examples/WiFi/Query_Results_WiFi)
-    * [11. Reboot_WiFi](examples/WiFi/Reboot_WiFi)
   * [For WiFiNINA module/shield](#for-wifinina-moduleshield)
-    * [ 1. Basic_Insert_WiFiNINA](examples/WiFiNINA/Basic_Insert_WiFiNINA)
-    * [ 2. Basic_Select_WiFiNINA](examples/WiFiNINA/Basic_Select_WiFiNINA)
-    * [ 3. Complex_Insert_WiFiNINA](examples/WiFiNINA/Complex_Insert_WiFiNINA)
-    * [ 4. Complex_Select_WiFiNINA](examples/WiFiNINA/Complex_Select_WiFiNINA)
-    * [ 5. Connect_WiFiNINA](examples/WiFiNINA/Connect_WiFiNINA)
-    * [ 6. Connect_Default_Database_WiFiNINA](examples/WiFiNINA/Connect_Default_Database_WiFiNINA)
-    * [ 7. Connect_Disconnect_WiFiNINA](examples/WiFiNINA/Connect_Disconnect_WiFiNINA)
-    * [ 8. Query_Progmem_WiFiNINA](examples/WiFiNINA/Query_Progmem_WiFiNINA)
-    * [ 9. Query_Results_WiFiNINA](examples/WiFiNINA/Query_Results_WiFiNINA)
-    * [10. Reboot_WiFiNINA](examples/WiFiNINA/Reboot_WiFiNINA)
   * [For WT32_ETH01](#for-wt32_eth01)
-    * [ 1. Basic_Insert_WT32_ETH01](examples/WT32_ETH01/Basic_Insert_WT32_ETH01)
-    * [ 2. Basic_Select_WT32_ETH01](examples/WT32_ETH01/Basic_Select_WT32_ETH01)
-    * [ 3. Complex_Insert_WT32_ETH01](examples/WT32_ETH01/Complex_Insert_WT32_ETH01)
-    * [ 4. Complex_Select_WT32_ETH01](examples/WT32_ETH01/Complex_Select_WT32_ETH01)
-    * [ 5. Connect_WT32_ETH01](examples/WT32_ETH01/Connect_WT32_ETH01)
-    * [ 6. Connect_Default_Database_WT32_ETH01](examples/WT32_ETH01/Connect_Default_Database_WT32_ETH01)
-    * [ 7. Connect_Disconnect_WT32_ETH01](examples/WT32_ETH01/Connect_Disconnect_WT32_ETH01)
-    * [ 8. Query_Progmem_WT32_ETH01](examples/WT32_ETH01/Query_Progmem_WT32_ETH01)
-    * [ 9. Query_Results_WT32_ETH01](examples/WT32_ETH01/Query_Results_WT32_ETH01)
-    * [10. Reboot_WT32_ETH01](examples/WT32_ETH01/Reboot_WT32_ETH01)
   * [For Teensy 4.1 NativeEthernet](#for-teensy-41-nativeethernet)
-    * [ 1. Basic_Insert](examples/NativeEthernet/Basic_Insert)
-    * [ 2. Basic_Select](examples/NativeEthernet/Basic_Select)
-    * [ 3. Complex_Insert](examples/NativeEthernet/Complex_Insert)
-    * [ 4. Complex_Select](examples/NativeEthernet/Complex_Select)
-    * [ 5. Connect](examples/NativeEthernet/Connect)
-    * [ 6. Connect_By_Hostname](examples/NativeEthernet/Connect_By_Hostname)
-    * [ 7. Connect_Default_Database](examples/NativeEthernet/Connect_Default_Database)
-    * [ 8. Connect_Disconnect](examples/NativeEthernet/Connect_Disconnect)
-    * [ 9. Query_Progmem](examples/NativeEthernet/Query_Progmem)
-    * [10. Query_Results](examples/NativeEthernet/Query_Results)
   * [For Teensy 4.1 QNEthernet](#for-teensy-41-qnethernet)
-    * [ 1. Basic_Insert](examples/QNEthernet/Basic_Insert)
-    * [ 2. Basic_Select](examples/QNEthernet/Basic_Select)
-    * [ 3. Complex_Insert](examples/QNEthernet/Complex_Insert)
-    * [ 4. Complex_Select](examples/QNEthernet/Complex_Select)
-    * [ 5. Connect](examples/QNEthernet/Connect)
-    * [ 6. Connect_By_Hostname](examples/QNEthernet/Connect_By_Hostname)
-    * [ 7. Connect_Default_Database](examples/QNEthernet/Connect_Default_Database)
-    * [ 8. Connect_Disconnect](examples/QNEthernet/Connect_Disconnect)
-    * [ 9. Query_Progmem](examples/QNEthernet/Query_Progmem)
-    * [10. Query_Results](examples/QNEthernet/Query_Results)
-* [Example Complex_Select](#example-complex_select)
-  * [1. File Complex_Select.ino](#1-file-complex_selectino)
+  * [For Portenta_H7 Ethernet](#For-Portenta_H7-Ethernet)
+  * [For Portenta_H7 WiFi](#For-Portenta_H7-WiFi)
+* [Example Basic_Select](#example-Basic_Select)
+  * [1. File Basic_Select.ino](#1-file-Basic_Selectino)
   * [2. File defines.h](#2-file-definesh)
 * [Debug Terminal Output Samples](#debug-terminal-output-samples)
   * [ 1. Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet3 Library](#1-query_progmem-on-nrf52840_feather-using-w5x00ethernet3-library) 
@@ -169,9 +86,10 @@
   * [15. Complex_Select_WT32_ETH01 on WT32-ETH01](#15-complex_select_wt32_eth01-on-wt32-eth01)
   * [16. Complex_Select on Teensy 4.1 with NativeEthernet](#16-complex_select-on-teensy-41-with-nativeethernet)
   * [17. Complex_Select on Teensy 4.1 with QNEthernet](#17-complex_select-on-teensy-41-with-qnethernet)
+  * [18. Complex_Insert on PORTENTA_H7_M7 using Portenta_Ethernet](#18-Complex_Insert-on-PORTENTA_H7_M7-using-Portenta_Ethernet)
+  * [19. Complex_Select_WiFi on PORTENTA_H7_M7](#19-Complex_Select_WiFi-on-PORTENTA_H7_M7)
 * [Debug](#debug)
 * [Troubleshooting](#troubleshooting)
-* [Releases](#releases)
 * [Issues](#issues)
 * [TO DO](#to-do)
 * [DONE](#done)
@@ -195,7 +113,7 @@ This also means you can setup your own, local MySQL server to store your data fu
 
 This [**MySQL_MariaDB_Generic library**](https://github.com/khoih-prog/MySQL_MariaDB_Generic) will let you to do exactly that and more!
 
-This [**MySQL_MariaDB_Generic library**](https://github.com/khoih-prog/MySQL_MariaDB_Generic) is based on and modified from [**Dr. Charles Bell's MySQL_Connector_Arduino Library**](https://github.com/ChuckBell/MySQL_Connector_Arduino), to provide support to many more boards and shields, such as **Arduino SAMD21, Adafruit SAMD21/SAMD51, Seeeduino SAMD21/SAMD51, nRF52, STM32F/L/H/G/WB/MP1, Teensy, SAM DUE, AVR Mega, RP2040-based (Nano RP2040 Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040), etc. boards**. Those supported boards can be used with **ESP8266/ESP32’s WiFi, WiFiNINA, W5x00/ENC28J60/LAN8742A Ethernet, ESP8266/ESP32-AT, NativeEthernet/QNEthernet modules/shields.**
+This [**MySQL_MariaDB_Generic library**](https://github.com/khoih-prog/MySQL_MariaDB_Generic) is based on and modified from [**Dr. Charles Bell's MySQL_Connector_Arduino Library**](https://github.com/ChuckBell/MySQL_Connector_Arduino), to provide support to many more boards and shields, such as **Arduino SAMD21, Adafruit SAMD21/SAMD51, Seeeduino SAMD21/SAMD51, nRF52, STM32F/L/H/G/WB/MP1, Teensy, SAM DUE, AVR Mega, RP2040-based (Nano RP2040 Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040), Portenta_H7, etc. boards**. Those supported boards can be used with **ESP8266/ESP32’s WiFi, WiFiNINA, W5x00/ENC28J60/LAN8742A Ethernet, ESP8266/ESP32-AT, NativeEthernet/QNEthernet modules/shields, Portenta_H7 WiFi/Ethernet.**
 
 ---
 
@@ -240,6 +158,8 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
 
 11. **WT32_ETH01 (ESP32 + LAN8720A)**
 
+12. **Portenta_H7** using either `Murata WiFi` or `Vision-shield Ethernet`
+
 ---
 
 #### Currently supported WiFi shields/modules
@@ -249,6 +169,8 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
 3. u-blox W101, W102 using [`WiFiNINA_Generic library`](https://github.com/khoih-prog/WiFiNINA_Generic)
 4. ESP8266-AT command using [`WiFiEspAT library`](https://github.com/jandrassy/WiFiEspAT)
 5. ESP8266/ESP32-AT command using [`ESP_AT_Lib library`](https://github.com/khoih-prog/ESP_AT_Lib)
+6. **Portenta_H7 built-in Murata WiFi**
+
 
 ---
 
@@ -259,87 +181,20 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
 3. LAN8720 / LAN8720A used in **WT32_ETH01 (ESP32 + LAN8720A)**
 4. Teensy 4.1 built-in Ethernet using [`NativeEthernet`](https://github.com/vjmuzik/NativeEthernet) library
 5. Teensy 4.1 built-in Ethernet using [`QNEthernet`](https://github.com/ssilverman/QNEthernet) library
+6. - Portenta_H7 using Ethernet from [Portenta Vision shields](https://store-usa.arduino.cc/products/arduino-portenta-vision-shield-ethernet)
+  
+<p align="center">
+    <img src="https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/master/pics/Portenta_Vision.jpg">
+</p>
+
 
 ---
 ---
 
-## Changelog
-
-### Major Release v1.4.0
-
-1. Add support to [QNEthernet Library](https://github.com/ssilverman/QNEthernet) for Teensy 4.1 built-in Ethernet
-2. Fix bug in non-blocking connection
-3. Add new feature to permit using either server's hostname, such as `your_account.duckdns.org`, or server's IPAddress, such as IPAddress(192,168,2,112)
-4. Update examples with new features, bug-fixes, etc.
-
-### Release v1.3.1
-
-1. Remove unnecessary SPI-bus code in NativeEthernet examples
-
-### Release v1.3.0
-
-1. Add support to **Teensy 4.1 using NativeEthernet**
-
-### Release v1.2.0
-
-1. Add support to WT32_ETH01 (ESP32 + LAN8720A)
-
-### Major Release v1.1.0
-
-1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico** v1.8.0+ core](https://github.com/earlephilhower/arduino-pico).
-2. Add support to RP2040-based boards, such as **Nano_RP2040_Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** v2.1.0+ core](https://github.com/arduino/ArduinoCore-mbed).
-3. Add support to new **ESP32-S2** boards (**Arduino ESP32C3_DEV**). Check [HOWTO Install esp32 core for ESP32-S2 (Saola, AI-Thinker ESP-12K) and ESP32-C3 boards into Arduino IDE](#howto-install-esp32-core-for-esp32-s2-saola-ai-thinker-esp-12k-and-esp32-c3-boards-into-arduino-ide).
-4. Verify working with new ESP8266 core v3.0.0 and new ESP32 core v1.0.6
-5. Suppress all warnings possible.
-6. Add Table of Contents and Version String
-
-### Release v1.0.3
-
- 1. Add support to ENC28J60 Ethernet module/shield using new **EthernetENC** library.
- 2. Update Platform.ini to support PlatformIO 5.x owner-based dependency declaration.
- 3. Enhance examples
-
-#### Release v1.0.2
-
- 1. Fix crashing bug when Client timeout. 
- 2. Make code more error-proof.
- 3. Drop support to ESP8266_AT_Webserver.
- 4. Enhance examples
-
-#### Release v1.0.1
-
- 1. Add support to ENC28J60 Ethernet module/shield using **UIPEthernet** library.
- 2. Fix bugs
- 3. Optimize code
- 4. Enhance examples
- 5. Add UIPEthernet Library Patches for SAMD21/SAMD51
-
-#### Release v1.0.0
-
- 1. Add support to **nRF52** boards, such as **AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B302_ublox, NINA_B112_ublox, etc.**
- 2. Add support to **Adafruit SAMD51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)**
- 3. Add support to **Adafruit SAMD21 Itsy-Bitsy M0, Feathr M0, Metro M0, AdaFruit CIRCUITPLAYGROUND_EXPRESS, etc.)**
- 4. Add support to **Arduino SAMD21 (ZERO, MKR, NANO_33_IOT, etc.)**
- 5. Add support to all **STM32F/L/H/G/WB/MP1 (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8, etc.)**
- 6. Add support to **Seeeduino SAMD21/SAMD51 boards (SEEED_WIO_TERMINAL, SEEED_FEMTO_M0, SEEED_XIAO_M0, Wio_Lite_MG126, WIO_GPS_BOARD, SEEEDUINO_ZERO, SEEEDUINO_LORAWAN, SEEED_GROVE_UI_WIRELESS, etc.)**
- 7. Add support to **SAM DUE and AVR Mega** boards.
- 8. Add support to **ESP32/ESP8266** boards.
- 9. Add connectNonBlocking() function to use in loop() to avoid being blocked running other tasks. 
-10. Add support to WiFiNINA using [**WiFiNINA_Generic library**](https://github.com/khoih-prog/WiFiNINA_Generic) or WiFiNINA library.
-11. Add support to W5x00 Ethernet module/shield using Ethernet, EthernetLarge, Ethernet2 or Ethernet3 library.
-12. Add support to LAN8742A Ethernet module/shield using STM32Ethernet library.
-13. Add support to ESP8266/ESP32-AT-command module/shield using [`WiFiEspAT library`](https://github.com/jandrassy/WiFiEspAT) or [`ESP8266_AT_WebServer library`](https://github.com/khoih-prog/ESP8266_AT_WebServer).
-14. Add Packages' Patches.
-15. Add sample Packages_Patches for **STM32F/L/H/G/WB/MP1** (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8)
-16. Add Ethernet Library Patches
-17. Add many examples
-
----
----
  
 ## Prerequisites
 
- 1. [`Arduino IDE v1.8.15+` for Arduino](https://www.arduino.cc/en/Main/Software)
+ 1. [`Arduino IDE v1.8.16+` for Arduino](https://www.arduino.cc/en/Main/Software)
  2. [`ESP32 Core 2.0.0+`](https://github.com/espressif/arduino-esp32) for ESP32-based boards. [![Latest release](https://img.shields.io/github/release/espressif/arduino-esp32.svg)](https://github.com/espressif/arduino-esp32/releases/latest/)
  3. [`ESP8266 Core 3.0.2+`](https://github.com/esp8266/Arduino) for ESP8266-based boards. [![Latest release](https://img.shields.io/github/release/esp8266/Arduino.svg)](https://github.com/esp8266/Arduino/releases/latest/).
  4. [`Arduino AVR core 1.8.3+`](https://github.com/arduino/ArduinoCore-avr) for Arduino (Use Arduino Board Manager) for AVR boards. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-avr.svg)](https://github.com/arduino/ArduinoCore-avr/releases/latest)
@@ -366,7 +221,7 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
    - [`UIPEthernet library v2.0.10+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60. [![GitHub release](https://img.shields.io/github/release/UIPEthernet/UIPEthernet.svg)](https://github.com/UIPEthernet/UIPEthernet/releases/latest)
    - [`STM32Ethernet library v1.2.0+`](https://github.com/stm32duino/STM32Ethernet) for built-in LAN8742A Ethernet on (Nucleo-144, Discovery). [![GitHub release](https://img.shields.io/github/release/stm32duino/STM32Ethernet.svg)](https://github.com/stm32duino/STM32Ethernet/releases/latest). To be used with [`LwIP library v2.1.2+`](https://github.com/stm32duino/LwIP). [![GitHub release](https://img.shields.io/github/release/stm32duino/LwIP.svg)](https://github.com/stm32duino/LwIP/releases/latest)
    - [`NativeEthernetLarge library v1.0.5+`](https://github.com/vjmuzik/NativeEthernet) for Teensy 4.1 built-in Ethernet.
-   - [`QNEthernet Library version v0.4.0+`](https://github.com/ssilverman/QNEthernet) for Teensy 4.1 built-in Ethernet. **New**
+   - [`QNEthernet Library version v0.6.0+`](https://github.com/ssilverman/QNEthernet) for Teensy 4.1 built-in Ethernet. **New**
    
 16. [`WiFiEspAT library v1.3.1+`](https://github.com/jandrassy/WiFiEspAT) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiEspAT.svg?)](https://www.ardu-badge.com/WiFiEspAT).
 17. [`ESP_AT_Lib library v1.4.0+`](https://github.com/khoih-prog/ESP_AT_Lib) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_AT_Lib.svg?)](https://www.ardu-badge.com/ESP_AT_Lib).
@@ -402,9 +257,6 @@ Another way to install is to:
 
 ### Packages' Patches
 
-
-### Packages' Patches
-
 #### 1. For Adafruit nRF52840 and nRF52832 boards
 
 **To be able to compile, run and automatically detect and display BOARD_NAME on nRF52840/nRF52832 boards**, you have to copy the whole [nRF52 1.0.0](Packages_Patches/adafruit/hardware/nrf52/1.0.0) directory into Adafruit nRF52 directory (~/.arduino15/packages/adafruit/hardware/nrf52/1.0.0). 
@@ -431,14 +283,14 @@ These files must be copied into the directory:
 
 #### 2. For Teensy boards
  
- **To be able to compile and run on Teensy boards**, you have to copy the files in [**Packages_Patches for Teensy directory**](Packages_Patches/hardware/teensy/avr) into Teensy hardware directory (./arduino-1.8.13/hardware/teensy/avr/boards.txt). 
+ **To be able to compile and run on Teensy boards**, you have to copy the files in [**Packages_Patches for Teensy directory**](Packages_Patches/hardware/teensy/avr) into Teensy hardware directory (./arduino-1.8.15/hardware/teensy/avr/boards.txt). 
 
-Supposing the Arduino version is 1.8.13. These files must be copied into the directory:
+Supposing the Arduino version is 1.8.15. These files must be copied into the directory:
 
-- `./arduino-1.8.13/hardware/teensy/avr/boards.txt`
-- `./arduino-1.8.13/hardware/teensy/avr/cores/teensy/Stream.h`
-- `./arduino-1.8.13/hardware/teensy/avr/cores/teensy3/Stream.h`
-- `./arduino-1.8.13/hardware/teensy/avr/cores/teensy4/Stream.h`
+- `./arduino-1.8.15/hardware/teensy/avr/boards.txt`
+- `./arduino-1.8.15/hardware/teensy/avr/cores/teensy/Stream.h`
+- `./arduino-1.8.15/hardware/teensy/avr/cores/teensy3/Stream.h`
+- `./arduino-1.8.15/hardware/teensy/avr/cores/teensy4/Stream.h`
 
 Whenever a new version is installed, remember to copy this file into the new version directory. For example, new version is x.yy.zz
 These files must be copied into the directory:
@@ -598,6 +450,37 @@ This file must be copied to replace:
 With core after v1.5.0, this step is not necessary anymore thanks to the PR [Add defs for compatibility #142](https://github.com/earlephilhower/arduino-pico/pull/142).
 
 
+#### 9. For Portenta_H7 boards using Arduino IDE in Linux
+
+  **To be able to upload firmware to Portenta_H7 using Arduino IDE in Linux (Ubuntu, etc.)**, you have to copy the file [portenta_post_install.sh](Packages_Patches/arduino/hardware/mbed_portenta/2.4.1/portenta_post_install.sh) into mbed_portenta directory (~/.arduino15/packages/arduino/hardware/mbed_portenta/2.4.1/portenta_post_install.sh). 
+  
+  Then run the following command using `sudo`
+  
+```
+$ cd ~/.arduino15/packages/arduino/hardware/mbed_portenta/2.4.1
+$ chmod 755 portenta_post_install.sh
+$ sudo ./portenta_post_install.sh
+```
+
+This will create the file `/etc/udev/rules.d/49-portenta_h7.rules` as follows:
+
+```
+# Portenta H7 bootloader mode UDEV rules
+
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="035b", GROUP="plugdev", MODE="0666"
+```
+
+Supposing the ArduinoCore-mbed core version is 2.4.1. Now only one file must be copied into the directory:
+
+- `~/.arduino15/packages/arduino/hardware/mbed_portenta/2.4.1/portenta_post_install.sh`
+
+Whenever a new version is installed, remember to copy this files into the new version directory. For example, new version is x.yy.zz
+
+This file must be copied into the directory:
+
+- `~/.arduino15/packages/arduino/hardware/mbed_portenta/x.yy.zz/portenta_post_install.sh`
+
+
 ---
 
 ### Libraries' Patches
@@ -673,166 +556,6 @@ just rename the following file in ./arduino-1.8.13/hardware/esp8266com/esp8266/l
 ---
 ---
 
-## HOWTO Install esp32 core for ESP32-S2 (Saola, AI-Thinker ESP-12K) and ESP32-C3 boards into Arduino IDE
-
-
-These are instructions demonstrating the steps to install esp32-s2/c3 core on Ubuntu machines. For Windows or other OS'es, just follow the the similar principles and steps.
-
-* Windows 10, follows these steps in [Steps to install Arduino ESP32 support on Windows](https://github.com/espressif/arduino-esp32/blob/master/docs/arduino-ide/windows.md) 
-
-* Mac OS, follows these steps in [Installation instructions for Mac OS](https://github.com/espressif/arduino-esp32/blob/master/docs/arduino-ide/mac.md)
-
-* Fedora, follows these steps in [Installation instructions for Fedora](https://github.com/espressif/arduino-esp32/blob/master/docs/arduino-ide/fedora.md)
-
-* openSUSE, follows these steps in [Installation instructions for openSUSE](https://github.com/espressif/arduino-esp32/blob/master/docs/arduino-ide/opensuse.md)
-
-* You can also try to add [package_esp32_dev_index.json](https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_dev_index.json) into Arduino IDE `File - Preferences - Additional Boards Manager URLs` 
-
-
-```
-https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_dev_index.json
-```
-
-and have Board Manager auto-install the **development** esp32 core. For example : esp32 core `v2.0.0-alpha1`
-
-
----
-
-If you're already successful in testing the core, after installing by using the above procedures, you don't need to follows the hereafter manual steps.
-
----
-
-Assuming you already installed Arduino IDE ESP32 core and the installed directory is
-
-`/home/your_account/.arduino15/packages/esp32`
-
-
-### 1. Save the original esp32 core
-
-First, copy the whole original esp32 core to another safe place. Then delete all the sub-directories of
-
-`/home/your_account/.arduino15/packages/esp32/hardware/esp32/1.0.4`
-
----
-
-
-### 2. Install esp32 core v1.0.6
-
-#### 2.1 Install esp32 core
-
-Just use Arduino IDE Board Manager to install [ESP32 Arduino Release 1.0.6 based on ESP-IDF v3.3.5](https://github.com/espressif/arduino-esp32/releases/tag/1.0.6). This official v1.06 core doesn't have esp32-s2/s3 support. You have to download and use the latest master branch.
-
-
-#### 2.2 Download latest zip with esp32-s2 support
-
-As of **April 16th 2021**, the **esp32-s2/c3** board support has been included in master branch of esp32 core. Download [**esp32 core, master branch**](https://github.com/espressif/arduino-esp32) in the zip format.
-
-#### 2.3 Unzip
-
-<p align="center">
-    <img src="https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/master/pics/esp32_s2_Core_Unzipped.png">
-</p>
-
-#### 2.4 Update esp32 core directories
-
-Copy all subdirectories of esp32 core into `/home/your_account/.arduino15/packages/esp32/hardware/esp32/1.0.6`
-
-
----
-
-### 3 Download tools for ESP32-S2
-
-
-#### 3.1 Download Toolchain for Xtensa (ESP32-S2) based on GCC
-
-Download [**esp32-s2 Toolchain**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-guides/tools/idf-tools.html#xtensa-esp32s2-elf) corresponding to your environment (linux-amd64, win64, etc.).
-
-For example `xtensa-esp32s2-elf-gcc8_4_0-esp-2020r3-linux-amd64.tar.gz`, then un-archive.
-
-
-<p align="center">
-    <img src="https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/master/pics/esp32_s2_Toolchain.png">
-</p>
-
-#### 3.2 Download esptool
-
-
-Download [esptool](https://github.com/espressif/esptool/releases) int the `zip` format:
-
-`esptool-3.0.zip`
-
-#### 3.3 Unzip
-
-<p align="center">
-    <img src="https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/master/pics/esp32_s2_esptool.png">
-</p>
-
----
-
-### 4. Update tools
-
-#### 4.1 Update Toolchain
-
-Copy whole `xtensa-esp32s2-elf` directory into `/home/your_account/.arduino15/packages/esp32/hardware/esp32/1.0.6/tools`
-
-
-#### 4.2 Update esptool
-
-Rename `esptool-3.0` directory to `esptool`
-
-
-Copy whole `esptool` directory into `/home/your_account/.arduino15/packages/esp32/hardware/esp32/1.0.6/tools`
-
-
-<p align="center">
-    <img src="https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/master/pics/esp32_s2_tools.png">
-</p>
-
-<p align="center">
-    <img src="https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/master/pics/Basic_Insert_ESP32_S2.png">
-</p>
-
-
-### 5 Download tools for ESP32-C3
-
-Download [**esp32-c3 Toolchain**](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-guides/tools/idf-tools.html#riscv32-esp-elf) corresponding to your environment (linux-amd64, win64, etc.).
-
-For example`riscv32-esp-elf-gcc8_4_0-crosstool-ng-1.24.0-123-g64eb9ff-linux-amd64.tar.gz`, then un-archive.
-
-Then using the similar steps as in
-
-* [3. Download tools for ESP32-S2](#3-download-tools-for-esp32-s2) 
-  * [3.1 Download Toolchain for Xtensa (ESP32-S2) based on GCC](#31-download-toolchain-for-xtensa-esp32-s2-based-on-gcc)
-  * [3.2 Download esptool](#32-download-esptool)
-  * [3.3 Unzip](#33-unzip)
-* [4. Update tools](#4-update-tools)
-  * [4.1 Update Toolchain](#41-update-toolchain)
-  * [4.2 Update esptool](#42-update-esptool)
-
-then copy whole `riscv32-esp-elf` directory into `/home/your_account/.arduino15/packages/esp32/hardware/esp32/1.0.6/tools`
-
-
-### 6. esp32-s2 WebServer Library Patch
-
-#### Necessary only for esp32 core v1.0.6-
-
-If you haven't installed a new version with [WebServer.handleClient delay PR #4350](https://github.com/espressif/arduino-esp32/pull/4350) or haven't applied the above mentioned PR, you have to use the following patch.
-
-
-**To be able to run Config Portal on ESP32-S2 boards**, you have to copy the files in [esp32-s2 WebServer Patch](esp32s2_WebServer_Patch/) directory into esp32-s2 WebServer library directory (~/.arduino15/packages/esp32/hardware/esp32/1.0.4/libraries/WebServer).
-
-Supposing the esp32-s2 version is 1.0.4, these files `WebServer.h/cpp` must be copied into the directory to replace:
-
-- `~/.arduino15/packages/esp32/hardware/esp32/1.0.4/libraries/WebServer/src/WebServer.h`
-- `~/.arduino15/packages/esp32/hardware/esp32/1.0.4/libraries/WebServer/src/WebServer.cpp`
-
-
----
-
-That's it. You're now ready to compile and test for **ESP32-S2 and ESP32-C3** now
-
----
----
 
 ### HOWTO Use analogRead() with ESP32 running WiFi and/or BlueTooth (BT/BLE)
 
@@ -1094,14 +817,37 @@ MySQL_Query sql_query = MySQL_Query(&conn);
  9. [Query_Progmem](examples/QNEthernet/Query_Progmem)
 10. [Query_Results](examples/QNEthernet/Query_Results)
 
+#### For Portenta_H7 Ethernet
+
+ 1. [Basic_Insert](examples/Portenta_H7/Ethernet/Basic_Insert)
+ 2. [Basic_Select](examples/Portenta_H7/Ethernet/Basic_Select)
+ 3. [Complex_Insert](examples/Portenta_H7/Ethernet/Complex_Insert)
+ 4. [Connect](examples/Portenta_H7/Ethernet/Connect)
+ 5. [Connect_By_Hostname](examples/Portenta_H7/Ethernet/Connect_By_Hostname)
+ 6. [Connect_Default_Database](examples/Portenta_H7/Ethernet/Connect_Default_Database)
+
+
+#### For Portenta_H7 WiFi
+
+ 1. [Basic_Insert_WiFi](examples/Portenta_H7/WiFi/Basic_Insert_WiFi)
+ 2. [Basic_Select_WiFi](examples/Portenta_H7/WiFi/Basic_Select_WiFi)
+ 3. [Complex_Insert_WiFi](examples/Portenta_H7/WiFi/Complex_Insert_WiFi)
+ 4. [Complex_Select_WiFi](examples/Portenta_H7/WiFi/Complex_Select_WiFi)
+ 5. [Connect_WiFi](examples/Portenta_H7/WiFi/Connect_WiFi)
+ 6. [Connect_Default_Database_WiFi](examples/Portenta_H7/WiFi/Connect_Default_Database_WiFi)
+ 7. [Connect_Disconnect_WiFi](examples/Portenta_H7/WiFi/Connect_Disconnect_WiFi)
+ 8. [Reboot_WiFi](examples/Portenta_H7/WiFi/Reboot_WiFi)
+
+
+
 ---
 ---
 
-### Example [Complex_Select](examples/Ethernet/Complex_Select)
+### Example [Basic_Select](examples/Ethernet/Basic_Select)
 
 Please take a look at other examples, as well.
 
-#### 1. File [Complex_Select.ino](examples/Ethernet/Complex_Select/Complex_Select.ino)
+#### 1. File [Basic_Select.ino](examples/Ethernet/Basic_Select/Basic_Select.ino)
 
 ```cpp
 #include "defines.h"
@@ -1111,7 +857,7 @@ Please take a look at other examples, as well.
 // Select the static Local IP address according to your local network
 IPAddress ip(192, 168, 2, 222);
 
-#define USING_HOST_NAME     true
+#define USING_HOST_NAME     false   //true
 
 #if USING_HOST_NAME
   // Optional using hostname, and Ethernet built-in DNS lookup
@@ -1128,26 +874,25 @@ char password[] = "the-invited-guest";          // MySQL user login password
 char default_database[] = "world";              //"test_arduino";
 char default_table[]    = "city";               //"test_arduino";
 
-// Sample query
-//
-// Notice the "%lu" - that's a placeholder for the parameter we will
-// supply. See sprintf() documentation for more formatting specifier
-// options
-unsigned long QUERY_POPULATION = 800000;
+String default_column   = "population"; 
+String default_value    = "Toronto"; 
 
-const char QUERY_POP[] = "SELECT name, population FROM world.city WHERE population < %lu ORDER BY population DESC LIMIT 12;";
-
-char query[128];
+String query = String("SELECT ") + default_column + " FROM " + default_database + "." + default_table 
+                 + " WHERE name = '" + default_value + "'";
 
 MySQL_Connection conn((Client *)&client);
+// Create an instance of the cursor passing in the connection
+MySQL_Query sql_query = MySQL_Query(&conn);
 
 void setup()
 {
   Serial.begin(115200);
   while (!Serial); // wait for serial port to connect
 
-  MYSQL_DISPLAY3("\nStarting Complex_Select on", BOARD_NAME, ", with", SHIELD_TYPE);
+  MYSQL_DISPLAY3("\nStarting Basic_Select on", BOARD_NAME, ", with", SHIELD_TYPE);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
+
+#if !(USE_ETHERNET_PORTENTA_H7)
 
   MYSQL_LOGERROR(F("========================================="));
   MYSQL_LOGERROR(F("Default SPI pinout:"));
@@ -1290,13 +1035,6 @@ void setup()
 
 #endif    //defined(ESP8266)
 
-  // start the ethernet connection and the server:
-  // Use DHCP dynamic IP and random mac
-  uint16_t index = millis() % NUMBER_OF_MAC;
-  // Use Static IP
-  //Ethernet.begin(mac[index], ip);
-  Ethernet.begin(mac[index]);
-
   // Just info to know how to connect correctly
   MYSQL_LOGERROR(F("========================================="));
   MYSQL_LOGERROR(F("Currently Used SPI pinout:"));
@@ -1305,6 +1043,15 @@ void setup()
   MYSQL_LOGERROR1(F("SCK:"),  SCK);
   MYSQL_LOGERROR1(F("SS:"),   SS);
   MYSQL_LOGERROR(F("========================================="));
+
+#endif    // #if !(USE_ETHERNET_PORTENTA_H7)
+
+  // start the ethernet connection and the server:
+  // Use DHCP dynamic IP and random mac
+  uint16_t index = millis() % NUMBER_OF_MAC;
+  // Use Static IP
+  //Ethernet.begin(mac[index], ip);
+  Ethernet.begin(mac[index]);
 
   MYSQL_DISPLAY1("Using mac index =", index);
   MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
@@ -1315,66 +1062,69 @@ void setup()
 
 void runQuery()
 {
-  MYSQL_DISPLAY("====================================================");
-  MYSQL_DISPLAY("> Running SELECT with dynamically supplied parameter");
-  
-  // Supply the parameter for the query
-  // Here we use the QUERY_POP as the format string and query as the
-  // destination. This uses twice the memory so another option would be
-  // to allocate one buffer for all formatted queries or allocate the
-  // memory as needed (just make sure you allocate enough memory and
-  // free it when you're done!).
-  sprintf(query, QUERY_POP, QUERY_POPULATION + (( millis() % 100000 ) * 10) );
-  MYSQL_DISPLAY(query);
-  
+  row_values *row = NULL;
+  long head_count = 0;
+
+  MYSQL_DISPLAY("1) Demonstrating using a dynamically allocated query.");
   // Initiate the query class instance
   MySQL_Query query_mem = MySQL_Query(&conn);
   
   // Execute the query
+  MYSQL_DISPLAY(query);
+
+  // Execute the query
   // KH, check if valid before fetching
-  if ( !query_mem.execute(query) )
+  if ( !query_mem.execute(query.c_str()) )
   {
     MYSQL_DISPLAY("Querying error");
     return;
   }
   
-  // Fetch the columns and print them
-  column_names *cols = query_mem.get_columns();
+  // Fetch the columns (required) but we don't use them.
+  //column_names *columns = query_mem.get_columns();
+  query_mem.get_columns();
 
-  for (int f = 0; f < cols->num_fields; f++) 
-  {
-    MYSQL_DISPLAY0(cols->fields[f]->name);
-    
-    if (f < cols->num_fields - 1) 
-    {
-      MYSQL_DISPLAY0(",");
-    }
-  }
-  
-  MYSQL_DISPLAY();
-  
-  // Read the rows and print them
-  row_values *row = NULL;
-  
+  // Read the row (we are only expecting the one)
   do 
   {
     row = query_mem.get_next_row();
     
     if (row != NULL) 
     {
-      for (int f = 0; f < cols->num_fields; f++) 
-      {
-        MYSQL_DISPLAY0(row->values[f]);
-        
-        if (f < cols->num_fields - 1) 
-        {
-          MYSQL_DISPLAY0(",");
-        }
-      }
-      
-      MYSQL_DISPLAY();
+      head_count = atol(row->values[0]);
     }
   } while (row != NULL);
+
+  // Show the result
+  MYSQL_DISPLAY1("  Toronto pop =", head_count);
+
+  delay(500);
+
+  MYSQL_DISPLAY("2) Demonstrating using a local, global query.");
+  
+  // Execute the query
+  MYSQL_DISPLAY(query);
+  sql_query.execute(query.c_str());
+  
+  // Fetch the columns (required) but we don't use them.
+  sql_query.get_columns();
+  
+  // Read the row (we are only expecting the one)
+  do 
+  {
+    row = sql_query.get_next_row();
+    if (row != NULL) 
+    {
+      head_count = atol(row->values[0]);
+    }
+  } while (row != NULL);
+  
+  // Now we close the cursor to free any memory
+  sql_query.close();
+
+  // Show the result but this time do some math on it
+  MYSQL_DISPLAY1("  Toronto pop =", head_count);
+  MYSQL_DISPLAY1("  Toronto pop increased by 11725 =", head_count + 11725);
 }
 
 void loop()
@@ -1396,11 +1146,11 @@ void loop()
   MYSQL_DISPLAY("\nSleeping...");
   MYSQL_DISPLAY("================================================");
  
-  delay(10000);
+  delay(60000);
 }
 ```
 
-#### 2. File [defines.h](examples/Ethernet/Complex_Select/defines.h)
+#### 2. File [defines.h](examples/Ethernet/Basic_Select/defines.h)
 
 ```cpp
 #ifndef defines_h
@@ -1412,6 +1162,27 @@ void loop()
 
 // Debug Level from 0 to 4
 #define _MYSQL_LOGLEVEL_      1
+
+#if ( defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_PORTENTA_H7_M4) )
+
+  #if defined(BOARD_NAME)
+    #undef BOARD_NAME
+  #endif
+
+  #if defined(CORE_CM7)
+    #warning Using Portenta H7 M7 core
+    #define BOARD_NAME              "PORTENTA_H7_M7"
+  #else
+    #warning Using Portenta H7 M4 core
+    #define BOARD_NAME              "PORTENTA_H7_M4"
+  #endif
+
+  #define ETHERNET_USE_PORTENTA_H7  true
+  #define USE_ETHERNET_PORTENTA_H7  true
+  
+  #define USE_ETHERNET_WRAPPER      false
+  
+#endif
 
 #if    ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
       || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) \
@@ -1740,7 +1511,7 @@ void loop()
 
 // Only one of the following to be true.
 #define USE_ETHERNET              false
-#define USE_ETHERNET_LARGE        true
+#define USE_ETHERNET_LARGE        false
 #define USE_ETHERNET2             false
 #define USE_ETHERNET3             false
 #define USE_ETHERNET_ESP8266      false
@@ -1751,7 +1522,10 @@ void loop()
 #define USE_UIP_ETHERNET          false
 //////
 
-#if USE_ETHERNET
+#if USE_ETHERNET_PORTENTA_H7
+  #warning Use Portenta Ethernet lib
+  #define SHIELD_TYPE           "Ethernet using Portenta_Ethernet Library"
+#elif USE_ETHERNET
   #warning Use Ethernet lib
   #define SHIELD_TYPE           "W5x00 using Ethernet Library" 
 #elif USE_ETHERNET_LARGE
@@ -1820,7 +1594,7 @@ This is terminal debug output when running [Query_Progmem](examples/Ethernet/Que
 
 ```
 Starting Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet3 Library
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 Ethernet3 W5500 init, using SPI_CS = 10, number of sockets = 4
 Using mac index = 10
 Connected! IP address: 192.168.2.145
@@ -1859,7 +1633,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NUCLEO_F767ZI using LAN8742A/STM32Ethernet Library
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 Using mac index = 0
 Connected! IP address: 192.168.2.165
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
@@ -1926,7 +1700,7 @@ This is terminal debug output when running [Query_Results_WiFi](examples/WiFi/Qu
 
 ```
 Starting Query_Results_WiFi on ITSYBITSY_M4
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 Using WiFiEspAT Library
 WiFi shield init done
 Connecting to HueNet1
@@ -1965,7 +1739,7 @@ This is terminal debug output when running [Basic_Select_WiFi](examples/WiFi/Bas
 
 ```
 Starting Basic_Select_WiFi on SEEED_XIAO_M0
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 Using WiFiEspAT Library
 WiFi shield init done
 Connecting to HueNet1
@@ -2001,7 +1775,7 @@ This is terminal debug output when running [Query_Results_WiFiNINA](examples/WiF
 
 ```
 Starting Query_Results_WiFiNINA on SAMD_NANO_33_IOT
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 Attempting to connect to SSID: HueNet1
 SSID: HueNet1
 IP Address: 192.168.2.118
@@ -2047,7 +1821,7 @@ This is terminal debug output when running [Connect_By_Hostname](examples/Ethern
 
 ```
 Starting Connect_By_Hostname on SAM DUE using W5x00/EthernetLarge Library
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 _pinCS = 0
 W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 10
 W5100::init: W5100, SSIZE =4096
@@ -2072,7 +1846,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NRF52840_FEATHER using ENC28J60/UIPEthernet Library
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 ENC28J60_CONTROL_CS =10
 SS =5
 SPI_MOSI =25
@@ -2171,7 +1945,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NRF52840_FEATHER, with ENC28J60 using EthernetENC Library
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 25
@@ -2228,7 +2002,7 @@ This is terminal debug output when running [Query_Progmem](examples/Ethernet/Que
 
 ```
 Starting Query_Progmem on NRF52840_FEATHER, with ENC28J60 using EthernetENC Library
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 25
@@ -2281,7 +2055,7 @@ This is terminal debug output when running [Basic_Insert_ESP](examples/WiFi/Basi
 
 ```
 Starting Basic_Insert_ESP on ESP8266_NODEMCU_ESP12E
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 Connecting to HueNet1
 ...........Connected to network. My IP address is: 192.168.2.135
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
@@ -2310,7 +2084,7 @@ This is terminal debug output when running [Basic_Insert_ESP](examples/WiFi/Basi
 
 ```
 Starting Basic_Insert_ESP on ESP32S2_DEV
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 Connecting to HueNet1
 .......Connected to network. My IP address is: 192.168.2.190
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
@@ -2339,7 +2113,7 @@ This is terminal debug output when running [Basic_Select_WiFiNINA](examples/WiFi
 
 ```
 Starting Basic_Select_WiFiNINA on MBED NANO_RP2040_CONNECT
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 Attempting to connect to SSID: HueNet1
 SSID: HueNet1
 IP Address: 192.168.2.153
@@ -2375,7 +2149,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on MBED RASPBERRY_PI_PICO , with W5x00 using EthernetLarge Library
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 3
@@ -2463,7 +2237,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on RASPBERRY_PI_PICO , with W5x00 using EthernetLarge Library
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 19
@@ -2524,7 +2298,7 @@ This is terminal debug output when running [Complex_Select_WT32_ETH01](examples/
 ```
 Starting Complex_Select_WT32_ETH01 on WT32-ETH01
 WebServer_WT32_ETH01 v1.2.0
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 ETH MAC: A8:03:2A:A1:61:73, IPv4: 192.168.2.232
 FULL_DUPLEX, 100Mbps
 Connected to network. My IP address is: 192.168.2.232
@@ -2583,7 +2357,7 @@ This is terminal debug output when running [Complex_Select](examples/NativeEther
 
 ```
 Starting Complex_Select on Teensy 4.1 , with NativeEthernet
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 Using mac index = 2
 Connected! IP address: 192.168.2.86
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
@@ -2645,8 +2419,6 @@ Sleeping...
 
 ---
 
----
-
 
 #### 17. Complex_Select on Teensy 4.1 with QNEthernet
 
@@ -2654,7 +2426,7 @@ This is terminal debug output when running [Complex_Select](examples/NativeEther
 
 ```
 Starting Complex_Select on TEENSY 4.1 using QNEthernet
-MySQL_MariaDB_Generic v1.4.0
+MySQL_MariaDB_Generic v1.5.0
 =========== USE_QN_ETHERNET ===========
 Initialize Ethernet using static IP => Connected! IP address: 192.168.2.222
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
@@ -2689,6 +2461,74 @@ Sleeping...
 ```
 
 ---
+
+
+#### 18. Complex_Insert on PORTENTA_H7_M7 using Portenta_Ethernet
+
+This is terminal debug output when running [Complex_Insert](examples/Portenta_H7/Ethernet/Complex_Insert) on **PORTENTA_H7_M7 using Portenta_Ethernet** connecting to MariaDB Server.
+
+```
+Starting Complex_Insert on PORTENTA_H7_M7 , with Ethernet using Portenta_Ethernet Library
+MySQL_MariaDB_Generic v1.5.0
+Using mac index = 14
+Connected! IP address: 192.168.2.132
+Connecting to SQL Server @ 192.168.2.112 , Port = 5698
+User = invited-guest , PW = the-invited-guest
+DB = test_arduino , Table = hello_sensor
+Connecting...
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connect OK. Try reading packets
+[SQL] Try parsing packets
+[SQL] Try send_authentication packets
+[SQL] Writing this_buffer, size_send = 72
+[SQL] Connected. Server Version = 5.5.5-10.3.29-MariaDB-0+deb10u1
+INSERT INTO test_arduino.hello_sensor (message, sensor_num, value) VALUES ('test sensor',24,50.1)
+Complex Data Inserted.
+[SQL] Disconnected
+
+Sleeping...
+================================================
+```
+
+---
+
+
+#### 19. Complex_Select_WiFi on PORTENTA_H7_M7
+
+This is terminal debug output when running [Complex_Insert_WiFi](examples/Portenta_H7/WiFi/Complex_Insert_WiFi) on **TPORTENTA_H7_M7 using Murata WiFi** connecting to MariaDB Server.
+
+```
+Starting Complex_Select_WiFi on PORTENTA_H7_M7
+MySQL_MariaDB_Generic v1.5.0
+Connecting to HueNet1
+Connected to network. My IP address is: 192.168.2.130
+Connecting to SQL Server @ 192.168.2.112 , Port = 5698
+User = invited-guest , PW = the-invited-guest , DB = world
+Connecting...
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connect OK. Try reading packets
+[SQL] Try parsing packets
+[SQL] Try send_authentication packets
+[SQL] Writing this_buffer, size_send = 72
+[SQL] Connected. Server Version = 5.5.5-10.3.29-MariaDB-0+deb10u1
+====================================================
+> Running SELECT with dynamically supplied parameter
+SELECT name, population FROM world.city WHERE population < 928790 ORDER BY population DESC LIMIT 6;
+name,population
+Patna,917243
+Hohhot,916700
+Rosario,907718
+Voronez,907700
+Soweto,904165
+Torino,903705
+[SQL] Disconnected
+
+Sleeping...
+================================================
+```
+
+
+---
 ---
 
 ### Debug
@@ -2714,81 +2554,6 @@ Sometimes, the library will only work if you update the board core to the latest
 ---
 ---
 
-
-## Releases
-
-### Major Release v1.4.0
-
-1. Add support to [QNEthernet Library](https://github.com/ssilverman/QNEthernet) for Teensy 4.1 built-in Ethernet
-2. Fix bug in non-blocking connection
-3. Add new feature to permit using either server's hostname, such as `your_account.duckdns.org`, or server's IPAddress, such as IPAddress(192,168,2,112)
-4. Update examples with new features, bug-fixes, etc.
-
-### Release v1.3.1
-
-1. Remove unnecessary SPI-bus code in NativeEthernet examples
-
-### Release v1.3.0
-
-1. Add support to **Teensy 4.1 using NativeEthernet**
-
-### Release v1.2.0
-
-1. Add support to WT32_ETH01 (ESP32 + LAN8720A)
-
-### Major Release v1.1.0
-
-1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico** v1.8.0+ core](https://github.com/earlephilhower/arduino-pico).
-2. Add support to RP2040-based boards, such as **Nano_RP2040_Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** v2.1.0+ core](https://github.com/arduino/ArduinoCore-mbed).
-3. Add support to new **ESP32-S2** boards (**Arduino ESP32C3_DEV**). Check [HOWTO Install esp32 core for ESP32-S2 (Saola, AI-Thinker ESP-12K) and ESP32-C3 boards into Arduino IDE](#howto-install-esp32-core-for-esp32-s2-saola-ai-thinker-esp-12k-and-esp32-c3-boards-into-arduino-ide).
-4. Verify working with new ESP8266 core v3.0.0 and new ESP32 core v1.0.6
-5. Suppress all warnings possible.
-6. Add Table of Contents and Version String
-
-### Release v1.0.3
-
- 1. Add support to ENC28J60 Ethernet module/shield using new **EthernetENC** library.
- 2. Update Platform.ini to support PlatformIO 5.x owner-based dependency declaration.
- 3. Enhance examples
-
-#### Release v1.0.2
-
- 1. Fix crashing bug when Client timeout. 
- 2. Make code more error-proof.
- 3. Drop support to ESP8266_AT_Webserver.
- 4. Enhance examples
-
-#### Release v1.0.1
-
- 1. Add support to ENC28J60 Ethernet module/shield using **UIPEthernet** library.
- 2. Fix bugs
- 3. Optimize code
- 4. Enhance examples
- 5. Add UIPEthernet Library Patches for SAMD21/SAMD51
-
-#### Release v1.0.0
-
- 1. Add support to **nRF52** boards, such as **AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B302_ublox, NINA_B112_ublox, etc.**
- 2. Add support to **Adafruit SAMD51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)**
- 3. Add support to **Adafruit SAMD21 Itsy-Bitsy M0, Feathr M0, Metro M0, AdaFruit CIRCUITPLAYGROUND_EXPRESS, etc.)**
- 4. Add support to **Arduino SAMD21 (ZERO, MKR, NANO_33_IOT, etc.)**
- 5. Add support to all **STM32F/L/H/G/WB/MP1 (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8, etc.)**
- 6. Add support to **Seeeduino SAMD21/SAMD51 boards (SEEED_WIO_TERMINAL, SEEED_FEMTO_M0, SEEED_XIAO_M0, Wio_Lite_MG126, WIO_GPS_BOARD, SEEEDUINO_ZERO, SEEEDUINO_LORAWAN, SEEED_GROVE_UI_WIRELESS, etc.)**
- 7. Add support to **SAM DUE and AVR Mega** boards.
- 8. Add support to **ESP32/ESP8266** boards.
- 9. Add connectNonBlocking() function to use in loop() to avoid being blocked running other tasks. 
-10. Add support to WiFiNINA using [**WiFiNINA_Generic library**](https://github.com/khoih-prog/WiFiNINA_Generic) or WiFiNINA library.
-11. Add support to W5x00 Ethernet module/shield using Ethernet, EthernetLarge, Ethernet2 or Ethernet3 library.
-12. Add support to LAN8742A Ethernet module/shield using STM32Ethernet library.
-13. Add support to ESP8266/ESP32-AT-command module/shield using [`WiFiEspAT library`](https://github.com/jandrassy/WiFiEspAT) or [`ESP8266_AT_WebServer library`](https://github.com/khoih-prog/ESP8266_AT_WebServer).
-14. Add Packages' Patches.
-15. Add sample Packages_Patches for **STM32F/L/H/G/WB/MP1** (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8)
-16. Add Ethernet Library Patches
-17. Add many examples
-
-
----
----
 
 ### Issues ###
 
@@ -2830,6 +2595,8 @@ Submit issues to: [MySQL_MariaDB_Generic issues](https://github.com/khoih-prog/M
 21. Add support to Teensy 4.1 built-in Ethernet using [`NativeEthernet`](https://github.com/vjmuzik/NativeEthernet) library
 22. Add support to Teensy 4.1 built-in Ethernet using [`QNEthernet`](https://github.com/ssilverman/QNEthernet) library
 23. Add new feature to permit using either server's hostname, such as `your_account.duckdns.org`, or server's IPAddress, such as IPAddress(192,168,2,112)
+24. Add support to **Portenta_H7**, using either `Murata WiFi` or `Vision-shield Ethernet`
+
 
 ---
 ---

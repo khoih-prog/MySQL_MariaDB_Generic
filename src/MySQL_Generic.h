@@ -4,14 +4,14 @@
   Library for communicating with a MySQL or MariaDB Server
   
   Based on and modified from Dr. Charles A. Bell's MySQL_Connector_Arduino Library https://github.com/ChuckBell/MySQL_Connector_Arduino
-  to support nRF52, SAMD21/SAMD51, SAM DUE, STM32F/L/H/G/WB/MP1, ESP8266, ESP32, etc. boards using W5x00, ENC28J60, LAM8742A Ethernet,
-  WiFiNINA, ESP-AT, built-in ESP8266/ESP32 WiFi.
+  to support nRF52, SAMD21/SAMD51, SAM DUE, STM32F/L/H/G/WB/MP1, ESP8266, ESP32, WT32_ETH01, Teensy, Portenta_H7, etc. boards 
+  using W5x00, ENC28J60, LAM8742A Ethernet, WiFiNINA, ESP-AT, built-in ESP8266/ESP32 WiFi, Portenta Ethernet/WiFi
 
   The library provides simple and easy Client interface to MySQL or MariaDB Server.
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.4.0
+  Version: 1.5.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -25,13 +25,14 @@
   1.3.0   K Hoang      30/08/2021 Add support to Teensy 4.1 using NativeEthernet
   1.3.1   K Hoang      31/08/2021 Remove unnecessary SPI-bus code in NativeEthernet examples
   1.4.0   K Hoang      05/09/2021 Add support to Teensy 4.1 using QNEthernet
+  1.5.0   K Hoang      17/09/2021 Add support to Portenta_H7, using either WiFi or Vision-shield Ethernet
  **********************************************************************************************************************************/
 
 #ifndef MYSQL_GENERIC_H
 #define MYSQL_GENERIC_H
 
 #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_ENC || USE_ETHERNET_ESP8266 || \
-      USE_UIP_ETHERNET || USE_NATIVE_ETHERNET || USE_QN_ETHERNET || USE_CUSTOM_ETHERNET )
+      USE_UIP_ETHERNET || USE_NATIVE_ETHERNET || USE_QN_ETHERNET || USE_CUSTOM_ETHERNET || USE_ETHERNET_PORTENTA_H7 )
 
   #include "MySQL_Generic_Ethernet.h"
   
@@ -40,7 +41,7 @@
   #include "MySQL_Generic_WiFiNINA.h" 
 
 #elif ( ESP8266 || ESP32 || USING_WIFI_ESP8266_AT || USING_WIFININA_GENERIC || USING_WIFININA || USING_WIFIESPAT_LIB || \
-        USING_WIFI_CUSTOM )
+        USING_WIFI_CUSTOM || USE_WIFI_PORTENTA_H7 )
 
   #include "MySQL_Generic_WiFi.h"
 
