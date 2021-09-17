@@ -96,6 +96,8 @@ void setup()
   MYSQL_DISPLAY3("\nStarting Basic_Insert on", BOARD_NAME, ", with", SHIELD_TYPE);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
+#if !(USE_ETHERNET_PORTENTA_H7)
+
   MYSQL_LOGERROR(F("========================================="));
   MYSQL_LOGERROR(F("Default SPI pinout:"));
   MYSQL_LOGERROR1(F("MOSI:"), MOSI);
@@ -237,13 +239,6 @@ void setup()
 
 #endif    //defined(ESP8266)
 
-  // start the ethernet connection and the server:
-  // Use DHCP dynamic IP and random mac
-  uint16_t index = millis() % NUMBER_OF_MAC;
-  // Use Static IP
-  //Ethernet.begin(mac[index], ip);
-  Ethernet.begin(mac[index]);
-
   // Just info to know how to connect correctly
   MYSQL_LOGERROR(F("========================================="));
   MYSQL_LOGERROR(F("Currently Used SPI pinout:"));
@@ -252,6 +247,15 @@ void setup()
   MYSQL_LOGERROR1(F("SCK:"),  SCK);
   MYSQL_LOGERROR1(F("SS:"),   SS);
   MYSQL_LOGERROR(F("========================================="));
+
+#endif    // #if !(USE_ETHERNET_PORTENTA_H7)
+
+  // start the ethernet connection and the server:
+  // Use DHCP dynamic IP and random mac
+  uint16_t index = millis() % NUMBER_OF_MAC;
+  // Use Static IP
+  //Ethernet.begin(mac[index], ip);
+  Ethernet.begin(mac[index]);
 
   MYSQL_DISPLAY1("Using mac index =", index);
   MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
