@@ -11,7 +11,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.5.0
+  Version: 1.5.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -26,6 +26,7 @@
   1.3.1   K Hoang      31/08/2021 Remove unnecessary SPI-bus code in NativeEthernet examples
   1.4.0   K Hoang      05/09/2021 Add support to Teensy 4.1 using QNEthernet
   1.5.0   K Hoang      17/09/2021 Add support to Portenta_H7, using either WiFi or Vision-shield Ethernet
+  1.5.1   K Hoang      10/10/2021 Update `platform.ini` and `library.json`
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -49,7 +50,7 @@
 #include <Arduino.h>
 #include <Client.h>
 
-#define MYSQL_GENERIC_VERSION               "1.5.0"
+#define MYSQL_GENERIC_VERSION               "1.5.1"
 
 #ifndef MYSQL_MARIADB_GENERIC_VERSION
   #define MYSQL_MARIADB_GENERIC_VERSION       ("MySQL_MariaDB_Generic v" MYSQL_GENERIC_VERSION)
