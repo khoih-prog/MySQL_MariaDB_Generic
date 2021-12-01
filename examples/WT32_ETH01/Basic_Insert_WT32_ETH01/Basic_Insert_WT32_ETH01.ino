@@ -44,10 +44,11 @@
   #error This code is intended to run on the WT32 boards and ESP32 platform ! Please check your Tools->Board setting.
 #endif
 
-#define MYSQL_DEBUG_PORT      Serial
+#define MYSQL_DEBUG_PORT                  Serial
 
 // Debug Level from 0 to 4
-#define _MYSQL_LOGLEVEL_      1
+#define _ETHERNET_WEBSERVER_LOGLEVEL_     3
+#define _MYSQL_LOGLEVEL_                  1
 
 #include <WebServer_WT32_ETH01.h>
 
@@ -61,7 +62,7 @@ IPAddress mySN(255, 255, 255, 0);
 // Google DNS Server IP
 IPAddress myDNS(8, 8, 8, 8);
 
-#define USING_HOST_NAME     true
+#define USING_HOST_NAME     false     //true
 
 #if USING_HOST_NAME
   // Optional using hostname, and Ethernet built-in DNS lookup
@@ -97,6 +98,9 @@ void setup()
   MYSQL_DISPLAY(WEBSERVER_WT32_ETH01_VERSION);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
 
+  // To be called before ETH.begin()
+  WT32_ETH01_onEvent();
+
   //bool begin(uint8_t phy_addr=ETH_PHY_ADDR, int power=ETH_PHY_POWER, int mdc=ETH_PHY_MDC, int mdio=ETH_PHY_MDIO, 
   //           eth_phy_type_t type=ETH_PHY_TYPE, eth_clock_mode_t clk_mode=ETH_CLK_MODE);
   //ETH.begin(ETH_PHY_ADDR, ETH_PHY_POWER, ETH_PHY_MDC, ETH_PHY_MDIO, ETH_PHY_TYPE, ETH_CLK_MODE);
@@ -105,8 +109,6 @@ void setup()
   // Static IP, leave without this line to get IP via DHCP
   //bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = 0, IPAddress dns2 = 0);
   ETH.config(myIP, myGW, mySN, myDNS);
-
-  WT32_ETH01_onEvent();
 
   WT32_ETH01_waitForConnect();
 
