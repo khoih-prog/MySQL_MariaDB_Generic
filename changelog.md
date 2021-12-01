@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Release v1.5.2](#release-v152)
   * [Release v1.5.1](#release-v151)
   * [Major Release v1.5.0](#major-release-v150)
   * [Major Release v1.4.0](#major-release-v140)
@@ -28,6 +29,12 @@
 ---
 
 ## Changelog
+
+### Release v1.5.2
+
+1. Auto detect ESP32 core version.
+2. Fix bug in examples for WT32_ETH01
+3. Update `Packages' Patches`
 
 ### Release v1.5.1
 
