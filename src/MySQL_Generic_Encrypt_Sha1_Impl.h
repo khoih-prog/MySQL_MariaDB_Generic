@@ -16,7 +16,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.5.2
+  Version: 1.6.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -33,6 +33,7 @@
   1.5.0   K Hoang      17/09/2021 Add support to Portenta_H7, using either WiFi or Vision-shield Ethernet
   1.5.1   K Hoang      10/10/2021 Update `platform.ini` and `library.json`
   1.5.2   K Hoang      01/12/2021 Auto detect ESP32 core for LittleFS. Fix bug in examples for WT32_ETH01
+  1.6.0   K Hoang      10/03/2022 Fix memory leak bug. Optimize code.
  **********************************************************************************************************************************/
 
 #ifndef MYSQL_GENERIC_ENCRYPT_SHA1_IMPL_H
@@ -54,7 +55,7 @@ const uint8_t sha1InitState[] PROGMEM =
   0xf0, 0xe1, 0xd2, 0xc3  // H4
 };
 
-void Encrypt_SHA1::init(void) 
+void Encrypt_SHA1::init() 
 {
   // KH
   //memcpy_P(state.b, sha1InitState, HASH_LENGTH);
@@ -64,7 +65,7 @@ void Encrypt_SHA1::init(void)
   bufferOffset = 0;
 }
 
-uint32_t Encrypt_SHA1::rol32(uint32_t number, uint8_t bits) 
+uint32_t Encrypt_SHA1::rol32(const uint32_t& number, const uint8_t& bits)
 {
   return ((number << bits) | (number >> (32 - bits)));
 }
@@ -121,7 +122,7 @@ void Encrypt_SHA1::hashBlock()
   state.w[4] += e;
 }
 
-void Encrypt_SHA1::addUncounted(uint8_t data) 
+void Encrypt_SHA1::addUncounted(const uint8_t& data) 
 {
   buffer.b[bufferOffset ^ 3] = data;
   bufferOffset++;
@@ -142,7 +143,7 @@ size_t Encrypt_SHA1::write(uint8_t data)
   return 1;
 }
 
-size_t Encrypt_SHA1::write(uint8_t* data, int length) 
+size_t Encrypt_SHA1::write(uint8_t* data, const int& length) 
 {
   for (int i = 0; i < length; i++) 
   {
@@ -175,7 +176,7 @@ void Encrypt_SHA1::pad()
 }
 
 
-uint8_t* Encrypt_SHA1::result(void) 
+uint8_t* Encrypt_SHA1::result() 
 {
   // Pad to complete the last block
   pad();
@@ -201,6 +202,6 @@ uint8_t* Encrypt_SHA1::result(void)
 #define HMAC_IPAD 0x36
 #define HMAC_OPAD 0x5c
 
-Encrypt_SHA1 Sha1;
+static Encrypt_SHA1 Sha1;
 
 #endif    // MYSQL_GENERIC_ENCRYPT_SHA1_IMPL_H

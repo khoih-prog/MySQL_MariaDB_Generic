@@ -11,7 +11,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.5.2
+  Version: 1.6.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -28,6 +28,7 @@
   1.5.0   K Hoang      17/09/2021 Add support to Portenta_H7, using either WiFi or Vision-shield Ethernet
   1.5.1   K Hoang      10/10/2021 Update `platform.ini` and `library.json`
   1.5.2   K Hoang      01/12/2021 Auto detect ESP32 core for LittleFS. Fix bug in examples for WT32_ETH01
+  1.6.0   K Hoang      10/03/2022 Fix memory leak bug. Optimize code.
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -51,10 +52,16 @@
 #include <Arduino.h>
 #include <Client.h>
 
-#define MYSQL_GENERIC_VERSION               "1.5.2"
+#define MYSQL_GENERIC_VERSION               		"1.6.0"
 
 #ifndef MYSQL_MARIADB_GENERIC_VERSION
-  #define MYSQL_MARIADB_GENERIC_VERSION       ("MySQL_MariaDB_Generic v" MYSQL_GENERIC_VERSION)
+  #define MYSQL_MARIADB_GENERIC_VERSION       	("MySQL_MariaDB_Generic v" MYSQL_GENERIC_VERSION)
+
+  #define MYSQL_MARIADB_GENERIC_VERSION_MAJOR    1
+  #define MYSQL_MARIADB_GENERIC_VERSION_MINOR    6
+  #define MYSQL_MARIADB_GENERIC_VERSION_PATCH    0
+
+  #define MYSQL_MARIADB_GENERIC_VERSION_INT      1006000
 #endif
 
 #define MYSQL_OK_PACKET         0x00
@@ -79,6 +86,15 @@ class MySQL_Packet
     char *server_version;   // save server version from handshake
 
     MySQL_Packet(Client *client_instance);
+    virtual ~MySQL_Packet()
+    {
+    	if (buffer)
+			{
+				MYSQL_LOGDEBUG("Free buffer");
+				
+				free(buffer);
+			}
+    };
     
     bool    complete_handshake(char *user, char *password);
     void    send_authentication_packet(char *user, char *password, char *db = NULL);
@@ -90,11 +106,11 @@ class MySQL_Packet
     
     int     get_packet_type();
     void    parse_error_packet();
-    int     get_lcb_len(int offset);
-    int     read_int(int offset, int size = 0);
-    void    store_int(byte *buff, long value, int size);
-    int     read_lcb_int(int offset);
-    int     wait_for_bytes(int bytes_count);
+    int     get_lcb_len(const int& offset);
+    int     read_int(const int& offset, const int& size = 0);
+    void    store_int(byte *buff, const long& value, const int& size);
+    int     read_lcb_int(const int& offset);
+    int     wait_for_bytes(const int& bytes_need);
 
     void    print_packet();
 

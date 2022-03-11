@@ -16,7 +16,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
-  Version: 1.5.2
+  Version: 1.6.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -33,6 +33,7 @@
   1.5.0   K Hoang      17/09/2021 Add support to Portenta_H7, using either WiFi or Vision-shield Ethernet
   1.5.1   K Hoang      10/10/2021 Update `platform.ini` and `library.json`
   1.5.2   K Hoang      01/12/2021 Auto detect ESP32 core for LittleFS. Fix bug in examples for WT32_ETH01
+  1.6.0   K Hoang      10/03/2022 Fix memory leak bug. Optimize code.
  **********************************************************************************************************************************/
 
 #ifndef MYSQL_GENERIC_ENCRYPT_SHA1_H
@@ -59,18 +60,18 @@ union _state
 class Encrypt_SHA1 : public Print
 {
   public:
-    void      init(void);
-    void      initHmac(const uint8_t* secret, int secretLength);
-    uint8_t*  result(void);
-    virtual size_t write(uint8_t);
-    virtual size_t write(uint8_t* data, int length);
+    void      init();
+    void      initHmac(const uint8_t* secret, const int& secretLength);
+    uint8_t*  result();
+    virtual size_t write(uint8_t data);
+    virtual size_t write(uint8_t* data, const int& length);
     using Print::write;
     
   private:
     void      pad();
-    void      addUncounted(uint8_t data);
+    void      addUncounted(const uint8_t& data);
     void      hashBlock();
-    uint32_t  rol32(uint32_t number, uint8_t bits);
+    uint32_t  rol32(const uint32_t& number, const uint8_t& bits);
     _buffer   buffer;
     uint8_t   bufferOffset;
     _state    state;
@@ -79,7 +80,7 @@ class Encrypt_SHA1 : public Print
     uint8_t   innerHash[HASH_LENGTH];
 };
 
-extern Encrypt_SHA1 Sha1;
+//extern Encrypt_SHA1 Sha1;
 
 #include "MySQL_Generic_Encrypt_Sha1_Impl.h"
 

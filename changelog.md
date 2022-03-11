@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Release v1.6.0](#release-v160)
   * [Release v1.5.2](#release-v152)
   * [Release v1.5.1](#release-v151)
   * [Major Release v1.5.0](#major-release-v150)
@@ -29,6 +30,13 @@
 ---
 
 ## Changelog
+
+### Release v1.6.0
+
+1. Fix memory leak bugs. Check [memory leak on 'server_version' #17](https://github.com/khoih-prog/MySQL_MariaDB_Generic/issues/17) and [memory leak on MySQL_Connection.MySQL_Packet.buffer #18](https://github.com/khoih-prog/MySQL_MariaDB_Generic/issues/18)
+2. Optimize library code by using `reference-passing` instead of `value-passing`
+3. Update RP2040 Ethernet-related examples to use the same SS/CS pin GP17 for [ArduinoCore-mbed mbed_rp2040 core](https://github.com/arduino/ArduinoCore-mbed) as [arduino-pico rp2040 core](https://github.com/earlephilhower/arduino-pico)
+4. Update `Packages' Patches`
 
 ### Release v1.5.2
 
