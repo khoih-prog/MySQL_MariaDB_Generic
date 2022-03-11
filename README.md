@@ -670,7 +670,7 @@ To know the default CS/SS pins of not listed boards, check the related `variant.
   
 5. For **RP2040**, use the SPI's pins as follows:
 
-  - SS/CS = GP17 default or GP5 by modifing `defines.h`
+  - SS/CS = GP17 default or GP5 by modifying `defines.h`
   - MOSI  = GP19
   - MISO  = GP16
   - SCK   = GP18
