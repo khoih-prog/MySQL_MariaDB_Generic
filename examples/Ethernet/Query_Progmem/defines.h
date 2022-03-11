@@ -25,7 +25,22 @@
 
 #if ( defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_PORTENTA_H7_M4) )
 
-  #error Portenta_H7 not supported.
+  #if defined(BOARD_NAME)
+    #undef BOARD_NAME
+  #endif
+
+  #if defined(CORE_CM7)
+    #warning Using Portenta H7 M7 core
+    #define BOARD_NAME              "PORTENTA_H7_M7"
+  #else
+    #warning Using Portenta H7 M4 core
+    #define BOARD_NAME              "PORTENTA_H7_M4"
+  #endif
+
+  #define ETHERNET_USE_PORTENTA_H7  true
+  #define USE_ETHERNET_PORTENTA_H7  true
+  
+  #define USE_ETHERNET_WRAPPER      false
   
 #endif
 
@@ -298,9 +313,9 @@
   // Default pin 5 (in Mbed) or 17 to SS/CS
   #if defined(ARDUINO_ARCH_MBED)
     // For RPI Pico using Arduino Mbed RP2040 core
-    // SCK: GPIO2,  MOSI: GPIO3, MISO: GPIO4, SS/CS: GPIO5
+    // SCK: GP18,  MOSI: GP19, MISO: GP16, SS/CS: GP17 or GP05
     
-    #define USE_THIS_SS_PIN       5
+    #define USE_THIS_SS_PIN       17    //5
 
     #if defined(BOARD_NAME)
       #undef BOARD_NAME
