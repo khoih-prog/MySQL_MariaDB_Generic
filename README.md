@@ -1929,9 +1929,11 @@ Submit issues to: [MySQL_MariaDB_Generic issues](https://github.com/khoih-prog/M
 1. Based on and modified from [Dr. Charles Bell's MySQL_Connector_Arduino Library](https://github.com/ChuckBell/MySQL_Connector_Arduino)
 2. Thanks to good work of [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for initiating, inspriring, working with, developing, debugging and testing.
 3. Thanks to [graham999au](https://github.com/graham999au) for the enhanement request [**NativeEthernet support for Teensy 4.1** #8](https://github.com/khoih-prog/MySQL_MariaDB_Generic/issues/8), and help testing, leading to new version v1.3.0
-4. Thanks to [Pablo Martikian](https://github.com/pabloandresm) to report issues
+4. Thanks to [Pablo Martikian](https://github.com/pabloandresm) to report issues:
+
 	- [memory leak on 'server_version' #17](https://github.com/khoih-prog/MySQL_MariaDB_Generic/issues/17)
 	- [memory leak on MySQL_Connection.MySQL_Packet.buffer #18](https://github.com/khoih-prog/MySQL_MariaDB_Generic/issues/18)
+
 leading to version v1.6.0 to fix memory leak bugs.
 
 <table>
