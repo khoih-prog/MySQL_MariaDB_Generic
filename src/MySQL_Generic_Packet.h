@@ -94,6 +94,12 @@ class MySQL_Packet
 				
 				free(buffer);
 			}
+	if (server_version)
+			{
+				MYSQL_LOGDEBUG("Free server_version");
+				
+				free(server_version);
+			}
     };
     
     bool    complete_handshake(char *user, char *password);

@@ -153,7 +153,10 @@ bool MySQL_Connection::connect(const char *hostname, const uint16_t& port, char 
   }
 
 	if (server_version)
-  	free(server_version); // don't need it anymore
+	{
+	  	free(server_version); // don't need it anymore
+		server_version = NULL;
+	}
 
   return returnVal;
 }
@@ -236,7 +239,10 @@ Connection_Result MySQL_Connection::connectNonBlocking(const char *hostname, con
   }
 
 	if (server_version)
-  	free(server_version); // don't need it anymore
+	{
+	  	free(server_version); // don't need it anymore
+		server_version = NULL;
+	}
 
   return returnVal;
 }

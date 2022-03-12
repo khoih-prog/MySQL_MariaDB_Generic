@@ -72,6 +72,7 @@
 MySQL_Packet::MySQL_Packet(Client *client_instance)
 {
   buffer = NULL;
+  server_version = NULL;
   client = client_instance;
 }
 
@@ -441,8 +442,15 @@ void MySQL_Packet::parse_handshake_packet()
     i++;
   } while (buffer[i - 1] != 0x00);
 
-  server_version = (char *) malloc(i - 5);
-  strncpy(server_version, (char *) &buffer[5], i - 5);
+  if (i>5)
+  {
+    server_version = (char *) malloc(i - 5);
+    if (server_version)
+    {
+       strncpy(server_version, (char *) &buffer[5], i - 5);
+       server_version[i-5-1]=0;
+    }
+  }
 
   // Capture the first 8 characters of seed
   i += 4; // Skip thread id
