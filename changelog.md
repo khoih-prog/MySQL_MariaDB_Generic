@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Release v1.6.1](#release-v161)
   * [Release v1.6.0](#release-v160)
   * [Release v1.5.2](#release-v152)
   * [Release v1.5.1](#release-v151)
@@ -30,6 +31,13 @@
 ---
 
 ## Changelog
+
+### Release v1.6.1
+
+1. Fix memory management bugs. Check [corrupt heap at MySQL_Connection destructor #19](https://github.com/khoih-prog/MySQL_MariaDB_Generic/issues/19) and [malloc server_version result not correctly handled may lead to memory corruption #20](https://github.com/khoih-prog/MySQL_MariaDB_Generic/issues/20)
+2. Add support to SAMD21/SAMD51 boards using [Fab_SAM_Arduino core](https://github.com/qbolsee/ArduinoCore-fab-sam)
+3. Add support to RP2040 boards using `Seeed RP2040 core`
+4. Add `Packages' Patches` for [Fab_SAM_Arduino core](https://github.com/qbolsee/ArduinoCore-fab-sam)
 
 ### Release v1.6.0
 
