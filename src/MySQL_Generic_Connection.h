@@ -67,12 +67,7 @@ class MySQL_Connection : public MySQL_Packet
     
     virtual ~MySQL_Connection()
     {
-    	if (server_version)
-			{
-				MYSQL_LOGDEBUG("Free server_version");
-				
-				free(server_version);
-			}
+	    this->close();
     };
     
     bool connect(const IPAddress& server, const uint16_t& port, char *user, char *password, char *db = NULL);
