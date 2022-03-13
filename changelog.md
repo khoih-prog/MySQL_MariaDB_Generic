@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+	* [Release v1.7.0](#release-v170)
   * [Release v1.6.1](#release-v161)
   * [Release v1.6.0](#release-v160)
   * [Release v1.5.2](#release-v152)
@@ -31,6 +32,11 @@
 ---
 
 ## Changelog
+
+### Releases v1.7.0
+
+1. Convert to `h-only` style
+2. Add `multiFileProject` examples to demo for multiple-file projects
 
 ### Release v1.6.1
 

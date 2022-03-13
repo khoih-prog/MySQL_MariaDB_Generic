@@ -14,6 +14,7 @@
 
 ## Table of Contents
 
+* [Important Change from v1.7.0](#Important-Change-from-v170)
 * [Why do we need this MySQL_MariaDB_Generic library](#why-do-we-need-this-mysql_mariadb_generic-library)
   * [Features](#features)
   * [Currently supported Boards](#currently-supported-boards)
@@ -25,6 +26,7 @@
   * [Use Arduino Library Manager](#use-arduino-library-manager)
   * [Manual Install](#manual-install)
   * [VS Code & PlatformIO](#vs-code--platformio)
+* [HOWTO Fix `Multiple Definitions` Linker Error](#howto-fix-multiple-definitions-linker-error) 
 * [Packages' Patches](#packages-patches)
   * [1. For Adafruit nRF52840 and nRF52832 boards](#1-for-adafruit-nRF52840-and-nRF52832-boards)
   * [2. For Teensy boards](#2-for-teensy-boards)
@@ -102,6 +104,14 @@
 * [Contributing](#contributing)
 * [License](#license)
 * [Copyright](#copyright)
+
+---
+---
+
+### Important Change from v1.7.0
+
+Please have a look at [HOWTO Fix `Multiple Definitions` Linker Error](#howto-fix-multiple-definitions-linker-error)
+
 
 ---
 ---
@@ -259,6 +269,33 @@ Another way to install is to:
 2. Install [PlatformIO](https://platformio.org/platformio-ide)
 3. Install [**MySQL_MariaDB_Generic** library](https://registry.platformio.org/libraries/khoih-prog/MySQL_MariaDB_Generic) by using [Library Manager](https://registry.platformio.org/libraries/khoih-prog/MySQL_MariaDB_Generic/installation). Search for **MySQL_MariaDB_Generic** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
 4. Use included [platformio.ini](platformio/platformio.ini) file from examples to ensure that all dependent libraries will installed automatically. Please visit documentation for the other options and examples at [Project Configuration File](https://docs.platformio.org/page/projectconf.html)
+
+
+---
+---
+
+### HOWTO Fix `Multiple Definitions` Linker Error
+
+The current library implementation, using `xyz-Impl.h` instead of standard `xyz.cpp`, possibly creates certain `Multiple Definitions` Linker error in certain use cases.
+
+You can include this `.hpp` file
+
+```
+// Can be included as many times as necessary, without `Multiple Definitions` Linker Error
+#include "MySQL_Generic.hpp"     //https://github.com/khoih-prog/MySQL_Generic
+```
+
+in many files. But be sure to use the following `.h` file **in just 1 `.h`, `.cpp` or `.ino` file**, which must **not be included in any other file**, to avoid `Multiple Definitions` Linker Error
+
+```
+// To be included only in main(), .ino with setup() to avoid `Multiple Definitions` Linker Error
+#include "MySQL_Generic.h"           //https://github.com/khoih-prog/MySQL_Generic
+```
+
+Check the new [**multiFileProject** example](examples/multiFileProject) for a `HOWTO` demo.
+
+Have a look at the discussion in [Different behaviour using the src_cpp or src_h lib #80](https://github.com/khoih-prog/ESPAsync_WiFiManager/discussions/80)
+
 
 
 ---
@@ -816,6 +853,7 @@ MySQL_Query sql_query = MySQL_Query(&conn);
  8. [Connect_Disconnect](examples/Ethernet/Connect_Disconnect)
  9. [Query_Progmem](examples/Ethernet/Query_Progmem)
 10. [Query_Results](examples/Ethernet/Query_Results)
+11. [multiFileProject_Ethernet](examples/Ethernet/multiFileProject_Ethernet) **New**
 
 #### For WiFi module/shield
 
@@ -830,6 +868,7 @@ MySQL_Query sql_query = MySQL_Query(&conn);
  9. [Query_Progmem_WiFi](examples/WiFi/Query_Progmem_WiFi)
 10. [Query_Results_WiFi](examples/WiFi/Query_Results_WiFi)
 11. [Reboot_WiFi](examples/WiFi/Reboot_WiFi)
+12. [multiFileProject_WiFi](examples/WiFi/multiFileProject_WiFi) **New**
 
 #### For WiFiNINA module/shield
 
@@ -843,6 +882,7 @@ MySQL_Query sql_query = MySQL_Query(&conn);
  8. [Query_Progmem_WiFiNINA](examples/WiFiNINA/Query_Progmem_WiFiNINA)
  9. [Query_Results_WiFiNINA](examples/WiFiNINA/Query_Results_WiFiNINA)
 10. [Reboot_WiFiNINA](examples/WiFiNINA/Reboot_WiFiNINA)
+11. [multiFileProject_WiFiNINA](examples/WiFiNINA/multiFileProject_WiFiNINA) **New**
 
 #### For WT32_ETH01
 
@@ -856,6 +896,7 @@ MySQL_Query sql_query = MySQL_Query(&conn);
  8. [Query_Progmem_WT32_ETH01](examples/WT32_ETH01/Query_Progmem_WT32_ETH01)
  9. [Query_Results_WT32_ETH01](examples/WT32_ETH01/Query_Results_WT32_ETH01)
 10. [Reboot_WT32_ETH01](examples/WT32_ETH01/Reboot_WT32_ETH01)
+11. [multiFileProject_WT32_ETH01](examples/WT32_ETH01/multiFileProject_WT32_ETH01) **New**
 
 #### For Teensy 4.1 NativeEthernet
 
@@ -869,6 +910,7 @@ MySQL_Query sql_query = MySQL_Query(&conn);
  8. [Connect_Disconnect](examples/NativeEthernet/Connect_Disconnect)
  9. [Query_Progmem](examples/NativeEthernet/Query_Progmem)
 10. [Query_Results](examples/NativeEthernet/Query_Results)
+11. [multiFileProject_NativeEthernet](examples/NativeEthernet/multiFileProject_NativeEthernet) **New**
 
 #### For Teensy 4.1 QNEthernet
 
@@ -882,6 +924,7 @@ MySQL_Query sql_query = MySQL_Query(&conn);
  8. [Connect_Disconnect](examples/QNEthernet/Connect_Disconnect)
  9. [Query_Progmem](examples/QNEthernet/Query_Progmem)
 10. [Query_Results](examples/QNEthernet/Query_Results)
+11. [multiFileProject_QNEthernet](examples/QNEthernet/multiFileProject_QNEthernet) **New**
 
 #### For Portenta_H7 Ethernet
 
@@ -891,6 +934,7 @@ MySQL_Query sql_query = MySQL_Query(&conn);
  4. [Connect](examples/Portenta_H7/Ethernet/Connect)
  5. [Connect_By_Hostname](examples/Portenta_H7/Ethernet/Connect_By_Hostname)
  6. [Connect_Default_Database](examples/Portenta_H7/Ethernet/Connect_Default_Database)
+ 7. [multiFileProject_Portenta_H7_Ethernet](examples/Portenta_H7/Ethernet/multiFileProject_Portenta_H7_Ethernet) **New**
 
 
 #### For Portenta_H7 WiFi
@@ -903,6 +947,7 @@ MySQL_Query sql_query = MySQL_Query(&conn);
  6. [Connect_Default_Database_WiFi](examples/Portenta_H7/WiFi/Connect_Default_Database_WiFi)
  7. [Connect_Disconnect_WiFi](examples/Portenta_H7/WiFi/Connect_Disconnect_WiFi)
  8. [Reboot_WiFi](examples/Portenta_H7/WiFi/Reboot_WiFi)
+ 9. [multiFileProject_Portenta_H7_WiFi](examples/Portenta_H7/WiFi/multiFileProject_Portenta_H7_WiFi) **New**
 
 
 
@@ -935,7 +980,7 @@ This is terminal debug output when running [Query_Progmem](examples/Ethernet/Que
 
 ```
 Starting Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet3 Library
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 Ethernet3 W5500 init, using SPI_CS = 10, number of sockets = 4
 Using mac index = 10
 Connected! IP address: 192.168.2.145
@@ -974,7 +1019,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NUCLEO_F767ZI using LAN8742A/STM32Ethernet Library
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 Using mac index = 0
 Connected! IP address: 192.168.2.165
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
@@ -1041,7 +1086,7 @@ This is terminal debug output when running [Query_Results_WiFi](examples/WiFi/Qu
 
 ```
 Starting Query_Results_WiFi on ITSYBITSY_M4
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 Using WiFiEspAT Library
 WiFi shield init done
 Connecting to HueNet1
@@ -1080,7 +1125,7 @@ This is terminal debug output when running [Basic_Select_WiFi](examples/WiFi/Bas
 
 ```
 Starting Basic_Select_WiFi on SEEED_XIAO_M0
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 Using WiFiEspAT Library
 WiFi shield init done
 Connecting to HueNet1
@@ -1116,7 +1161,7 @@ This is terminal debug output when running [Query_Results_WiFiNINA](examples/WiF
 
 ```
 Starting Query_Results_WiFiNINA on SAMD_NANO_33_IOT
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 Attempting to connect to SSID: HueNet1
 SSID: HueNet1
 IP Address: 192.168.2.118
@@ -1162,7 +1207,7 @@ This is terminal debug output when running [Connect_By_Hostname](examples/Ethern
 
 ```
 Starting Connect_By_Hostname on SAM DUE using W5x00/EthernetLarge Library
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 _pinCS = 0
 W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 10
 W5100::init: W5100, SSIZE =4096
@@ -1187,7 +1232,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NRF52840_FEATHER using ENC28J60/UIPEthernet Library
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 ENC28J60_CONTROL_CS =10
 SS =5
 SPI_MOSI =25
@@ -1286,7 +1331,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NRF52840_FEATHER, with ENC28J60 using EthernetENC Library
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 25
@@ -1343,7 +1388,7 @@ This is terminal debug output when running [Query_Progmem](examples/Ethernet/Que
 
 ```
 Starting Query_Progmem on NRF52840_FEATHER, with ENC28J60 using EthernetENC Library
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 25
@@ -1396,7 +1441,7 @@ This is terminal debug output when running [Basic_Insert_ESP](examples/WiFi/Basi
 
 ```
 Starting Basic_Insert_ESP on ESP8266_NODEMCU_ESP12E
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 Connecting to HueNet1
 ...........Connected to network. My IP address is: 192.168.2.135
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
@@ -1425,7 +1470,7 @@ This is terminal debug output when running [Basic_Insert_ESP](examples/WiFi/Basi
 
 ```
 Starting Basic_Insert_ESP on ESP32S2_DEV
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 Connecting to HueNet1
 .......Connected to network. My IP address is: 192.168.2.190
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
@@ -1454,7 +1499,7 @@ This is terminal debug output when running [Basic_Select_WiFiNINA](examples/WiFi
 
 ```
 Starting Basic_Select_WiFiNINA on MBED NANO_RP2040_CONNECT
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 Attempting to connect to SSID: HueNet1
 SSID: HueNet1
 IP Address: 192.168.2.153
@@ -1490,7 +1535,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on MBED RASPBERRY_PI_PICO , with W5x00 using Ethernet Library
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 19
@@ -1575,7 +1620,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on RASPBERRY_PI_PICO , with W5x00 using EthernetLarge Library
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 19
@@ -1636,7 +1681,7 @@ This is terminal debug output when running [Complex_Select_WT32_ETH01](examples/
 ```
 Starting Complex_Select_WT32_ETH01 on WT32-ETH01
 WebServer_WT32_ETH01 v1.4.1
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 ETH MAC: A8:03:2A:A1:61:73, IPv4: 192.168.2.232
 FULL_DUPLEX, 100Mbps
 Connected to network. My IP address is: 192.168.2.232
@@ -1695,7 +1740,7 @@ This is terminal debug output when running [Complex_Select](examples/NativeEther
 
 ```
 Starting Complex_Select on Teensy 4.1 , with NativeEthernet
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 Using mac index = 2
 Connected! IP address: 192.168.2.86
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
@@ -1764,7 +1809,7 @@ This is terminal debug output when running [Complex_Select](examples/NativeEther
 
 ```
 Starting Complex_Select on TEENSY 4.1 using QNEthernet
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 =========== USE_QN_ETHERNET ===========
 Initialize Ethernet using static IP => Connected! IP address: 192.168.2.222
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
@@ -1807,7 +1852,7 @@ This is terminal debug output when running [Complex_Insert](examples/Portenta_H7
 
 ```
 Starting Complex_Insert on PORTENTA_H7_M7 , with Ethernet using Portenta_Ethernet Library
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 Using mac index = 14
 Connected! IP address: 192.168.2.132
 Connecting to SQL Server @ 192.168.2.112 , Port = 5698
@@ -1837,7 +1882,7 @@ This is terminal debug output when running [Complex_Insert_WiFi](examples/Porten
 
 ```
 Starting Complex_Select_WiFi on PORTENTA_H7_M7
-MySQL_MariaDB_Generic v1.6.1
+MySQL_MariaDB_Generic v1.7.0
 Connecting to HueNet1
 Connected to network. My IP address is: 192.168.2.130
 Connecting to SQL Server @ 192.168.2.112 , Port = 5698
@@ -1938,6 +1983,8 @@ Submit issues to: [MySQL_MariaDB_Generic issues](https://github.com/khoih-prog/M
 26. Fix memory leak and memory management bugs.
 27. Add support to SAMD21/SAMD51 boards using [Fab_SAM_Arduino core](https://github.com/qbolsee/ArduinoCore-fab-sam)
 28. Add support to RP2040 boards using `Seeed RP2040 core`
+29 Convert to `h-only` style
+30. Add `multiFileProject` examples to demo for multiple-file projects
 
 ---
 ---
@@ -1954,8 +2001,9 @@ Submit issues to: [MySQL_MariaDB_Generic issues](https://github.com/khoih-prog/M
 	- [corrupt heap at MySQL_Connection destructor #19](https://github.com/khoih-prog/MySQL_MariaDB_Generic/issues/19)
 	- [malloc server_version result not correctly handled may lead to memory corruption #20](https://github.com/khoih-prog/MySQL_MariaDB_Generic/issues/20)
 	- [fix server_version memory management #21](https://github.com/khoih-prog/MySQL_MariaDB_Generic/pull/21)
+	- [suggest replacing all files xxxx_Impl.h by xxxx.cpp #22](https://github.com/khoih-prog/MySQL_MariaDB_Generic/issues/22)
 
-leading to version v1.6.0 and v1.6.1 to fix memory leak / management bugs.
+leading to version v1.6.0, v1.6.1 and v1.7.0 to fix memory leak / management bugs / `Multiple Definitions` Linker Error.
 
 <table>
   <tr>

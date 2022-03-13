@@ -114,5 +114,5 @@
   "frameworks": "*",
   "platforms": "*",
   "examples": "examples/*/*/*.ino",
-  "headers": ["MySQL_Generic.h"]
+  "headers": ["MySQL_Generic.h", "MySQL_Generic.hpp"]
 }

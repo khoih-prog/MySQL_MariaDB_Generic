@@ -1,6 +1,6 @@
-/****************************************************************************************************************************
-  MySQL_Generic_WiFi.h
-  
+/*********************************************************************************************************************************
+  MySQL_Generic.hpp
+      
   Library for communicating with a MySQL or MariaDB Server
   
   Based on and modified from Dr. Charles A. Bell's MySQL_Connector_Arduino Library https://github.com/ChuckBell/MySQL_Connector_Arduino
@@ -28,62 +28,24 @@
   1.7.0   K Hoang      12/03/2022 Convert to `h-only` style library
  **********************************************************************************************************************************/
 
-#ifndef MYSQL_GENERIC_WIFI_H
-#define MYSQL_GENERIC_WIFI_H
+#ifndef MYSQL_GENERIC_HPP
+#define MYSQL_GENERIC_HPP
 
-// ESP8266 and ESP32 built-in WiFi have highest priority and will override all other settings
-#if (ESP8266)
-  #warning Using ESP8266 built-in WiFi
-  #include <ESP8266WiFi.h>
-  WiFiClient client;
-  
-#elif (ESP32)
-  #warning Using ESP32 built-in WiFi
-  #include <WiFi.h>
-  WiFiClient client;
-  
-#elif USING_WIFI_ESP8266_AT
-  // Changed from USING_WIFI_ESP_AT to USING_WIFI_ESP8266_AT from v1.0.2
-  #error Using ESP8266_AT Library not supported now
-  // Uncomment to use ESP32-AT commands
-  //#define USE_ESP32_AT      true
-  
-  #include <ESP8266_AT_WebServer.h>
-  #include <ESP8266_AT.h>
-  #include <ESP8266_AT_Client.h>
-  ESP8266_AT_Client client;
-#elif (USING_WIFININA_GENERIC)
-  #warning Using WiFiNINA_Generic Library
-  #include "WiFiNINA_Generic.h"
-  #include "WiFiClient_Generic.h"
-  WiFiClient client;
-  
-#elif (USING_WIFININA)
-  #warning Using WiFiNINA Library
-  #include "WiFiNINA.h"
-  #include "WiFiClient.h"
-  WiFiClient client;
-  
-#elif (USING_WIFIESPAT_LIB)
-  #warning Using WiFiEspAT Library
-  #include "WiFiEspAT.h"
-  WiFiClient client;
-  
-  // KH, from v1.5.0  
-#elif USE_WIFI_PORTENTA_H7
-  #warning Using Portenta_H7 WiFi Library
-  #include "WiFi.h"
-  WiFiClient client;
-  
-#elif (USING_WIFI_CUSTOM)
-  #warning Using Custom WiFi Library. To modify according to Library.
-  #include "WiFi_XYZ.h"
-  #include "WiFi_XYZ_Client.h"
-  WiFiClient client;
-  
-#else
-  #error You must specify a WiFi Library to use.
-  
+#define MYSQL_GENERIC_VERSION               		"1.7.0"
+
+#ifndef MYSQL_MARIADB_GENERIC_VERSION
+  #define MYSQL_MARIADB_GENERIC_VERSION       	("MySQL_MariaDB_Generic v" MYSQL_GENERIC_VERSION)
+
+  #define MYSQL_MARIADB_GENERIC_VERSION_MAJOR    1
+  #define MYSQL_MARIADB_GENERIC_VERSION_MINOR    7
+  #define MYSQL_MARIADB_GENERIC_VERSION_PATCH    0
+
+  #define MYSQL_MARIADB_GENERIC_VERSION_INT      1007000
 #endif
 
-#endif    //MYSQL_GENERIC_WIFI_H
+#include <MySQL_Generic_Connection.h>
+#include <MySQL_Generic_Query.h>
+#include <MySQL_Generic_Encrypt_Sha1.h>
+#include <MySQL_Generic_Packet.h>
+ 
+#endif    //MYSQL_GENERIC_HPP
