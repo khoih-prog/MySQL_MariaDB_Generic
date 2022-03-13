@@ -171,7 +171,7 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
 
 10. RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) or [**Earle Philhower's arduino-pico** core](https://github.com/earlephilhower/arduino-pico).
 
-11. RP2040-based boards, such as **Seeed XIAO RP2040**, using [**Seeeduino RP2040** core]
+11. RP2040-based boards, such as **Seeed XIAO RP2040**, using **Seeeduino RP2040** core
 
 12. **WT32_ETH01 (ESP32 + LAN8720A)**
 
