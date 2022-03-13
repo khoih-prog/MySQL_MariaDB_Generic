@@ -292,7 +292,7 @@ in many files. But be sure to use the following `.h` file **in just 1 `.h`, `.cp
 #include "MySQL_Generic.h"           //https://github.com/khoih-prog/MySQL_Generic
 ```
 
-Check the new [**multiFileProject** example](examples/multiFileProject) for a `HOWTO` demo.
+Check the new [**multiFileProject_Ethernet** example](examples/multiFileProject[multiFileProject_Ethernet](examples/Ethernet/multiFileProject_Ethernet)) for a `HOWTO` demo.
 
 Have a look at the discussion in [Different behaviour using the src_cpp or src_h lib #80](https://github.com/khoih-prog/ESPAsync_WiFiManager/discussions/80)
 
