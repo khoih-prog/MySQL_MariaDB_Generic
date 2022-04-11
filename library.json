@@ -1,6 +1,6 @@
 {
   "name": "MySQL_MariaDB_Generic",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "keywords": "Communication, Database, Storage, MySQL, MariaDB, wt32-eth01, Teensy, SAMD, nRF52, W5x00, Ethernet, wifi, wifinina, lan8720, rp2040, nano-33-iot, nano-rp2040-connect, QNEthernet, native-ethernet, Portenta-H7, SAM DUE, ENC28J60, rpi-pico, Arduino, AVR",
   "description": "Connects to MySQL or MariaDB using ESP8266/ESP32, WT32_ETH01 (ESP32 + LAN8720A), nRF52, SAMD21/SAMD51, STM32F/L/H/G/WB/MP1, Teensy, SAM DUE, Mega, RP2040-based boards, Portenta_H7, etc. with W5x00, ENC28J60 Ethernet, Teensy 4.1 NativeEthernet/QNEthernet, WiFiNINA modules/shields or Portenta_H7 WiFi/Ethernet. W5x00 can use Ethernet, EthernetLarge, Ethernet2 or Ethernet3 library. ENC28J60 can use either EthernetENC or UIPEthernet Library. Now accepting server's hostname, besides IPAddress. Ethernet_Generic library is used as default for W5x00",
   "authors": [

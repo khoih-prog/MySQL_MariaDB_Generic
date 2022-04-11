@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+	* [Release v1.7.2](#release-v172)
 	* [Release v1.7.1](#release-v171)
 	* [Release v1.7.0](#release-v170)
   * [Release v1.6.1](#release-v161)
@@ -33,6 +34,10 @@
 ---
 
 ## Changelog
+
+### Release v1.7.2
+
+1. Fix missing paragraph in `library.properties` resulting in Arduino IDE's invalid library complaint
 
 ### Release v1.7.1
 
