@@ -27,7 +27,7 @@
 void setup() 
 {
   Serial.begin(115200);
-  while (!Serial);
+  while (!Serial && millis() < 5000); // wait for serial port to connect
   
   Serial.println("\nStart multiFileProject_Portenta_H7_Ethernet");
   Serial.println(MYSQL_MARIADB_GENERIC_VERSION);

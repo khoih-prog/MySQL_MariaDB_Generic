@@ -111,7 +111,7 @@ char *dtostrf(double val, signed char width, unsigned char prec, char *sout)
 void setup()
 {
   Serial.begin(115200);
-  while (!Serial); // wait for serial port to connect
+  while (!Serial && millis() < 5000); // wait for serial port to connect
 
   MYSQL_DISPLAY3("\nStarting Complex_Insert on", BOARD_NAME, ", with", SHIELD_TYPE);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);

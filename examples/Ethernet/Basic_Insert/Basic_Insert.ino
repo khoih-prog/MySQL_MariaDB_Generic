@@ -63,7 +63,7 @@
 // Select the static Local IP address according to your local network
 IPAddress ip(192, 168, 2, 222);
 
-#define USING_HOST_NAME     true
+#define USING_HOST_NAME     false   //true
 
 #if USING_HOST_NAME
   // Optional using hostname, and Ethernet built-in DNS lookup
@@ -88,15 +88,9 @@ String INSERT_SQL = String("INSERT INTO ") + default_database + "." + default_ta
 
 MySQL_Connection conn((Client *)&client);
 
-void setup()
+void initEthernet()
 {
-  Serial.begin(115200);
-  while (!Serial); // wait for serial port to connect
-
-  MYSQL_DISPLAY3("\nStarting Basic_Insert on", BOARD_NAME, ", with", SHIELD_TYPE);
-  MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
-
-#if !(USE_ETHERNET_PORTENTA_H7)
+#if !(USE_ETHERNET_PORTENTA_H7 || USE_ETHERNET_LAN8742A || USE_ETHERNET_LAN8720)
 
   MYSQL_LOGERROR(F("========================================="));
   MYSQL_LOGERROR(F("Default SPI pinout:"));
@@ -114,7 +108,7 @@ void setup()
   
     MYSQL_LOGERROR1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
   
-  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
+  #if ( USE_ETHERNET_GENERIC || USE_ETHERNET_ENC )
     // For ESP8266
     // Pin                D0(GPIO16)    D1(GPIO5)    D2(GPIO4)    D3(GPIO0)    D4(GPIO2)    D8
     // Ethernet           0                 X            X            X            X        0
@@ -125,17 +119,8 @@ void setup()
     // D2 is safe to used for Ethernet, Ethernet2, Ethernet3, EthernetLarge libs
     // Must use library patch for Ethernet, EthernetLarge libraries
     Ethernet.init (USE_THIS_SS_PIN);
-  
-  #elif USE_ETHERNET3
-    // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
-    #ifndef ETHERNET3_MAX_SOCK_NUM
-      #define ETHERNET3_MAX_SOCK_NUM      4
-    #endif
-  
-    Ethernet.setCsPin (USE_THIS_SS_PIN);
-    Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
-  
-  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET_LARGE || USE_ETHERNET_ENC )
+   
+  #endif  //( USE_ETHERNET_GENERIC || USE_ETHERNET_ENC )
 
 #elif defined(ESP32)
 
@@ -154,7 +139,7 @@ void setup()
   MYSQL_LOGERROR1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
 
   // For other boards, to change if necessary
-  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
+  #if ( USE_ETHERNET_GENERIC || USE_ETHERNET_ENC )
     // Must use library patch for Ethernet, EthernetLarge libraries
     // ESP32 => GPIO2,4,5,13,15,21,22 OK with Ethernet, Ethernet2, EthernetLarge
     // ESP32 => GPIO2,4,5,15,21,22 OK with Ethernet3
@@ -162,16 +147,7 @@ void setup()
     //Ethernet.setCsPin (USE_THIS_SS_PIN);
     Ethernet.init (USE_THIS_SS_PIN);
 
-  #elif USE_ETHERNET3
-    // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
-    #ifndef ETHERNET3_MAX_SOCK_NUM
-      #define ETHERNET3_MAX_SOCK_NUM      4
-    #endif
-  
-    Ethernet.setCsPin (USE_THIS_SS_PIN);
-    Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
-
-  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET_LARGE  || USE_ETHERNET_ENC )
+  #endif  //( USE_ETHERNET_GENERIC || USE_ETHERNET_ENC )
 
 #elif ETHERNET_USE_RPIPICO
 
@@ -181,7 +157,7 @@ void setup()
   // ETHERNET_USE_RPIPICO, use default SS = 5 or 17
   #ifndef USE_THIS_SS_PIN
     #if defined(ARDUINO_ARCH_MBED)
-      #define USE_THIS_SS_PIN   5     // For Arduino Mbed core
+      #define USE_THIS_SS_PIN   17     // For Arduino Mbed core
     #else  
       #define USE_THIS_SS_PIN   17    // For E.Philhower core
     #endif
@@ -190,7 +166,7 @@ void setup()
   MYSQL_LOGERROR1(F("RPIPICO setCsPin:"), USE_THIS_SS_PIN);
 
   // For other boards, to change if necessary
-  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
+  #if ( USE_ETHERNET_GENERIC || USE_ETHERNET_ENC )
     // Must use library patch for Ethernet, EthernetLarge libraries
     // For RPI Pico using Arduino Mbed RP2040 core
     // SCK: GPIO2,  MOSI: GPIO3, MISO: GPIO4, SS/CS: GPIO5
@@ -200,17 +176,8 @@ void setup()
   
     //Ethernet.setCsPin (USE_THIS_SS_PIN);
     Ethernet.init (USE_THIS_SS_PIN);
-  
-  #elif USE_ETHERNET3
-    // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
-    #ifndef ETHERNET3_MAX_SOCK_NUM
-      #define ETHERNET3_MAX_SOCK_NUM      4
-    #endif
-  
-    Ethernet.setCsPin (USE_THIS_SS_PIN);
-    Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
     
-  #endif    //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+  #endif    //( USE_ETHERNET_GENERIC || USE_ETHERNET_LARGE )
   
 #else   //defined(ESP8266)
   // unknown board, do nothing, use default SS = 10
@@ -221,34 +188,35 @@ void setup()
   MYSQL_LOGERROR3(F("Board :"), BOARD_NAME, F(", setCsPin:"), USE_THIS_SS_PIN);
 
   // For other boards, to change if necessary
-  #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 || USE_ETHERNET_ENC )
+  #if ( USE_ETHERNET_GENERIC || USE_ETHERNET_ENC )
     // Must use library patch for Ethernet, Ethernet2, EthernetLarge libraries
   
     Ethernet.init (USE_THIS_SS_PIN);
-
-  #elif USE_ETHERNET3
-    // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
-    #ifndef ETHERNET3_MAX_SOCK_NUM
-      #define ETHERNET3_MAX_SOCK_NUM      4
-    #endif
-  
-    Ethernet.setCsPin (USE_THIS_SS_PIN);
-    Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
-  
-  #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET_LARGE || USE_ETHERNET_ENC )
+ 
+  #endif  //( USE_ETHERNET_GENERIC || USE_ETHERNET_ENC )
 
 #endif    //defined(ESP8266)
 
-  // Just info to know how to connect correctly
-  MYSQL_LOGERROR(F("========================================="));
-  MYSQL_LOGERROR(F("Currently Used SPI pinout:"));
-  MYSQL_LOGERROR1(F("MOSI:"), MOSI);
-  MYSQL_LOGERROR1(F("MISO:"), MISO);
-  MYSQL_LOGERROR1(F("SCK:"),  SCK);
-  MYSQL_LOGERROR1(F("SS:"),   SS);
-  MYSQL_LOGERROR(F("========================================="));
+#if !(USE_ETHERNET_PORTENTA_H7 || USE_ETHERNET_LAN8742A || USE_ETHERNET_LAN8720)
+    // Just info to know how to connect correctly
+  #if defined(CUR_PIN_MISO)
+    MYSQL_LOGERROR(F("Currently Used SPI pinout:"));
+    MYSQL_LOGERROR1(F("MOSI:"), CUR_PIN_MOSI);
+    MYSQL_LOGERROR1(F("MISO:"), CUR_PIN_MISO);
+    MYSQL_LOGERROR1(F("SCK:"),  CUR_PIN_SCK);
+    MYSQL_LOGERROR1(F("SS:"),   CUR_PIN_SS);
+  #else
+    MYSQL_LOGERROR(F("Currently Used SPI pinout:"));
+    MYSQL_LOGERROR1(F("MOSI:"), MOSI);
+    MYSQL_LOGERROR1(F("MISO:"), MISO);
+    MYSQL_LOGERROR1(F("SCK:"),  SCK);
+    MYSQL_LOGERROR1(F("SS:"),   SS);
+  #endif
+  
+  MYSQL_LOGERROR(F("========================="));
+#endif
 
-#endif    // #if !(USE_ETHERNET_PORTENTA_H7)
+#endif    // #if !(USE_ETHERNET_PORTENTA_H7 || USE_ETHERNET_LAN8742A || USE_ETHERNET_LAN8720)
 
   // start the ethernet connection and the server:
   // Use DHCP dynamic IP and random mac
@@ -259,6 +227,17 @@ void setup()
 
   MYSQL_DISPLAY1("Using mac index =", index);
   MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
+}
+
+void setup()
+{
+  Serial.begin(115200);
+  while (!Serial && millis() < 5000); // wait for serial port to connect
+
+  MYSQL_DISPLAY3("\nStarting Basic_Insert on", BOARD_NAME, ", with", SHIELD_TYPE);
+  MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
+
+  initEthernet();
 
   MYSQL_DISPLAY3("Connecting to SQL Server @", server, ", Port =", server_port);
   MYSQL_DISPLAY5("User =", user, ", PW =", password, ", DB =", default_database);

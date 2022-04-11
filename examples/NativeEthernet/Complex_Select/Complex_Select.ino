@@ -51,7 +51,7 @@
 // Select the static Local IP address according to your local network
 IPAddress ip(192, 168, 2, 222);
 
-#define USING_HOST_NAME     true
+#define USING_HOST_NAME     false   //true
 
 #if USING_HOST_NAME
   // Optional using hostname, and Ethernet built-in DNS lookup
@@ -84,7 +84,7 @@ MySQL_Connection conn((Client *)&client);
 void setup()
 {
   Serial.begin(115200);
-  while (!Serial); // wait for serial port to connect
+  while (!Serial && millis() < 5000); // wait for serial port to connect
 
   MYSQL_DISPLAY3("\nStarting Complex_Select on", BOARD_NAME, ", with", SHIELD_TYPE);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);

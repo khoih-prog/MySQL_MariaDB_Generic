@@ -27,10 +27,10 @@
   #if defined(USE_NATIVE_ETHERNET)
     #undef USE_NATIVE_ETHERNET
   #endif
-  #define USE_NATIVE_ETHERNET      true
+  #define USE_NATIVE_ETHERNET     true
+  #define USE_QN_ETHERNET         false
 
   #define BOARD_TYPE              "Teensy 4.1"
-  #define SHIELD_TYPE             "NativeEthernet"
   #warning Use Teensy 4,1 with NativeEthernet library
 #else
   #error For Teensy 4.1 using NativeEthernet only.  
@@ -46,16 +46,13 @@
 #endif
 
 // Only one of the following to be true.
-#define USE_ETHERNET              false
-#define USE_ETHERNET_LARGE        false
-#define USE_ETHERNET2             false
-#define USE_ETHERNET3             false
+#define USE_ETHERNET_GENERIC      true
 #define USE_ETHERNET_ESP8266      false
 #define USE_ETHERNET_ENC          false
 #define USE_ETHERNET_LAN8742A     false
-#define USE_UIP_ETHERNET          false
-
+#define USE_ETHERNET_LAN8720      false
 #define USE_CUSTOM_ETHERNET       false
+#define USE_UIP_ETHERNET          false
 
 // Enter a MAC address and IP address for your controller below.
 #define NUMBER_OF_MAC      20

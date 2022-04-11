@@ -21,7 +21,7 @@
 #define MYSQL_DEBUG_PORT      Serial
 
 // Debug Level from 0 to 4
-#define _MYSQL_LOGLEVEL_      1
+#define _MYSQL_LOGLEVEL_      2
 
 #if ( defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_PORTENTA_H7_M4) )
 
@@ -39,8 +39,6 @@
 
   #define ETHERNET_USE_PORTENTA_H7  true
   #define USE_ETHERNET_PORTENTA_H7  true
-  
-  #define USE_ETHERNET_WRAPPER      false
   
 #endif
 
@@ -239,7 +237,15 @@
   
   #if defined(__IMXRT1062__)
     // For Teensy 4.1/4.0
-    #define BOARD_TYPE      "TEENSY 4.1/4.0"
+    #if defined(ARDUINO_TEENSY41)
+      #define BOARD_TYPE      "TEENSY 4.1"
+      // Use true for NativeEthernet Library, false if using other Ethernet libraries
+      #define USE_NATIVE_ETHERNET     true
+    #elif defined(ARDUINO_TEENSY40)
+      #define BOARD_TYPE      "TEENSY 4.0"
+    #else
+      #define
+    #endif    
   #elif defined(__MK66FX1M0__)
     #define BOARD_TYPE "Teensy 3.6"
   #elif defined(__MK64FX512__)
@@ -313,9 +319,9 @@
   // Default pin 5 (in Mbed) or 17 to SS/CS
   #if defined(ARDUINO_ARCH_MBED)
     // For RPI Pico using Arduino Mbed RP2040 core
-    // SCK: GP18,  MOSI: GP19, MISO: GP16, SS/CS: GP17 or GP05
+    // SCK: GPIO2,  MOSI: GPIO3, MISO: GPIO4, SS/CS: GPIO5
     
-    #define USE_THIS_SS_PIN       17    //5
+    #define USE_THIS_SS_PIN       17
 
     #if defined(BOARD_NAME)
       #undef BOARD_NAME
@@ -333,11 +339,16 @@
     
   #else
     // For RPI Pico using E. Philhower RP2040 core
-    // SCK: GPIO18,  MOSI: GPIO19, MISO: GPIO16, SS/CS: GPIO17
-    #define USE_THIS_SS_PIN       17
+    #if (USING_SPI2)
+      // SCK: GPIO14,  MOSI: GPIO15, MISO: GPIO12, SS/CS: GPIO13 for SPI1
+      #define USE_THIS_SS_PIN       13
+    #else
+      // SCK: GPIO18,  MOSI: GPIO19, MISO: GPIO16, SS/CS: GPIO17 for SPI0
+      #define USE_THIS_SS_PIN       17
+    #endif
 
   #endif
-    
+   
   #define SS_PIN_DEFAULT        USE_THIS_SS_PIN
 
   // For RPI Pico
@@ -370,47 +381,56 @@
 //#define USE_THIS_SS_PIN   22  //21  //5 //4 //2 //15
 
 // Only one of the following to be true.
-#define USE_ETHERNET              false
-#define USE_ETHERNET_LARGE        false
-#define USE_ETHERNET2             false
-#define USE_ETHERNET3             false
+#define USE_ETHERNET_GENERIC      true
 #define USE_ETHERNET_ESP8266      false
 #define USE_ETHERNET_ENC          false
 #define USE_ETHERNET_LAN8742A     false
-
-// KH, from v1.0.1
+#define USE_ETHERNET_LAN8720      false
+#define USE_CUSTOM_ETHERNET       false
 #define USE_UIP_ETHERNET          false
 //////
 
-#if USE_ETHERNET_PORTENTA_H7
-  #warning Use Portenta Ethernet lib
-  #define SHIELD_TYPE           "Ethernet using Portenta_Ethernet Library"
-#elif USE_ETHERNET
-  #warning Use Ethernet lib
-  #define SHIELD_TYPE           "W5x00 using Ethernet Library" 
-#elif USE_ETHERNET_LARGE
-  #warning Use EthernetLarge lib
-  #define SHIELD_TYPE           "W5x00 using EthernetLarge Library"
-#elif USE_ETHERNET2
-   #warning Use Ethernet2 lib
-  #define SHIELD_TYPE           "W5x00 using Ethernet2 Library"
-#elif USE_ETHERNET3
-   #warning Use Ethernet3 lib   
-  #define SHIELD_TYPE           "W5x00 using Ethernet3 Library" 
-#elif USE_ETHERNET_ESP8266
-  #warning Using Ethernet_ESP8266 lib 
-  #define SHIELD_TYPE           "W5x00 using Ethernet_ESP8266 Library" 
-#elif USE_ETHERNET_ENC
-  #warning Using EthernetENC lib
-  #define SHIELD_TYPE           "ENC28J60 using EthernetENC Library"
-#elif USE_ETHERNET_LAN8742A
-  #warning Using LAN8742A Ethernet & STM32Ethernet lib
-  #define SHIELD_TYPE           "LAN8742A Ethernet & STM32Ethernet Library"  
-#else
-  #define USE_ETHERNET          true
-  #include "Ethernet.h"
-  #warning Use Ethernet lib
-  #define SHIELD_TYPE           "W5x00 using Ethernet Library"
+#if USE_CUSTOM_ETHERNET
+  // You have to include an Ethernet library in your program
+  //#include "Ethernet_XYZ.h"
+  #include "EthernetLarge.h"
+ 
+  #define SHIELD_TYPE           "Custom Ethernet using EthernetLarge Library"
+#endif
+
+#if (_MYSQL_LOGLEVEL_ > 1)  
+  #if USE_ETHERNET_PORTENTA_H7
+    #warning Use Portenta Ethernet lib 
+  #elif USE_QN_ETHERNET
+    #warning Using QNEthernet lib for Teensy 4.1. Must also use Teensy Packages Patch or error   
+  #elif USE_NATIVE_ETHERNET
+    #warning Using NativeEthernet lib for Teensy 4.1. Must also use Teensy Packages Patch or error
+  #elif USE_ETHERNET_GENERIC
+    #warning Using Ethernet_Generic lib
+  #elif USE_ETHERNET_ESP8266
+    #warning Using Ethernet_ESP8266 lib 
+  #elif USE_ETHERNET_ENC
+    #warning Using EthernetENC lib
+  #elif USE_ETHERNET_LAN8742A
+    #warning Using LAN8742A Ethernet & STM32Ethernet lib
+  #elif USE_CUSTOM_ETHERNET
+    #warning Using Custom Ethernet library
+  #else
+    #define USE_ETHERNET_GENERIC          true
+    
+    #warning Using Ethernet_Generic lib
+  #endif
+#endif
+
+#if !( USE_ETHERNET_ENC || USE_ETHERNET_ESP8266 || USE_UIP_ETHERNET || USE_ETHERNET_LAN8742A ||  USE_ETHERNET_LAN8720 || USE_NATIVE_ETHERNET || \
+       USE_QN_ETHERNET || USE_CUSTOM_ETHERNET || USE_ETHERNET_PORTENTA_H7 || USE_CUSTOM_ETHERNET )
+  #define USE_ETHERNET_GENERIC          true
+#endif
+      
+#if USE_ETHERNET_GENERIC
+  #define ETHERNET_LARGE_BUFFERS
+
+  #define _ETG_LOGLEVEL_                      1
 #endif
 
 // Enter a MAC address and IP address for your controller below.
