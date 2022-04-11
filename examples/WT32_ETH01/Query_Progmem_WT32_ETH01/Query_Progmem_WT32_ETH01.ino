@@ -83,7 +83,7 @@ MySQL_Connection conn((Client *)&client);
 void setup()
 {
   Serial.begin(115200);
-  while (!Serial);
+  while (!Serial && millis() < 5000); // wait for serial port to connect
 
   MYSQL_DISPLAY1("\nStarting Query_Progmem_WT32_ETH01 on", BOARD_NAME);
   MYSQL_DISPLAY(WEBSERVER_WT32_ETH01_VERSION);
