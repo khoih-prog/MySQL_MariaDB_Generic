@@ -45,6 +45,7 @@
   * [9. For Portenta_H7 boards using Arduino IDE in Linux](#9-for-portenta_h7-boards-using-arduino-ide-in-linux)
   * [10. For RTL8720DN boards using AmebaD core](#10-for-rtl8720dn-boards-using-amebad-core)
   * [11. For SAMD21 and SAMD51 boards using ArduinoCore-fab-sam core](#11-For-SAMD21-and-SAMD51-boards-using-ArduinoCore-fab-sam-core)
+  * [12. For Seeeduino RP2040 boards](#12-For-Seeeduino-RP2040-boards)
 * [Libraries' Patches](#libraries-patches)
   * [1. For application requiring 2K+ HTML page](#1-for-application-requiring-2k-html-page)
   * [2. For Ethernet library](#2-for-ethernet-library)
@@ -76,20 +77,20 @@
   * [1. File Basic_Select.ino](#1-file-Basic_Selectino)
   * [2. File defines.h](#2-file-definesh)
 * [Debug Terminal Output Samples](#debug-terminal-output-samples)
-  * [ 1. Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet3 Library](#1-query_progmem-on-nrf52840_feather-using-w5x00ethernet3-library) 
+  * [ 1. Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet_Generic Library](#1-query_progmem-on-nrf52840_feather-using-w5x00Ethernet_Generic-library) 
   * [ 2. Complex_Select on NUCLEO_F767ZI using LAN8742A/STM32Ethernet Library](#2-complex_select-on-nucleo_f767zi-using-lan8742astm32ethernet-library)
   * [ 3. Query_Results_WiFi on ITSYBITSY_M4](#3-query_results_wifi-on-itsybitsy_m4) 
   * [ 4. Basic_Select_WiFi on SEEED_XIAO_M0](#4-basic_select_wifi-on-seeed_xiao_m0)
   * [ 5. Query_Results_WiFiNINA on SAMD_NANO_33_IOT](#5-query_results_wifinina-on-samd_nano_33_iot) 
-  * [ 6. Connect_By_Hostname on SAM DUE using W5x00/EthernetLarge Library](#6-connect_by_hostname-on-sam-due-using-w5x00ethernetlarge-library)
+  * [ 6. Connect_By_Hostname on SAM DUE using W5x00/Ethernet_Generic Library](#6-connect_by_hostname-on-sam-due-using-w5x00Ethernet_Generic-library)
   * [ 7. Complex_Select on NRF52840_FEATHER using ENC28J60/UIPEthernet Library](#7-complex_select-on-nrf52840_feather-using-enc28j60uipethernet-library) 
   * [ 8. Complex_Select on NRF52840_FEATHER using ENC28J60/EthernetENC Library](#8-complex_select-on-nrf52840_feather-using-enc28j60ethernetenc-library)
   * [ 9. Query_Progmem on NRF52840_FEATHER using ENC28J60/EthernetENC Library](#9-query_progmem-on-nrf52840_feather-using-enc28j60ethernetenc-library) 
   * [10. Basic_Insert_ESP on ESP8266_NODEMCU_ESP12E](#10-basic_insert_esp-on-esp8266_nodemcu_esp12e)
   * [11. Basic_Insert_ESP on ESP32S2_DEV](#11-basic_insert_esp-on-esp32s2_dev)
   * [12. Basic_Select_WiFiNINA on MBED NANO_RP2040_CONNECT](#12-basic_select_wifinina-on-mbed-nano_rp2040_connect)
-  * [13. Complex_Select on MBED RASPBERRY_PI_PICO using W5x00/EthernetLarge Library](#13-complex_select-on-mbed-raspberry_pi_pico-using-w5x00ethernetlarge-library) 
-  * [14. Complex_Select on RASPBERRY_PI_PICO using W5x00/EthernetLarge Library](#14-complex_select-on-raspberry_pi_pico-using-w5x00ethernetlarge-library)
+  * [13. Complex_Select on MBED RASPBERRY_PI_PICO using W5x00/Ethernet_Generic Library](#13-complex_select-on-mbed-raspberry_pi_pico-using-w5x00Ethernet_Generic-library) 
+  * [14. Complex_Select on RASPBERRY_PI_PICO using W5x00/Ethernet_Generic Library](#14-complex_select-on-raspberry_pi_pico-using-w5x00Ethernet_Generic-library)
   * [15. Complex_Select_WT32_ETH01 on WT32-ETH01](#15-complex_select_wt32_eth01-on-wt32-eth01)
   * [16. Complex_Select on Teensy 4.1 with NativeEthernet](#16-complex_select-on-teensy-41-with-nativeethernet)
   * [17. Complex_Select on Teensy 4.1 with QNEthernet](#17-complex_select-on-teensy-41-with-qnethernet)
@@ -193,12 +194,12 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
 
 #### Currently supported Ethernet shields/modules
 
-1. W5x00 using [`Ethernet`](https://www.arduino.cc/en/Reference/Ethernet), [`EthernetLarge`](https://github.com/OPEnSLab-OSU/EthernetLarge), [`Ethernet2`](https://github.com/adafruit/Ethernet2) or [`Ethernet3`](https://github.com/sstaub/Ethernet3) library
-2. ENC28J60 using [`EthernetENC`](https://github.com/jandrassy/EthernetENC) or [`UIPEthernet`](https://github.com/UIPEthernet/UIPEthernet) library
-3. LAN8720 / LAN8720A used in **WT32_ETH01 (ESP32 + LAN8720A)**
+1. W5x00 using [`Ethernet_Generic`](https://github.com/khoih-prog/Ethernet_Generic) library
+2. W5x00 using [`Ethernet`](https://www.arduino.cc/en/Reference/Ethernet), [`EthernetLarge`](https://github.com/OPEnSLab-OSU/EthernetLarge), [`Ethernet2`](https://github.com/adafruit/Ethernet2) or [`Ethernet3`](https://github.com/sstaub/Ethernet3) library
+3. ENC28J60 using [`EthernetENC`](https://github.com/jandrassy/EthernetENC) or [`UIPEthernet`](https://github.com/UIPEthernet/UIPEthernet) library
 4. Teensy 4.1 built-in Ethernet using [`NativeEthernet`](https://github.com/vjmuzik/NativeEthernet) library
 5. Teensy 4.1 built-in Ethernet using [`QNEthernet`](https://github.com/ssilverman/QNEthernet) library
-6. - Portenta_H7 using Ethernet from [Portenta Vision shields](https://store-usa.arduino.cc/products/arduino-portenta-vision-shield-ethernet)
+6. Portenta_H7 Ethernet using [`Portenta_Ethernet`](https://github.com/arduino/ArduinoCore-mbed/tree/master/libraries/Ethernet) library
   
 <p align="center">
     <img src="https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/master/pics/Portenta_Vision.jpg">
@@ -218,31 +219,29 @@ This [**MySQL_MariaDB_Generic** library](https://github.com/khoih-prog/MySQL_Mar
  5. [`Teensy core v1.56+`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0) boards.
  6. [`Arduino SAM DUE core v1.6.12+`](https://github.com/arduino/ArduinoCore-sam) for SAM DUE ARM Cortex-M3 boards.
  7. [`Arduino SAMD core 1.8.13+`](https://github.com/arduino/ArduinoCore-samd) for SAMD ARM Cortex-M0+ boards. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-samd.svg)](https://github.com/arduino/ArduinoCore-samd/releases/latest)
- 8. [`Adafruit SAMD core 1.7.9+`](https://github.com/adafruit/ArduinoCore-samd) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.). [![GitHub release](https://img.shields.io/github/release/adafruit/ArduinoCore-samd.svg)](https://github.com/adafruit/ArduinoCore-samd/releases/latest)
+ 8. [`Adafruit SAMD core 1.7.10+`](https://github.com/adafruit/ArduinoCore-samd) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.). [![GitHub release](https://img.shields.io/github/release/adafruit/ArduinoCore-samd.svg)](https://github.com/adafruit/ArduinoCore-samd/releases/latest)
  9. [`Fab_SAM_Arduino core v1.16.18-alpha2+`](https://github.com/qbolsee/ArduinoCore-fab-sam) for SAMD21/SAMD51 boards. [![GitHub release](https://img.shields.io/github/release/qbolsee/ArduinoCore-fab-sam.svg)](https://github.com/qbolsee/ArduinoCore-fab-sam/releases/latest)
 10. [`Seeeduino SAMD core 1.8.2+`](https://github.com/Seeed-Studio/ArduinoCore-samd) for SAMD21/SAMD51 boards (XIAO M0, Wio Terminal, etc.). [![Latest release](https://img.shields.io/github/release/Seeed-Studio/ArduinoCore-samd.svg)](https://github.com/Seeed-Studio/ArduinoCore-samd/releases/latest/)
-11. [`Seeeduino RP2040 core 1.12.0+`](https://github.com/Seeed-Studio) for XIAO RP2040 boards. 
+11. [`Seeeduino RP2040 core 2.7.2+`](https://github.com/Seeed-Studio) for XIAO RP2040 boards. 
 12. [`Adafruit nRF52 v1.3.0+`](https://github.com/adafruit/Adafruit_nRF52_Arduino) for nRF52 boards such as Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, **NINA_B302_ublox**, etc. [![GitHub release](https://img.shields.io/github/release/adafruit/Adafruit_nRF52_Arduino.svg)](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/latest)
 13. [`Arduino Core for STM32 v2.2.0+`](https://github.com/stm32duino/Arduino_Core_STM32) for STM32F/L/H/G/WB/MP1 boards. [![GitHub release](https://img.shields.io/github/release/stm32duino/Arduino_Core_STM32.svg)](https://github.com/stm32duino/Arduino_Core_STM32/releases/latest)
-14. [`Earle Philhower's arduino-pico core v1.13.0+`](https://github.com/earlephilhower/arduino-pico) for RP2040-based boards such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
-15. [`Arduino mbed_rp2040 core 2.8.0+`](https://github.com/arduino/ArduinoCore-mbed) for Arduino (Use Arduino Board Manager) RP2040-based boards, such as RASPBERRY_PI_PICO. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
+14. [`Earle Philhower's arduino-pico core v1.13.1+`](https://github.com/earlephilhower/arduino-pico) for RP2040-based boards such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
+15. [`Arduino mbed_rp2040 core 3.0.1+`](https://github.com/arduino/ArduinoCore-mbed) for Arduino (Use Arduino Board Manager) RP2040-based boards, such as RASPBERRY_PI_PICO. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
 
 
 16. [`WiFiNINA_Generic library v1.8.14-3+`](https://github.com/khoih-prog/WiFiNINA_Generic) for WiFiNINA. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiNINA_Generic.svg?)](https://www.ardu-badge.com/WiFiNINA_Generic).
 
 17. Depending on which Ethernet module/shield you're using :
-   - [`EthernetLarge library v2.0.0+`](https://github.com/OPEnSLab-OSU/EthernetLarge) for W5100, W5200 and W5500.
-   - [`Ethernet2 library v1.0.4+`](https://github.com/adafruit/Ethernet2) for W5500. [![GitHub release](https://img.shields.io/github/release/adafruit/Ethernet2.svg)](https://github.com/adafruit/Ethernet2/releases/latest)
-   - [`Ethernet3 library v1.5.5+`](https://github.com/sstaub/Ethernet3) for W5500/WIZ550io/WIZ850io/USR-ES1 with Wiznet W5500 chip. [![GitHub release](https://img.shields.io/github/release/sstaub/Ethernet3.svg)](https://github.com/sstaub/Ethernet3/releases/latest)
+   - [`Ethernet_Generic library v2.0.1+`](https://github.com/khoih-prog/Ethernet_Generic) for W5100, W5200 and W5500/WIZ550io/WIZ850io/USR-ES1 with Wiznet W5500 chip.  [![GitHub release](https://img.shields.io/github/release/khoih-prog/Ethernet_Generic.svg)](https://github.com/khoih-prog/Ethernet_Generic/releases/latest)
    - [`EthernetENC library v2.0.1+`](https://github.com/jandrassy/EthernetENC) for ENC28J60. [![GitHub release](https://img.shields.io/github/release/jandrassy/EthernetENC.svg)](https://github.com/jandrassy/EthernetENC/releases/latest). **New and Better**
    - [`UIPEthernet library v2.0.10+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60. [![GitHub release](https://img.shields.io/github/release/UIPEthernet/UIPEthernet.svg)](https://github.com/UIPEthernet/UIPEthernet/releases/latest)
    - [`STM32Ethernet library v1.2.0+`](https://github.com/stm32duino/STM32Ethernet) for built-in LAN8742A Ethernet on (Nucleo-144, Discovery). [![GitHub release](https://img.shields.io/github/release/stm32duino/STM32Ethernet.svg)](https://github.com/stm32duino/STM32Ethernet/releases/latest). To be used with [`LwIP library v2.1.2+`](https://github.com/stm32duino/LwIP). [![GitHub release](https://img.shields.io/github/release/stm32duino/LwIP.svg)](https://github.com/stm32duino/LwIP/releases/latest)
    - [`NativeEthernetLarge library stable111+`](https://github.com/vjmuzik/NativeEthernet) for Teensy 4.1 built-in Ethernet.
-   - [`QNEthernet Library version v0.13.0+`](https://github.com/ssilverman/QNEthernet) for Teensy 4.1 built-in Ethernet. **New**
+   - [`QNEthernet Library version v0.14.0+`](https://github.com/ssilverman/QNEthernet) for Teensy 4.1 built-in Ethernet. **New**
    
-18. [`WiFiEspAT library v1.3.2+`](https://github.com/jandrassy/WiFiEspAT) if necessary to use ESP8266/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiEspAT.svg?)](https://www.ardu-badge.com/WiFiEspAT).
-19. [`ESP8266_AT_WebServer library v1.5.3+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) if necessary to use ESP8266/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer).
-20. [`ESP_AT_Lib library v1.4.1+`](https://github.com/khoih-prog/ESP_AT_Lib) if necessary to use ESP8266/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_AT_Lib.svg?)](https://www.ardu-badge.com/ESP_AT_Lib).
+18. [`WiFiEspAT library v1.3.2+`](https://github.com/jandrassy/WiFiEspAT) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiEspAT.svg?)](https://www.ardu-badge.com/WiFiEspAT).
+19. [`ESP8266_AT_WebServer library v1.5.3+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer).
+20. [`ESP_AT_Lib library v1.4.1+`](https://github.com/khoih-prog/ESP_AT_Lib) if necessary to use ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_AT_Lib.svg?)](https://www.ardu-badge.com/ESP_AT_Lib).
 21. [`WebServer_WT32_ETH01 library v1.4.1+`](https://github.com/khoih-prog/WebServer_WT32_ETH01) to use WT32_ETH01 (ESP32 + LAN8720). To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WebServer_WT32_ETH01.svg?)](https://www.ardu-badge.com/WebServer_WT32_ETH01).
 
 ---
@@ -514,12 +513,12 @@ With core after v1.5.0, this step is not necessary anymore thanks to the PR [Add
 
 #### 9. For Portenta_H7 boards using Arduino IDE in Linux
 
-  **To be able to upload firmware to Portenta_H7 using Arduino IDE in Linux (Ubuntu, etc.)**, you have to copy the file [portenta_post_install.sh](Packages_Patches/arduino/hardware/mbed_portenta/2.8.0/portenta_post_install.sh) into mbed_portenta directory (~/.arduino15/packages/arduino/hardware/mbed_portenta/2.8.0/portenta_post_install.sh). 
+  **To be able to upload firmware to Portenta_H7 using Arduino IDE in Linux (Ubuntu, etc.)**, you have to copy the file [portenta_post_install.sh](Packages_Patches/arduino/hardware/mbed_portenta/3.0.0/portenta_post_install.sh) into mbed_portenta directory (~/.arduino15/packages/arduino/hardware/mbed_portenta/3.0.0/portenta_post_install.sh). 
   
   Then run the following command using `sudo`
   
 ```
-$ cd ~/.arduino15/packages/arduino/hardware/mbed_portenta/2.8.0
+$ cd ~/.arduino15/packages/arduino/hardware/mbed_portenta/3.0.0
 $ chmod 755 portenta_post_install.sh
 $ sudo ./portenta_post_install.sh
 ```
@@ -532,9 +531,9 @@ This will create the file `/etc/udev/rules.d/49-portenta_h7.rules` as follows:
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="035b", GROUP="plugdev", MODE="0666"
 ```
 
-Supposing the ArduinoCore-mbed core version is 2.8.0. Now only one file must be copied into the directory:
+Supposing the ArduinoCore-mbed core version is 3.0.0. Now only one file must be copied into the directory:
 
-- `~/.arduino15/packages/arduino/hardware/mbed_portenta/2.8.0/portenta_post_install.sh`
+- `~/.arduino15/packages/arduino/hardware/mbed_portenta/3.0.0/portenta_post_install.sh`
 
 Whenever a new version is installed, remember to copy this files into the new version directory. For example, new version is x.yy.zz
 
@@ -569,6 +568,22 @@ Whenever a new version is installed, remember to copy this file into the new ver
 This file must be copied into the directory:
 
 - `~/.arduino15/packages/Fab_SAM_Arduino/hardware/samd/x.yy.zz/boards.txt`
+
+
+#### 12. For Seeeduino RP2040 boards
+ 
+ ***To be able to compile, run and automatically detect and display BOARD_NAME on Seeeduino RP2040 (XIAO RP2040, Wio RP2040 Mini) boards***, you have to copy the whole [Seeeduino RP2040 Packages_Patches](Packages_Patches/Seeeduino/hardware/rp2040/2.7.2) directory into Seeeduino samd directory (~/.arduino15/packages/Seeeduino/hardware/rp2040/2.7.2). 
+
+Supposing the Seeeduino SAMD core version is 2.7.2. This file must be copied into the directory:
+
+- `~/.arduino15/packages/Seeeduino/hardware/rp2040/2.7.2/boards.txt`
+- `~/.arduino15/packages/Seeeduino/hardware/rp2040/2.7.2/variants/Seeed_XIAO_RP2040/pins_arduino.h`
+
+Whenever a new version is installed, remember to copy this file into the new version directory. For example, new version is x.yy.zz
+This file must be copied into the directory:
+
+- `~/.arduino15/packages/Seeeduino/hardware/samd/x.yy.zz/boards.txt`
+- `~/.arduino15/packages/Seeeduino/hardware/samd/x.yy.zz/variants/Seeed_XIAO_RP2040/pins_arduino.h`
 
 
 ---
@@ -750,18 +765,14 @@ There are many modifications to facilitate the usage of [**MySQL_MariaDB_Generic
 #### Just select an Ethernet module/shield and the corresponding library to use in defines.h:
 
 ```c++
-#define USE_UIP_ETHERNET        false
-
-// Only one if the following to be true
-#define USE_NATIVE_ETHERNET     false
-#define USE_QN_ETHERNET         false
-#define USE_ETHERNET            true
-#define USE_ETHERNET2           false
-#define USE_ETHERNET3           false
-#define USE_ETHERNET_LARGE      false
-#define USE_ETHERNET_ESP8266    false 
-#define USE_ETHERNET_ENC        false
-#define USE_CUSTOM_ETHERNET     false
+// Only one of the following to be true.
+#define USE_ETHERNET_GENERIC      true
+#define USE_ETHERNET_ESP8266      false
+#define USE_ETHERNET_ENC          false
+#define USE_ETHERNET_LAN8742A     false
+#define USE_ETHERNET_LAN8720      false
+#define USE_CUSTOM_ETHERNET       false
+#define USE_UIP_ETHERNET          false
 ```
 
 #### In the sketch:
@@ -960,13 +971,13 @@ Please take a look at other examples, as well.
 
 #### 1. File [Basic_Select.ino](examples/Ethernet/Basic_Select/Basic_Select.ino)
 
-https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/919038858ac9b55217f9cefd8e9d2301a9b0f39b/examples/Ethernet/Basic_Select/Basic_Select.ino#L50-L347
+https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/78ff2dbda8caaa10266eb93acd286641aba7dd27/examples/Ethernet/Basic_Select/Basic_Select.ino#L50-L326
 
 
 
 #### 2. File [defines.h](examples/Ethernet/Basic_Select/defines.h)
 
-https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/919038858ac9b55217f9cefd8e9d2301a9b0f39b/examples/Ethernet/Basic_Select/defines.h#L16-L443
+https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/78ff2dbda8caaa10266eb93acd286641aba7dd27/examples/Ethernet/Basic_Select/defines.h#L16-L463
 
 
 ---
@@ -974,23 +985,20 @@ https://github.com/khoih-prog/MySQL_MariaDB_Generic/blob/919038858ac9b55217f9cef
 
 ### Debug Terminal Output Samples
 
-#### 1. Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet3 Library
+#### 1. Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet_Generic Library
 
-This is terminal debug output when running [Query_Progmem](examples/Ethernet/Query_Progmem) on nRF52 **Adafruit NRF52840_FEATHER using W5500 Ethernet module and Ethernet3 library** connecting to MariaDB Server.
+This is terminal debug output when running [Query_Progmem](examples/Ethernet/Query_Progmem) on nRF52 **Adafruit NRF52840_FEATHER using W5500 Ethernet module and Ethernet_Generic library** connecting to MariaDB Server.
 
 ```
-Starting Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet3 Library
-MySQL_MariaDB_Generic v1.7.0
-Ethernet3 W5500 init, using SPI_CS = 10, number of sockets = 4
+Starting Query_Progmem on NRF52840_FEATHER using W5x00/Ethernet_Generic Library
+MySQL_MariaDB_Generic v1.7.1
+Ethernet_Generic W5500 init, using SPI_CS = 10, number of sockets = 4
 Using mac index = 10
 Connected! IP address: 192.168.2.145
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 
 Running SELECT from PROGMEM and printing results
 
@@ -1019,16 +1027,13 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NUCLEO_F767ZI using LAN8742A/STM32Ethernet Library
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 Using mac index = 0
 Connected! IP address: 192.168.2.165
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest, DB = world
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
 SELECT name, population FROM world.city WHERE population < 857880 ORDER BY population DESC LIMIT 12;
@@ -1051,10 +1056,7 @@ Sleeping...
 ================================================
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
 SELECT name, population FROM world.city WHERE population < 972170 ORDER BY population DESC LIMIT 12;
@@ -1086,7 +1088,7 @@ This is terminal debug output when running [Query_Results_WiFi](examples/WiFi/Qu
 
 ```
 Starting Query_Results_WiFi on ITSYBITSY_M4
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 Using WiFiEspAT Library
 WiFi shield init done
 Connecting to HueNet1
@@ -1095,10 +1097,7 @@ Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 
 Running SELECT and printing results
 
@@ -1125,7 +1124,7 @@ This is terminal debug output when running [Basic_Select_WiFi](examples/WiFi/Bas
 
 ```
 Starting Basic_Select_WiFi on SEEED_XIAO_M0
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 Using WiFiEspAT Library
 WiFi shield init done
 Connecting to HueNet1
@@ -1134,10 +1133,7 @@ Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest, DB = world
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 1) Demonstrating using a dynamically allocated query.
 SELECT population FROM world.city WHERE name = 'Toronto'
   Toronto pop = 688275
@@ -1161,7 +1157,7 @@ This is terminal debug output when running [Query_Results_WiFiNINA](examples/WiF
 
 ```
 Starting Query_Results_WiFiNINA on SAMD_NANO_33_IOT
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 Attempting to connect to SSID: HueNet1
 SSID: HueNet1
 IP Address: 192.168.2.118
@@ -1170,10 +1166,7 @@ Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 
 Running SELECT and printing results
 
@@ -1200,14 +1193,14 @@ Sleeping...
 
 ---
 
-#### 6. Connect_By_Hostname on SAM DUE using W5x00/EthernetLarge Library
+#### 6. Connect_By_Hostname on SAM DUE using W5x00/Ethernet_Generic Library
 
-This is terminal debug output when running [Connect_By_Hostname](examples/Ethernet/Connect_By_Hostname) on **Arduino SAM DUE using W5100 Ethernet shield and EthernetLarge library** connecting to MariaDB Server.
+This is terminal debug output when running [Connect_By_Hostname](examples/Ethernet/Connect_By_Hostname) on **Arduino SAM DUE using W5100 Ethernet shield and Ethernet_Generic library** connecting to MariaDB Server.
 
 
 ```
-Starting Connect_By_Hostname on SAM DUE using W5x00/EthernetLarge Library
-MySQL_MariaDB_Generic v1.7.0
+Starting Connect_By_Hostname on SAM DUE using W5x00/Ethernet_Generic Library
+MySQL_MariaDB_Generic v1.7.1
 _pinCS = 0
 W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 10
 W5100::init: W5100, SSIZE =4096
@@ -1216,10 +1209,7 @@ Connected! IP address: 192.168.2.177
 Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 [SQL] Disconnected
 ```
 
@@ -1232,7 +1222,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NRF52840_FEATHER using ENC28J60/UIPEthernet Library
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 ENC28J60_CONTROL_CS =10
 SS =5
 SPI_MOSI =25
@@ -1244,10 +1234,7 @@ Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest, DB = world
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
 SELECT name, population FROM world.city WHERE population < 885240 ORDER BY population DESC LIMIT 12;
@@ -1270,10 +1257,7 @@ Sleeping...
 ================================================
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
 SELECT name, population FROM world.city WHERE population < 1015280 ORDER BY population DESC LIMIT 12;
@@ -1296,10 +1280,7 @@ Sleeping...
 ================================================
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
 SELECT name, population FROM world.city WHERE population < 1193330 ORDER BY population DESC LIMIT 12;
@@ -1331,7 +1312,7 @@ This is terminal debug output when running [Complex_Select](examples/Ethernet/Co
 
 ```
 Starting Complex_Select on NRF52840_FEATHER, with ENC28J60 using EthernetENC Library
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 25
@@ -1353,10 +1334,7 @@ Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest, DB = world
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
 SELECT name, population FROM world.city WHERE population < 831690 ORDER BY population DESC LIMIT 12;
@@ -1388,7 +1366,7 @@ This is terminal debug output when running [Query_Progmem](examples/Ethernet/Que
 
 ```
 Starting Query_Progmem on NRF52840_FEATHER, with ENC28J60 using EthernetENC Library
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 25
@@ -1410,10 +1388,7 @@ Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Connected. Server Version = 5.5.5-10.3.23-MariaDB-0+deb10u1
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 
 Running SELECT from PROGMEM and printing results
 
@@ -1441,17 +1416,13 @@ This is terminal debug output when running [Basic_Insert_ESP](examples/WiFi/Basi
 
 ```
 Starting Basic_Insert_ESP on ESP8266_NODEMCU_ESP12E
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 Connecting to HueNet1
 ...........Connected to network. My IP address is: 192.168.2.135
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = test_arduino
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
 [SQL] Connected. Server Version = 5.5.5-10.3.27-MariaDB-0+deb10u1
 INSERT INTO test_arduino.hello_arduino (message) VALUES ('Hello, Arduino!')
 Data Inserted.
@@ -1470,17 +1441,13 @@ This is terminal debug output when running [Basic_Insert_ESP](examples/WiFi/Basi
 
 ```
 Starting Basic_Insert_ESP on ESP32S2_DEV
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 Connecting to HueNet1
 .......Connected to network. My IP address is: 192.168.2.190
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = test_arduino
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
 [SQL] Connected. Server Version = 5.5.5-10.3.27-MariaDB-0+deb10u1
 INSERT INTO test_arduino.hello_arduino (message) VALUES ('Hello, Arduino!')
 Data Inserted.
@@ -1499,7 +1466,7 @@ This is terminal debug output when running [Basic_Select_WiFiNINA](examples/WiFi
 
 ```
 Starting Basic_Select_WiFiNINA on MBED NANO_RP2040_CONNECT
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 Attempting to connect to SSID: HueNet1
 SSID: HueNet1
 IP Address: 192.168.2.153
@@ -1508,10 +1475,6 @@ Connecting to SQL Server @ your_account.ddns.net, Port = 5698
 User = invited-guest, PW = the-invited-guest, DB = world
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
 [SQL] Connected. Server Version = 5.5.5-10.3.27-MariaDB-0+deb10u1
 1) Demonstrating using a dynamically allocated query.
 SELECT population FROM world.city WHERE name = 'Toronto'
@@ -1528,14 +1491,14 @@ Sleeping...
 
 ---
 
-#### 13. Complex_Select on MBED RASPBERRY_PI_PICO using W5x00/EthernetLarge Library
+#### 13. Complex_Select on MBED RASPBERRY_PI_PICO using W5x00/Ethernet_Generic Library
 
-This is terminal debug output when running [Complex_Select](examples/Ethernet/Complex_Select) on **MBED RASPBERRY_PI_PICO, with W5x00 using EthernetLarge Library** connecting to MariaDB Server, using [ArduinoCore-mbed mbed_rp2040 core](https://github.com/arduino/ArduinoCore-mbed)
+This is terminal debug output when running [Complex_Select](examples/Ethernet/Complex_Select) on **MBED RASPBERRY_PI_PICO, with W5x00 using Ethernet_Generic Library** connecting to MariaDB Server, using [ArduinoCore-mbed mbed_rp2040 core](https://github.com/arduino/ArduinoCore-mbed)
 
 
 ```
-Starting Complex_Select on MBED RASPBERRY_PI_PICO , with W5x00 using Ethernet Library
-MySQL_MariaDB_Generic v1.7.0
+Starting Complex_Select on MBED RASPBERRY_PI_PICO , with W5x00 using Ethernet_Generic Library on SPI0/SPI
+MySQL_MariaDB_Generic v1.7.1
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 19
@@ -1544,24 +1507,19 @@ MySQL_MariaDB_Generic v1.7.0
 [SQL] SS: 17
 [SQL] =========================================
 [SQL] RPIPICO setCsPin: 17
-[SQL] =========================================
 [SQL] Currently Used SPI pinout:
 [SQL] MOSI: 19
 [SQL] MISO: 16
 [SQL] SCK: 18
 [SQL] SS: 17
-[SQL] =========================================
-Using mac index = 16
-Connected! IP address: 192.168.2.93
-Connecting to SQL Server @ your_account.ddns.net , Port = 5698
+[SQL] =========================
+Using mac index = 2
+Connected! IP address: 192.168.2.92
+Connecting to SQL Server @ 192.168.2.112 , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = world
 Connecting...
-[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
-[SQL] Connected. Server Version = 5.5.5-10.3.27-MariaDB-0+deb10u1
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
 SELECT name, population FROM world.city WHERE population < 827440 ORDER BY population DESC LIMIT 12;
@@ -1584,10 +1542,6 @@ Sleeping...
 ================================================
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
 [SQL] Connected. Server Version = 5.5.5-10.3.27-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
@@ -1613,14 +1567,14 @@ Sleeping...
 
 ---
 
-#### 14. Complex_Select on RASPBERRY_PI_PICO using W5x00/EthernetLarge Library
+#### 14. Complex_Select on RASPBERRY_PI_PICO using W5x00/Ethernet_Generic Library
 
-This is terminal debug output when running [Complex_Select](examples/Ethernet/Complex_Select) on **RASPBERRY_PI_PICO, with W5x00 using EthernetLarge Library** connecting to MariaDB Server, using [arduino-pico rp2040 core](https://github.com/earlephilhower/arduino-pico)
+This is terminal debug output when running [Complex_Select](examples/Ethernet/Complex_Select) on **RASPBERRY_PI_PICO, with W5x00 using Ethernet_Generic Library** connecting to MariaDB Server, using [arduino-pico rp2040 core](https://github.com/earlephilhower/arduino-pico)
 
 
 ```
-Starting Complex_Select on RASPBERRY_PI_PICO , with W5x00 using EthernetLarge Library
-MySQL_MariaDB_Generic v1.7.0
+Starting Complex_Select on RASPBERRY_PI_PICO , with W5x00 using Ethernet_Generic Library on SPI1
+MySQL_MariaDB_Generic v1.7.1
 [SQL] =========================================
 [SQL] Default SPI pinout:
 [SQL] MOSI: 19
@@ -1628,28 +1582,20 @@ MySQL_MariaDB_Generic v1.7.0
 [SQL] SCK: 18
 [SQL] SS: 17
 [SQL] =========================================
-[SQL] RPIPICO setCsPin: 17
-_pinCS = 0
-W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 17
-W5100::init: W5500, SSIZE =8192
-[SQL] =========================================
+[SQL] RPIPICO setCsPin: 13
 [SQL] Currently Used SPI pinout:
-[SQL] MOSI: 19
-[SQL] MISO: 16
-[SQL] SCK: 18
-[SQL] SS: 17
-[SQL] =========================================
+[SQL] MOSI: 15
+[SQL] MISO: 12
+[SQL] SCK: 14
+[SQL] SS: 13
+[SQL] =========================
 Using mac index = 0
-Connected! IP address: 192.168.2.118
-Connecting to SQL Server @ your_account.ddns.net , Port = 5698
+Connected! IP address: 192.168.2.172
+Connecting to SQL Server @ 192.168.2.112 , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = world
 Connecting...
-[SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
-[SQL] Connected. Server Version = 5.5.5-10.3.27-MariaDB-0+deb10u1
+[SQL] Connecting to Server: 192.168.2.112 , Port =  5698
+[SQL] Connected. Server Version = 5.5.5-10.3.34-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
 SELECT name, population FROM world.city WHERE population < 900290 ORDER BY population DESC LIMIT 12;
@@ -1681,7 +1627,7 @@ This is terminal debug output when running [Complex_Select_WT32_ETH01](examples/
 ```
 Starting Complex_Select_WT32_ETH01 on WT32-ETH01
 WebServer_WT32_ETH01 v1.4.1
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 ETH MAC: A8:03:2A:A1:61:73, IPv4: 192.168.2.232
 FULL_DUPLEX, 100Mbps
 Connected to network. My IP address is: 192.168.2.232
@@ -1689,10 +1635,6 @@ Connecting to SQL Server @ your_account.ddns.net , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = world
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
 [SQL] Connected. Server Version = 5.5.5-10.3.27-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
@@ -1710,10 +1652,6 @@ Sleeping...
 ================================================
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
 [SQL] Connected. Server Version = 5.5.5-10.3.27-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
@@ -1740,17 +1678,13 @@ This is terminal debug output when running [Complex_Select](examples/NativeEther
 
 ```
 Starting Complex_Select on Teensy 4.1 , with NativeEthernet
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 Using mac index = 2
 Connected! IP address: 192.168.2.86
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = world
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
 [SQL] Connected. Server Version = 5.5.5-10.3.29-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
@@ -1774,10 +1708,6 @@ Sleeping...
 ================================================
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
 [SQL] Connected. Server Version = 5.5.5-10.3.29-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
@@ -1809,17 +1739,13 @@ This is terminal debug output when running [Complex_Select](examples/NativeEther
 
 ```
 Starting Complex_Select on TEENSY 4.1 using QNEthernet
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 =========== USE_QN_ETHERNET ===========
 Initialize Ethernet using static IP => Connected! IP address: 192.168.2.222
 Connecting to SQL Server @ your_account.ddns.net , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = world
 Connecting...
 [SQL] Connecting to Server: your_account.ddns.net , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
 [SQL] Connected. Server Version = 5.5.5-10.3.29-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
@@ -1852,7 +1778,7 @@ This is terminal debug output when running [Complex_Insert](examples/Portenta_H7
 
 ```
 Starting Complex_Insert on PORTENTA_H7_M7 , with Ethernet using Portenta_Ethernet Library
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 Using mac index = 14
 Connected! IP address: 192.168.2.132
 Connecting to SQL Server @ 192.168.2.112 , Port = 5698
@@ -1860,10 +1786,6 @@ User = invited-guest , PW = the-invited-guest
 DB = test_arduino , Table = hello_sensor
 Connecting...
 [SQL] Connecting to Server: 192.168.2.112 , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
 [SQL] Connected. Server Version = 5.5.5-10.3.29-MariaDB-0+deb10u1
 INSERT INTO test_arduino.hello_sensor (message, sensor_num, value) VALUES ('test sensor',24,50.1)
 Complex Data Inserted.
@@ -1882,17 +1804,13 @@ This is terminal debug output when running [Complex_Insert_WiFi](examples/Porten
 
 ```
 Starting Complex_Select_WiFi on PORTENTA_H7_M7
-MySQL_MariaDB_Generic v1.7.0
+MySQL_MariaDB_Generic v1.7.1
 Connecting to HueNet1
 Connected to network. My IP address is: 192.168.2.130
 Connecting to SQL Server @ 192.168.2.112 , Port = 5698
 User = invited-guest , PW = the-invited-guest , DB = world
 Connecting...
 [SQL] Connecting to Server: 192.168.2.112 , Port =  5698
-[SQL] Connect OK. Try reading packets
-[SQL] Try parsing packets
-[SQL] Try send_authentication packets
-[SQL] Writing this_buffer, size_send = 72
 [SQL] Connected. Server Version = 5.5.5-10.3.29-MariaDB-0+deb10u1
 ====================================================
 > Running SELECT with dynamically supplied parameter
@@ -1985,6 +1903,10 @@ Submit issues to: [MySQL_MariaDB_Generic issues](https://github.com/khoih-prog/M
 28. Add support to RP2040 boards using `Seeed RP2040 core`
 29 Convert to `h-only` style
 30. Add `multiFileProject` examples to demo for multiple-file projects
+31. Use new [**Ethernet_Generic** library](https://github.com/khoih-prog/Ethernet_Generic) as default for W5x00.
+32. Support **SPI2 for ESP32**
+33. Add support to SPI1 for RP2040 using [arduino-pico core](https://github.com/earlephilhower/arduino-pico)
+34. Use new function `waitForLink()` for Teensy 4.1 `QNEthernet library v0.14.0+`
 
 ---
 ---

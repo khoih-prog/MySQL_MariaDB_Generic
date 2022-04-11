@@ -12,7 +12,7 @@
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
   
-  Version: 1.7.0
+  Version: 1.7.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -26,6 +26,7 @@
   1.6.0   K Hoang      10/03/2022 Fix memory leak bug. Optimize code
   1.6.1   K Hoang      12/03/2022 Fix memory management bug
   1.7.0   K Hoang      12/03/2022 Convert to `h-only` style library
+  1.7.1   K Hoang      10/04/2022 Use Ethernet_Generic library as default. Support SPI1/SPI2 for RP2040/ESP32
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -41,6 +42,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
 
  **********************************************************************************************************************************/
+
+#pragma once
  
 #ifndef MYSQL_GENERIC_CONNECTION_IMPL_H
 #define MYSQL_GENERIC_CONNECTION_IMPL_H
@@ -93,10 +96,10 @@ bool MySQL_Connection::connect(const char *hostname, const uint16_t& port, char 
   int  retries 		= 0;
   bool returnVal 	= false;
   
-  MYSQL_LOGERROR3("Connecting to Server:", hostname, ", Port = ", port);
+  MYSQL_LOGWARN3("Connecting to Server:", hostname, ", Port = ", port);
   
   if (db)
-    MYSQL_LOGERROR1("Using Database:", db);
+    MYSQL_LOGWARN1("Using Database:", db);
 
   // Retry up to MAX_CONNECT_ATTEMPTS times.
   while (retries++ < MAX_CONNECT_ATTEMPTS)
@@ -119,7 +122,7 @@ bool MySQL_Connection::connect(const char *hostname, const uint16_t& port, char 
   if (connected != SUCCESS)
     return false;
 
-  MYSQL_LOGERROR("Connect OK. Try reading packets");
+  MYSQL_LOGINFO("Connect OK. Try reading packets");
 
   if ( !read_packet() )
   {
@@ -127,11 +130,11 @@ bool MySQL_Connection::connect(const char *hostname, const uint16_t& port, char 
     return false;
   }
 
-  MYSQL_LOGERROR("Try parsing packets");
+  MYSQL_LOGINFO("Try parsing packets");
 
   parse_handshake_packet();
 
-  MYSQL_LOGERROR("Try send_authentication packets");
+  MYSQL_LOGINFO("Try send_authentication packets");
 
   send_authentication_packet(user, password, db);
    
@@ -145,7 +148,7 @@ bool MySQL_Connection::connect(const char *hostname, const uint16_t& port, char 
   }
   else
   {
-  	MYSQL_LOGERROR1("Connected. Server Version =", server_version);
+  	MYSQL_LOGWARN1("Connected. Server Version =", server_version);
   	returnVal = true;
   }
 
@@ -169,10 +172,10 @@ Connection_Result MySQL_Connection::connectNonBlocking(const char *hostname, con
   
   long now = 0;
   
-  MYSQL_LOGERROR3("Connecting to Server:", hostname, ", Port = ", port);
+  MYSQL_LOGWARN3("Connecting to Server:", hostname, ", Port = ", port);
   
   if (db)
-    MYSQL_LOGERROR1("Using Database:", db);
+    MYSQL_LOGWARN1("Using Database:", db);
   
   while (retries < MAX_CONNECT_ATTEMPTS)
   {  
@@ -205,7 +208,7 @@ Connection_Result MySQL_Connection::connectNonBlocking(const char *hostname, con
   if (connected != SUCCESS)
     return RESULT_FAIL;
 
-  MYSQL_LOGERROR("Connect OK. Try reading packets");
+  MYSQL_LOGINFO("Connect OK. Try reading packets");
 
   if ( !read_packet() )
   {
@@ -213,11 +216,11 @@ Connection_Result MySQL_Connection::connectNonBlocking(const char *hostname, con
     return RESULT_FAIL;
   }
 
-  MYSQL_LOGERROR("Try parsing packets");
+  MYSQL_LOGINFO("Try parsing packets");
 
   parse_handshake_packet();
 
-  MYSQL_LOGERROR("Try send_authentication packets");
+  MYSQL_LOGINFO("Try send_authentication packets");
 
   send_authentication_packet(user, password, db);
    
@@ -231,7 +234,7 @@ Connection_Result MySQL_Connection::connectNonBlocking(const char *hostname, con
   }
   else
   {
-  	MYSQL_LOGERROR1("Connected. Server Version =", server_version);
+  	MYSQL_LOGWARN1("Connected. Server Version =", server_version);
   	returnVal = RESULT_OK;
   }
 

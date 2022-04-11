@@ -14,7 +14,7 @@
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
   
-  Version: 1.7.0
+  Version: 1.7.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -28,6 +28,7 @@
   1.6.0   K Hoang      10/03/2022 Fix memory leak bug. Optimize code
   1.6.1   K Hoang      12/03/2022 Fix memory management bug
   1.7.0   K Hoang      12/03/2022 Convert to `h-only` style library
+  1.7.1   K Hoang      10/04/2022 Use Ethernet_Generic library as default. Support SPI1/SPI2 for RP2040/ESP32
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -43,6 +44,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
 
  **********************************************************************************************************************************/
+
+#pragma once
 
 #ifndef MYSQL_GENERIC_PACKET_IMPL_H
 #define MYSQL_GENERIC_PACKET_IMPL_H
@@ -167,7 +170,7 @@ void MySQL_Packet::send_authentication_packet(char *user, char *password, char *
   this_buffer[3] = byte(0x01);
 
   // Write the packet
-  MYSQL_LOGERROR1("Writing this_buffer, size_send =", size_send);
+  MYSQL_LOGINFO1("Writing this_buffer, size_send =", size_send);
   
   client->write((uint8_t*)this_buffer, size_send);
   client->flush();
@@ -316,7 +319,7 @@ bool MySQL_Packet::read_packet()
     packet_len = 0;
     //////
     
-    MYSQL_LOGERROR1("MySQL_Packet::read_packet: ", READ_TIMEOUT);
+    MYSQL_LOGINFO1("MySQL_Packet::read_packet: ", READ_TIMEOUT);
     
     return false;
   }
@@ -343,7 +346,7 @@ bool MySQL_Packet::read_packet()
     }
   */
 
-  MYSQL_LOGWARN1("MySQL_Packet::read_packet: packet_len= ", packet_len);
+  MYSQL_LOGINFO1("MySQL_Packet::read_packet: packet_len= ", packet_len);
 
   // Check for valid packet.
   // KH mod
@@ -361,7 +364,7 @@ bool MySQL_Packet::read_packet()
     {
       // Check if we need to allocate buffer the first time
       largest_buffer_size = packet_len + PACKET_HEADER_SZ;
-      MYSQL_LOGWARN1("MySQL_Packet::read_packet: First time allocate buffer, size = ", largest_buffer_size);
+      MYSQL_LOGINFO1("MySQL_Packet::read_packet: First time allocate buffer, size = ", largest_buffer_size);
       
       buffer = (byte *) malloc(largest_buffer_size);
     }
@@ -369,7 +372,7 @@ bool MySQL_Packet::read_packet()
     {
       // Check if we need to reallocate buffer
       largest_buffer_size = packet_len + PACKET_HEADER_SZ;
-      MYSQL_LOGWARN1("MySQL_Packet::read_packet: Reallocate buffer, size = ", largest_buffer_size);
+      MYSQL_LOGINFO1("MySQL_Packet::read_packet: Reallocate buffer, size = ", largest_buffer_size);
       
       buffer = (byte *) realloc(buffer, largest_buffer_size);
     }

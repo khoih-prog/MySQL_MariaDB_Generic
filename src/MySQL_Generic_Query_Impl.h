@@ -15,7 +15,7 @@
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
   
-  Version: 1.7.0
+  Version: 1.7.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -29,6 +29,7 @@
   1.6.0   K Hoang      10/03/2022 Fix memory leak bug. Optimize code
   1.6.1   K Hoang      12/03/2022 Fix memory management bug
   1.7.0   K Hoang      12/03/2022 Convert to `h-only` style library
+  1.7.1   K Hoang      10/04/2022 Use Ethernet_Generic library as default. Support SPI1/SPI2 for RP2040/ESP32
  **********************************************************************************************************************************/
 
 /*********************************************************************************************************************************
@@ -44,6 +45,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
 
  **********************************************************************************************************************************/
+
+#pragma once
 
 #ifndef MYSQL_GENERIC_QUERY_IMPL_H
 #define MYSQL_GENERIC_QUERY_IMPL_H
@@ -147,7 +150,7 @@ bool MySQL_Query::execute(const char *query, bool progmem)
   }
   else
   {
-    MYSQL_LOGWARN3("MySQL_Query::execute: Reuse allocated buffer, conn->largest_buffer_size = ", conn->largest_buffer_size, " > ", query_len + COMMAND_HEADER_LEN);
+    MYSQL_LOGDEBUG3("MySQL_Query::execute: Reuse allocated buffer, conn->largest_buffer_size = ", conn->largest_buffer_size, " > ", query_len + COMMAND_HEADER_LEN);
   }
    
   if (conn->buffer == NULL)

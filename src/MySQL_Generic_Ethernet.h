@@ -12,7 +12,7 @@
   Built by Khoi Hoang https://github.com/khoih-prog/MySQL_MariaDB_Generic
   Licensed under MIT license
   
-  Version: 1.7.0
+  Version: 1.7.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -26,6 +26,7 @@
   1.6.0   K Hoang      10/03/2022 Fix memory leak bug. Optimize code
   1.6.1   K Hoang      12/03/2022 Fix memory management bug
   1.7.0   K Hoang      12/03/2022 Convert to `h-only` style library
+  1.7.1   K Hoang      10/04/2022 Use Ethernet_Generic library as default. Support SPI1/SPI2 for RP2040/ESP32
  **********************************************************************************************************************************/
 
 #ifndef MYSQL_GENERIC_ETHERNET_H
@@ -33,76 +34,142 @@
 
 #include <SPI.h>
 
-#if USE_ETHERNET
-  #include "Ethernet.h"
-  EthernetClient client;
-  #warning Using Ethernet lib
-#elif USE_ETHERNET_LARGE
-  #include "EthernetLarge.h"
-  EthernetClient client;
-  #warning Using EthernetLarge lib
-#elif USE_ETHERNET2
-  #include "Ethernet2.h"
-  EthernetClient client;
-  #warning Using Ethernet2 lib
-#elif USE_ETHERNET3
-  #include "Ethernet3.h"
-  EthernetClient client;
-  #warning Using Ethernet3 lib
-// KH, from v1.0.3
-#elif USE_ETHERNET_ENC
-  #include "EthernetENC.h"
-  EthernetClient client;
-  #warning Using ENC28J60 with EthernetENC lib
-//////  
-#elif USE_ETHERNET_ESP8266
-  #include "Ethernet_ESP8266.h"
-  EthernetClient client;
-  #warning Using Ethernet_ESP8266 lib
-#elif USE_ETHERNET_LAN8742A
-  #include <LwIP.h>
-  #include <STM32Ethernet.h>
-  EthernetClient client;
-  #warning Using Ethernet_LAN8742A lib
+///////////////////////////////////////////////////////
 
-// KH, from v1.0.1  
-#elif USE_UIP_ETHERNET
-  #include <UIPEthernet.h>
-  #include <utility/logging.h>
+#if USE_ETHERNET_PORTENTA_H7
+  #include <Portenta_Ethernet.h>
+  #include <Ethernet.h>
+  
   EthernetClient client;
-  #warning Using ENC28J60 UIPEthernet lib
-//////
+  
+  #define SHIELD_TYPE           "Ethernet using Portenta_Ethernet Library"
 
-// KH, from v1.3.0  
-#elif USE_NATIVE_ETHERNET
-  #include <NativeEthernet.h>
-  EthernetClient client;
-  #warning Using Teensy 4.1 NativeEthernet lib
- 
-// KH, from v1.4.0  
+//////////////////////////////////////
+
 #elif USE_QN_ETHERNET
   #include <QNEthernet.h>
   using namespace qindesign::network;
+  
   EthernetClient client;
-  #warning Using Teensy 4.1 QNEthernet lib
+  
+  #define SHIELD_TYPE           "Ethernet using Teensy 4.1 QNEthernet Library"
 
-// KH, from v1.5.0  
-#elif USE_ETHERNET_PORTENTA_H7
-  #include <Portenta_Ethernet.h>
-  #include <Ethernet.h>
+//////////////////////////////////////
+    
+#elif USE_NATIVE_ETHERNET
+  #include "NativeEthernet.h"
+  
   EthernetClient client;
-  #warning Using Portenta_Ethernet lib for Portenta_H7.
-     
+  
+  #define SHIELD_TYPE           "Ethernet using Teensy 4.1 NativeEthernet Library"
+
+//////////////////////////////////////
+  
+#elif USE_ETHERNET_LAN8742A
+  #include <LwIP.h>
+  #include <STM32Ethernet.h>
+  
+  EthernetClient client;
+  
+  #define SHIELD_TYPE           "LAN8742A Ethernet & STM32Ethernet Library" 
+
+//////////////////////////////////////
+
+#elif USE_ETHERNET_LAN8720
+  #include <LwIP.h>
+  #include <STM32Ethernet.h>
+  
+  EthernetClient client;
+  
+  #define SHIELD_TYPE           "LAN8720 Ethernet & STM32Ethernet Library" 
+
+//////////////////////////////////////
+      
+#elif USE_ETHERNET_GENERIC
+  #if (ESP32)
+    #include <soc/spi_pins.h>
+      
+    // Optional SPI2
+    //#define USING_SPI2                          true
+
+    #if USING_SPI2
+      #define PIN_MISO          HSPI_IOMUX_PIN_NUM_MISO
+      #define PIN_MOSI          HSPI_IOMUX_PIN_NUM_MOSI
+      #define PIN_SCK           HSPI_IOMUX_PIN_NUM_CLK
+      #define PIN_SS            HSPI_IOMUX_PIN_NUM_CS
+    
+      #define SHIELD_TYPE       "W5x00 using Ethernet_Generic Library on SPI2"
+      
+    #else
+    
+      #define PIN_MISO          MISO
+      #define PIN_MOSI          MOSI
+      #define PIN_SCK           SCK
+      #define PIN_SS            SS
+    
+      #define SHIELD_TYPE       "W5x00 using Ethernet_Generic Library on SPI"
+      
+    #endif
+
+  #else
+    #if USING_SPI2
+      #define SHIELD_TYPE           "W5x00 using Ethernet_Generic Library on SPI1"
+    #else
+      #define SHIELD_TYPE           "W5x00 using Ethernet_Generic Library on SPI0/SPI"
+    #endif 
+  #endif
+ 
+  #include "Ethernet_Generic.h"
+  
+  EthernetClient client;
+
+//////////////////////////////////////
+
+#elif USE_ETHERNET_ESP8266
+  #include "Ethernet_ESP8266.h"
+  
+  EthernetClient client;
+  
+  #define SHIELD_TYPE           "W5x00 using Ethernet_ESP8266 Library" 
+
+//////////////////////////////////////
+  
+#elif USE_ETHERNET_ENC
+  #include "EthernetENC.h"
+  
+  EthernetClient client;
+
+  #define SHIELD_TYPE           "ENC28J60 using EthernetENC Library"
+
+//////////////////////////////////////
+  
 #elif USE_CUSTOM_ETHERNET
-  #include "Ethernet_XYZ.h"
+  // You have to include an Ethernet library in your program
+  //#include "Ethernet_XYZ.h"
+  //#include "EthernetLarge.h"
+  
   EthernetClient client;
-  #warning Using Custom Ethernet library from EthernetWrapper. You must include a library here or error.
+  
+  #if !defined(SHIELD_TYPE)
+    #define SHIELD_TYPE           "Custom Ethernet using your choice of Library"
+  #endif
+
+//////////////////////////////////////
+  
 #else
-  // Backup if none is selected
-  #define USE_ETHERNET          true
-  #include "Ethernet.h"
+
+  #ifdef USE_ETHERNET_GENERIC
+    #undef USE_ETHERNET_GENERIC
+  #endif
+  #define USE_ETHERNET_GENERIC   true
+  #include "Ethernet_Generic.h"
+  
   EthernetClient client;
-  #warning Using Ethernet lib
+
+  #define SHIELD_TYPE           "W5x00 using default Ethernet_Generic Library"
+  
 #endif
+
+///////////////////////////////////////////////////////
  
 #endif    //MYSQL_GENERIC_ETHERNET_H
