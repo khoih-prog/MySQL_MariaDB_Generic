@@ -64,7 +64,7 @@ MySQL_Connection conn((Client *)&client);
 void setup()
 {
   Serial.begin(115200);
-  while (!Serial);
+  while (!Serial && millis() < 5000); // wait for serial port to connect
 
   MYSQL_DISPLAY1("\nStarting Query_Results_WiFi on", BOARD_NAME);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);

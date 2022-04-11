@@ -38,16 +38,13 @@
 #endif
 
 // Only one of the following to be true.
-#define USE_ETHERNET              false
-#define USE_ETHERNET_LARGE        false
-#define USE_ETHERNET2             false
-#define USE_ETHERNET3             false
+#define USE_ETHERNET_GENERIC      true
 #define USE_ETHERNET_ESP8266      false
 #define USE_ETHERNET_ENC          false
 #define USE_ETHERNET_LAN8742A     false
-#define USE_UIP_ETHERNET          false
-
+#define USE_ETHERNET_LAN8720      false
 #define USE_CUSTOM_ETHERNET       false
+#define USE_UIP_ETHERNET          false
 
 #if USE_NATIVE_ETHERNET
   #include "NativeEthernet.h"

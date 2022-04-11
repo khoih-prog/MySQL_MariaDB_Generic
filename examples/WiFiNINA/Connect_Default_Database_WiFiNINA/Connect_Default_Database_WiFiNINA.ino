@@ -73,7 +73,7 @@ void printWifiStatus()
 void setup()
 {
   Serial.begin(115200);
-  while (!Serial); // wait for serial port to connect
+  while (!Serial && millis() < 5000); // wait for serial port to connect
 
   MYSQL_DISPLAY1("\nStarting Connect_Default_Database_WiFiNINA on", BOARD_NAME);
   MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);

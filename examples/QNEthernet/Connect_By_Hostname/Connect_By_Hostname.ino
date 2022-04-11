@@ -59,7 +59,6 @@
   IPAddress server(192, 168, 2, 112);
 #endif
 
-
 uint16_t server_port = 5698;    //3306;
 
 char user[]             = "invited-guest";              // MySQL user login username
@@ -70,14 +69,8 @@ IPAddress server_addr;
 MySQL_Connection conn((Client *)&client);
 
 
-void setup()
+void initEthernet()
 {
-  Serial.begin(115200);
-  while (!Serial);
-
-  MYSQL_DISPLAY2("\nStarting Connect_By_Hostname on", BOARD_NAME, SHIELD_TYPE);
-  MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
-
 #if USE_NATIVE_ETHERNET
   MYSQL_DISPLAY(F("======== USE_NATIVE_ETHERNET ========"));
 #elif USE_QN_ETHERNET
@@ -98,6 +91,9 @@ void setup()
   MYSQL_DISPLAY1("Using mac index =", index);
   MYSQL_DISPLAY1("Connected! IP address:", Ethernet.localIP());
 
+  // give the Ethernet shield 2 seconds to initialize:
+  delay(2000);
+
 #else
 
   #if USING_DHCP
@@ -113,11 +109,11 @@ void setup()
 
   if (!Ethernet.waitForLocalIP(5000))
   {
-    MYSQL_DISPLAY(F("Failed to configure Ethernet"));
+    Serial.println("Failed to configure Ethernet");
 
     if (!Ethernet.linkStatus())
     {
-      MYSQL_DISPLAY(F("Ethernet cable is not connected."));
+      Serial.println("Ethernet cable is not connected.");
     }
 
     // Stay here forever
@@ -126,12 +122,29 @@ void setup()
       delay(1);
     }
   }
+
+  if (!Ethernet.waitForLink(5000))
+  {
+    Serial.println(F("Failed to wait for Link"));
+  }
   else
   {
-    MYSQL_DISPLAY1(F("Connected! IP address:"), Ethernet.localIP());
+    Serial.print("IP Address = ");
+    Serial.println(Ethernet.localIP());
   }
 
-#endif
+#endif  
+}
+
+void setup()
+{
+  Serial.begin(115200);
+  while (!Serial && millis() < 5000); // wait for serial port to connect
+
+  MYSQL_DISPLAY2("\nStarting Connect_By_Hostname on", BOARD_NAME, SHIELD_TYPE);
+  MYSQL_DISPLAY(MYSQL_MARIADB_GENERIC_VERSION);
+
+  initEthernet();
 
   MYSQL_DISPLAY3("Connecting to SQL Server @", server, ", Port =", server_port)  
   MYSQL_DISPLAY3("User =", user, ", PW =", password);
