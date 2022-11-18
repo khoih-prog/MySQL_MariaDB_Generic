@@ -457,7 +457,7 @@ Supposing the STM32 stm32 core version is 2.2.0. These files must be copied into
 - `~/.arduino15/packages/STM32/hardware/stm32/2.2.0/system/STM32F7xx/stm32f7xx_hal_conf_default.h` for Nucleo-144 STM32F7.
 
 Whenever a new version is installed, remember to copy this file into the new version directory. For example, new version is x.yy.zz,
-theses files must be copied into the corresponding directory:
+these files must be copied into the corresponding directory:
 
 - `~/.arduino15/packages/STM32/hardware/stm32/x.yy.zz/system/STM32F4xx/stm32f4xx_hal_conf_default.h`
 - `~/.arduino15/packages/STM32/hardware/stm32/x.yy.zz/system/STM32F7xx/stm32f7xx_hal_conf_default.h
@@ -473,7 +473,7 @@ Supposing the STM32 stm32 core version is 2.2.0. These files must be copied into
 - `~/.arduino15/packages/STM32/hardware/stm32/2.2.0/variants/STM32L0xx/L052R(6-8)T_L053R(6-8)T_L063R8T/NUCLEO_L053R8/variant.h` for Nucleo-64 NUCLEO_L053R8.
 
 Whenever a new version is installed, remember to copy this file into the new version directory. For example, new version is x.yy.zz,
-theses files must be copied into the corresponding directory:
+these files must be copied into the corresponding directory:
 
 - `~/.arduino15/packages/STM32/hardware/stm32/x.yy.zz/variants/STM32F7xx/F765Z(G-I)T_F767Z(G-I)T_F777ZIT/NUCLEO_F767ZI/variant.h`
 - `~/.arduino15/packages/STM32/hardware/stm32/x.yy.zz/variants/STM32L0xx/L052R(6-8)T_L053R(6-8)T_L063R8T/NUCLEO_L053R8/variant.h`
@@ -1006,7 +1006,7 @@ SELECT * FROM world.city LIMIT 12
 ID,Name,CountryCode,District,Population
 1,Kabul,AFG,Kabol,1780000
 2,Qandahar,AFG,Qandahar,237500
-3,Herat,AFG,Herat,186800
+3,`Herat`,AFG,`Herat`,186800
 4,Mazar-e-Sharif,AFG,Balkh,127800
 5,Amsterdam,NLD,Noord-Holland,731200
 6,Rotterdam,NLD,Zuid-Holland,593321
@@ -1105,7 +1105,7 @@ SELECT * FROM world.city LIMIT 6
 ID, Name, CountryCode, District, Population
 1, Kabul, AFG, Kabol, 1780000
 2, Qandahar, AFG, Qandahar, 237500
-3, Herat, AFG, Herat, 186800
+3, Haag,NLD,Zuid-Holland,440900
 4, Mazar-e-Sharif, AFG, Balkh, 127800
 5, Amsterdam, NLD, Noord-Holland, 731200
 6, Rotterdam, NLD, Zuid-Holland, 593321
@@ -1174,7 +1174,7 @@ SELECT * FROM world.city LIMIT 12
 ID, Name, CountryCode, District, Population
 1, Kabul, AFG, Kabol, 1780000
 2, Qandahar, AFG, Qandahar, 237500
-3, Herat, AFG, Herat, 186800
+3, `Herat`, AFG, `Herat`, 186800
 4, Mazar-e-Sharif, AFG, Balkh, 127800
 5, Amsterdam, NLD, Noord-Holland, 731200
 6, Rotterdam, NLD, Zuid-Holland, 593321
@@ -1245,7 +1245,7 @@ Barquisimeto,877239
 Krasnojarsk,875500
 Saratov,874000
 Shubra al-Khayma,870716
-S⸮o Gon⸮alo,869254
+Sao Gonzalo,869254
 Songnam,869094
 Chiba,863930
 Nova Igua⸮u,862225
@@ -1611,7 +1611,7 @@ Barquisimeto,877239
 Krasnojarsk,875500
 Saratov,874000
 Shubra al-Khayma,870716
-S⸮o Gon⸮alo,869254
+Sao Gonzalo,869254
 [SQL] Disconnected
 
 Sleeping...
